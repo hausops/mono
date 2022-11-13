@@ -13,13 +13,25 @@ export type NavLinkProps = {
 
 export default function NavLink({href, icon, text}: NavLinkProps) {
   const {pathname} = useRouter();
-  const className = clsx(s.base, {
-    [s.state.active]: href === pathname,
+  const active = href === pathname;
+  const linkClassName = clsx(s.link, {
+    [s.state.active]: active,
   });
   return (
-    <Link className={className} href={href}>
-      <span className={s.icon}>{icon}</span>
-      {text}
-    </Link>
+    <div className={s.root}>
+      {active && <ActiveMarker />}
+      <Link className={linkClassName} href={href}>
+        <span className={s.icon}>{icon}</span>
+        {text}
+      </Link>
+    </div>
+  );
+}
+
+function ActiveMarker() {
+  return (
+    <div className={s.activeMarkerContainer}>
+      <span className={s.activeMarker} />
+    </div>
   );
 }

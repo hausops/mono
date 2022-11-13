@@ -7,7 +7,6 @@ export const MainNav = style({
   gap: unit(4),
   minWidth: unit(60),
   paddingBlock: unit(4),
-  paddingInline: unit(2),
 
   borderRight: '0.0625rem solid #e1e3e5',
 });
