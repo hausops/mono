@@ -1,17 +1,16 @@
-import type {SvgIconProps} from '@mui/material';
+import type {SvgIcon} from '@mui/material';
 import clsx from 'clsx';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {ReactElement} from 'react';
 import * as s from './NavLink.css';
 
 export type NavLinkProps = {
   href: string;
-  icon: ReactElement<SvgIconProps>;
+  icon: typeof SvgIcon;
   text: string;
 };
 
-export default function NavLink({href, icon, text}: NavLinkProps) {
+export default function NavLink({href, icon: Icon, text}: NavLinkProps) {
   const {pathname} = useRouter();
   const active = href === pathname;
   const linkClassName = clsx(s.link, {
@@ -21,7 +20,9 @@ export default function NavLink({href, icon, text}: NavLinkProps) {
     <div className={s.root}>
       {active && <ActiveMarker />}
       <Link className={linkClassName} href={href}>
-        <span className={s.icon}>{icon}</span>
+        <span className={s.icon}>
+          <Icon fontSize="inherit" />
+        </span>
         {text}
       </Link>
     </div>

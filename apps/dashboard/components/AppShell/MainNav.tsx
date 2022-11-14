@@ -6,7 +6,7 @@ import Dashboard from '@mui/icons-material/Dashboard';
 import Description from '@mui/icons-material/Description';
 import Home from '@mui/icons-material/Home';
 import Settings from '@mui/icons-material/Settings';
-import {cloneElement, PropsWithChildren} from 'react';
+import {PropsWithChildren} from 'react';
 import * as s from './MainNav.css';
 import NavLink, {NavLinkProps} from './NavLink';
 
@@ -15,17 +15,12 @@ export default function MainNav() {
     <aside className={s.MainNav}>
       <header className={s.Header}>Logo</header>
       <NavSection>
-        {navLinks.map(({href, icon, text}, i) => (
-          <NavLink
-            key={i}
-            href={href}
-            icon={cloneElement(icon, {fontSize: 'inherit'})}
-            text={text}
-          />
+        {navLinks.map((props, i) => (
+          <NavLink key={i} {...props} />
         ))}
       </NavSection>
       <footer className={s.Footer}>
-        <NavLink href="/settings" icon={<Settings />} text="Settings" />
+        <NavLink href="/settings" icon={Settings} text="Settings" />
       </footer>
     </aside>
   );
@@ -42,27 +37,27 @@ export function NavSection({
 const navLinks: NavLinkProps[] = [
   {
     href: '/',
-    icon: <Dashboard />,
+    icon: Dashboard,
     text: 'Dashboard',
   },
   {
     href: '/properties',
-    icon: <Home />,
+    icon: Home,
     text: 'Properties',
   },
   {
     href: '/units',
-    icon: <Chair />,
+    icon: Chair,
     text: 'Units',
   },
   {
     href: '/applications',
-    icon: <Description />,
+    icon: Description,
     text: 'Applications',
   },
   {
     href: '/payments',
-    icon: <CreditCard />,
+    icon: CreditCard,
     text: 'Payments',
   },
 ];
