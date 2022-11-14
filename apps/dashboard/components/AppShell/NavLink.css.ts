@@ -44,12 +44,14 @@ export const link = style({
 
 export const state = styleVariants({
   active: {
-    color: color.text.primary.$,
     backgroundColor: color.background.selected,
+    color: color.text.primary.$,
   },
 });
 
 export const icon = style({
   display: 'inline-flex',
-  fontSize: unit(5),
+  fill: 'currentcolor',
+  height: unit(5),
+  width: unit(5),
 });
