@@ -29,10 +29,10 @@ export const link = style({
   display: 'flex',
   alignItems: 'center',
   gap: unit(2),
-  paddingBlock: unit(1),
   paddingInline: unit(2),
   borderRadius: unit(1),
 
+  lineHeight: unit(8),
   fontSize: '0.875rem',
   fontWeight: font.weight.medium,
   color: color.text.$,
