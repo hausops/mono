@@ -1,4 +1,5 @@
 import {unit} from '@/volto/spacing.css';
+import {root} from '@/volto/root.css';
 import {style} from '@vanilla-extract/css';
 
 export const MainNav = style({
@@ -7,8 +8,7 @@ export const MainNav = style({
   gap: unit(4),
   minWidth: unit(60),
   paddingBlock: unit(4),
-
-  borderRight: '0.0625rem solid #e1e3e5',
+  borderRight: root.border.divider,
 });
 
 export const Header = style({

@@ -21,6 +21,7 @@ export const activeMarker = style({
   height: '80%',
   width: 3,
   backgroundColor: color.text.primary.$,
+  // backgroundColor: color.brand,
   borderBottomRightRadius: unit(1),
   borderTopRightRadius: unit(1),
 });
@@ -33,9 +34,8 @@ export const link = style({
   borderRadius: unit(1),
 
   lineHeight: unit(8),
-  fontSize: '0.875rem',
+  fontSize: font.size[14],
   fontWeight: font.weight.medium,
-  color: color.text.$,
 
   ':hover': {
     backgroundColor: color.background.hovered,
@@ -46,6 +46,7 @@ export const state = styleVariants({
   active: {
     backgroundColor: color.background.selected,
     color: color.text.primary.$,
+    // color: color.brand,
   },
 });
 
