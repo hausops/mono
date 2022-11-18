@@ -21,7 +21,6 @@ export const activeMarker = style({
   height: '80%',
   width: 3,
   backgroundColor: color.text.primary.$,
-  // backgroundColor: color.brand,
   borderBottomRightRadius: unit(1),
   borderTopRightRadius: unit(1),
 });
@@ -46,7 +45,6 @@ export const state = styleVariants({
   active: {
     backgroundColor: color.background.selected,
     color: color.text.primary.$,
-    // color: color.brand,
   },
 });
 
