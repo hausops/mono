@@ -1,14 +1,15 @@
 import {unit} from '@/volto/spacing.css';
-import {root} from '@/volto/root.css';
+import {vars} from '@/volto/root.css';
 import {style} from '@vanilla-extract/css';
 
 export const MainNav = style({
   display: 'flex',
   flexDirection: 'column',
+  flexShrink: 0,
   gap: unit(4),
   minWidth: unit(60),
   paddingBlock: unit(4),
-  borderRight: root.border.divider,
+  borderRight: vars.border.divider,
 });
 
 export const Header = style({

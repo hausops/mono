@@ -6,7 +6,7 @@ export default function AppFrame({children}: PropsWithChildren<{}>) {
   return (
     <div className={s.AppShell}>
       <MainNav />
-      <main>{children}</main>
+      <main className={s.Main}>{children}</main>
     </div>
   );
 }
