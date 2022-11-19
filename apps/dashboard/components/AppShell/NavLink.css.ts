@@ -1,4 +1,5 @@
 import * as color from '@/volto/color.css';
+import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style, styleVariants} from '@vanilla-extract/css';
@@ -30,10 +31,9 @@ export const link = style({
   alignItems: 'center',
   gap: unit(2),
   paddingInline: unit(2),
-  borderRadius: unit(1),
+  borderRadius: vars.border.radius,
 
   lineHeight: unit(8),
-  fontSize: font.size[14],
   fontWeight: font.weight.medium,
 
   ':hover': {
