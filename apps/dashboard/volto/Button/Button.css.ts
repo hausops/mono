@@ -3,7 +3,7 @@ import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {ComplexStyleRule, style, styleVariants} from '@vanilla-extract/css';
-import type {ButtonVarient} from './types';
+import type {ButtonVariant} from './types';
 
 export const base = style({
   alignItems: 'center',
@@ -28,8 +28,8 @@ export const base = style({
   // verticalAlign: 'middle',
 });
 
-export const varient = styleVariants<{
-  [K in ButtonVarient]: ComplexStyleRule;
+export const variant = styleVariants<{
+  [K in ButtonVariant]: ComplexStyleRule;
 }>({
   contained: {
     backgroundColor: color.primaryPallete[35],

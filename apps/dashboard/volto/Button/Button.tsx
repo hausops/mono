@@ -1,16 +1,31 @@
 import clsx from 'clsx';
-import {PropsWithChildren, ReactElement} from 'react';
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  PropsWithChildren,
+  ReactElement,
+} from 'react';
 import * as s from './Button.css';
-import type {ButtonVarient} from './types';
+import type {ButtonVariant} from './types';
 
-type ButtonProps = PropsWithChildren<{
-  varient: ButtonVarient;
+type ButtonProps<As extends ElementType> = {
+  // https://itnext.io/react-polymorphic-components-with-typescript-f7ce72ea7af2
+  as?: As;
+  variant: ButtonVariant;
   // color
-}>;
+};
 
-export default function Button({children, varient}: ButtonProps) {
-  const className = clsx(s.base, s.varient[varient]);
-  return <button className={className}>{children}</button>;
+export default function Button<As extends ElementType = 'button'>({
+  as,
+  className,
+  variant,
+  ...props
+}: ButtonProps<As> &
+  Omit<ComponentPropsWithoutRef<As>, keyof ButtonProps<As>>) {
+  const Root = as ?? 'button';
+  return (
+    <Root {...props} className={clsx(s.base, s.variant[variant], className)} />
+  );
 }
 
 type IconButtonProps = PropsWithChildren<{

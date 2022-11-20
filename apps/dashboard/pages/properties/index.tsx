@@ -1,6 +1,7 @@
 import PropertySummary from '@/components/PropertySummary';
 import Button from '@/volto/Button';
 import Head from 'next/head';
+import Link from 'next/link';
 import data from './data.json';
 import * as s from './index.css';
 
@@ -19,8 +20,9 @@ export default function Page() {
 
         <header className={s.Header}>
           <h1 className={s.Title}>Properties</h1>
-          {/* TODO: as={Link} */}
-          <Button varient="contained">Add property</Button>
+          <Button as={Link} variant="contained" href="/properties/new">
+            Add property
+          </Button>
         </header>
 
         <ul className={s.PropertyList}>

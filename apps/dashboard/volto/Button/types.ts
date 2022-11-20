@@ -1,1 +1,1 @@
-export type ButtonVarient = 'text' | 'outlined' | 'contained';
+export type ButtonVariant = 'text' | 'outlined' | 'contained';
