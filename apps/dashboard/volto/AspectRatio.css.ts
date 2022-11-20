@@ -6,13 +6,13 @@ const container = style({
 
 export const ratio = styleVariants(
   {
-    '1:1': 100,
-    '2:1': 50,
-    '3:2': 66.67,
-    '4:3': 75,
-    '16:9': 56.25,
+    '1:1': '1',
+    '2:1': '2',
+    '3:2': '3 / 2',
+    '4:3': '4 / 3',
+    '16:9': '16 / 9',
   },
-  (percent) => [container, {paddingTop: `${percent}%`}]
+  (r) => [container, {aspectRatio: r}]
 );
 
 export const media = style({
