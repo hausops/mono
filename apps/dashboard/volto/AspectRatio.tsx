@@ -6,9 +6,5 @@ type AspectRatioProps = PropsWithChildren<{
 }>;
 
 export default function AspectRatio({children, ratio}: AspectRatioProps) {
-  return (
-    <div className={s.ratio[ratio]}>
-      <div className={s.media}>{children}</div>
-    </div>
-  );
+  return <div className={s.ratio[ratio]}>{children}</div>;
 }

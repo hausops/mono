@@ -1,6 +1,7 @@
 import {style, styleVariants} from '@vanilla-extract/css';
 
 const container = style({
+  // overflow: 'hidden',
   position: 'relative',
 });
 
@@ -14,9 +15,3 @@ export const ratio = styleVariants(
   },
   (r) => [container, {aspectRatio: r}]
 );
-
-export const media = style({
-  position: 'absolute',
-  inset: 0,
-  overflow: 'hidden',
-});
