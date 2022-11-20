@@ -4,5 +4,5 @@ import {style} from '@vanilla-extract/css';
 export const Card = style({
   backgroundColor: 'white', // surface
   borderRadius: vars.border.radius,
-  overflow: 'hidden',
+  overflow: 'auto',
 });

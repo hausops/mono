@@ -1,7 +1,7 @@
-import {PropsWithChildren} from 'react';
-import type {ButtonVarient} from './types';
-import * as s from './Button.css';
 import clsx from 'clsx';
+import {PropsWithChildren, ReactElement} from 'react';
+import * as s from './Button.css';
+import type {ButtonVarient} from './types';
 
 type ButtonProps = PropsWithChildren<{
   varient: ButtonVarient;
@@ -13,4 +13,10 @@ export default function Button({children, varient}: ButtonProps) {
   return <button className={className}>{children}</button>;
 }
 
-export function IconButton() {}
+type IconButtonProps = PropsWithChildren<{
+  icon: ReactElement;
+}>;
+
+export function IconButton({icon}: IconButtonProps) {
+  return <button className={s.IconButton}>{icon}</button>;
+}

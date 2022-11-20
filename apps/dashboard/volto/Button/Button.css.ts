@@ -64,8 +64,28 @@ export const varient = styleVariants<{
   },
 });
 
-export const icon = style({
-  display: 'inline-block',
-  verticalAlign: 'bottom',
-  height: '1em',
-});
+export const IconButton = style([
+  base,
+  {
+    display: 'inline-flex',
+    padding: unit(2),
+    minHeight: vars.size[36],
+    minWidth: vars.size[36],
+    // borderRadius: '50%',
+    borderRadius: vars.border.radius,
+    backgroundColor: 'transparent',
+    fill: 'currentcolor',
+    ':hover': {
+      backgroundColor: color.neutral[95],
+    },
+    ':active': {
+      backgroundColor: color.neutral[90],
+    },
+  },
+]);
+
+// export const icon = style({
+//   display: 'inline-block',
+//   verticalAlign: 'bottom',
+//   height: '1em',
+// });
