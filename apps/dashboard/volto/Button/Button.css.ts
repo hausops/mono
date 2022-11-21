@@ -43,7 +43,7 @@ export const variant = styleVariants<{
   },
   outlined: {
     border: `1px solid ${color.primaryPallete[35]}`,
-    backgroundColor: 'transparent',
+    backgroundColor: color.background.transparent,
     color: color.primaryPallete[35],
     ':hover': {
       backgroundColor: color.primaryPallete[95],
@@ -53,7 +53,7 @@ export const variant = styleVariants<{
     },
   },
   text: {
-    backgroundColor: 'transparent',
+    backgroundColor: color.background.transparent,
     color: color.primaryPallete[35],
     ':hover': {
       backgroundColor: color.primaryPallete[95],
@@ -71,15 +71,15 @@ export const IconButton = style([
     padding: unit(2),
     minHeight: vars.size[36],
     minWidth: vars.size[36],
-    // borderRadius: '50%',
-    borderRadius: vars.border.radius,
-    backgroundColor: 'transparent',
+    borderRadius: '50%',
+    // borderRadius: vars.border.radius,
+    backgroundColor: color.background.transparent,
     fill: 'currentcolor',
     ':hover': {
-      backgroundColor: color.neutral[95],
+      backgroundColor: 'rgb(0 0 0 / 0.04)',
     },
     ':active': {
-      backgroundColor: color.neutral[90],
+      backgroundColor: 'rgb(0 0 0 / 0.07)',
     },
   },
 ]);
