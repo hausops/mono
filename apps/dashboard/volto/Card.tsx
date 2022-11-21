@@ -1,6 +1,10 @@
-import {PropsWithChildren} from 'react';
+import {ElementType, PropsWithChildren, ReactNode} from 'react';
 import * as s from './Card.css';
 
-export default function Card({children}: PropsWithChildren<{}>) {
-  return <div className={s.Card}>{children}</div>;
+type CardProps = PropsWithChildren<{
+  as?: ElementType<{className: string; children: ReactNode}>;
+}>;
+
+export default function Card({as: Root = 'div', children}: CardProps) {
+  return <Root className={s.Card}>{children}</Root>;
 }

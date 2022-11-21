@@ -43,7 +43,7 @@ export default function PropertySummary({
 
 function Cover({image, caption}: {image?: string; caption: string}) {
   return (
-    <AspectRatio as="figure" ratio="2:1">
+    <AspectRatio as="figure" ratio="2:1" className={s.Cover}>
       {image ? (
         <Image src={image} alt={caption} className={s.CoverImage} fill />
       ) : (
