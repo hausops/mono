@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
+      "@/layouts/*": ["layouts/*"],
       "@/volto/*": ["volto/*"]
     },
     "target": "es5",
