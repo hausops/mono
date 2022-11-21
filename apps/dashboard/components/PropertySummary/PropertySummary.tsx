@@ -2,7 +2,7 @@ import AspectRatio from '@/volto/AspectRatio';
 import {IconButton} from '@/volto/Button';
 import Card from '@/volto/Card';
 import {MoreH} from '@/volto/icons';
-// import Image from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import * as s from './PropertySummary.css';
 
@@ -43,12 +43,9 @@ export default function PropertySummary({
 
 function Cover({image, caption}: {image?: string; caption: string}) {
   return (
-    // as="figure"
-    <AspectRatio ratio="2:1">
+    <AspectRatio as="figure" ratio="2:1">
       {image ? (
-        // <Image src={image} alt={caption} className={s.CoverImage} fill />
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={caption} className={s.CoverImage} />
+        <Image src={image} alt={caption} className={s.CoverImage} fill />
       ) : (
         <NoImage />
       )}
