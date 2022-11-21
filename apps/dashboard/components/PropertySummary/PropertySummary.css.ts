@@ -5,6 +5,10 @@ import {style} from '@vanilla-extract/css';
 
 export const PropertyDetail = style({});
 
+export const Cover = style({
+  backgroundColor: '#ececec', // TODO
+});
+
 export const CoverImage = style({
   objectFit: 'cover',
 });
@@ -14,7 +18,6 @@ export const NoImage = style({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100%',
-  backgroundColor: '#ececec', // TODO
 });
 
 export const Body = style({

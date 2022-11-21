@@ -22,20 +22,20 @@ export default function PropertySummary({
   property: {image, address},
 }: PropertySummaryProps) {
   return (
-    <Card>
+    <Card as="article">
       <Cover image={image} caption={address.street} />
       <div className={s.Body}>
-        <header>
+        <div>
           <p className={s.Title}>
             <Link href="#">{address.street}</Link>
           </p>
           <p>
             {address.city}, {address.state} {address.zipcode}
           </p>
-        </header>
-        <aside>
+        </div>
+        <div>
           <IconButton icon={<MoreH />} />
-        </aside>
+        </div>
       </div>
     </Card>
   );

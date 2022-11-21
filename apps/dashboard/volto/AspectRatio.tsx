@@ -1,16 +1,18 @@
+import clsx from 'clsx';
 import {ElementType, PropsWithChildren, ReactNode} from 'react';
 import * as s from './AspectRatio.css';
 
-type AspectRatioProps<As extends ElementType> = PropsWithChildren<{
-  as?: As;
+type AspectRatioProps = PropsWithChildren<{
+  as?: ElementType<{className: string; children: ReactNode}>;
+  className?: string;
   ratio: keyof typeof s.ratio;
 }>;
 
-export default function AspectRatio<As extends ElementType = 'div'>({
-  as,
+export default function AspectRatio({
+  as: Root = 'div',
   children,
+  className,
   ratio,
-}: AspectRatioProps<As>) {
-  const Root = as ?? 'div';
-  return <Root className={s.ratio[ratio]}>{children}</Root>;
+}: AspectRatioProps) {
+  return <Root className={clsx(s.ratio[ratio], className)}>{children}</Root>;
 }
