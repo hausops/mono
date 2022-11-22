@@ -1,22 +1,23 @@
 import clsx from 'clsx';
-import {HTMLInputTypeAttribute} from 'react';
+import {HTMLInputTypeAttribute, InputHTMLAttributes} from 'react';
 import * as s from './TextField.css';
 
-type TextFieldProps = {
+type OwnTextFieldProps = {
   className?: string;
   // disabled?: boolean;
   id?: string;
   label: string;
   name: string;
-  optional?: boolean;
-  placeholder?: string;
-  type?: HTMLInputTypeAttribute;
+  // optional?: boolean;
 };
+
+type TextFieldProps = OwnTextFieldProps &
+  Omit<InputHTMLAttributes<HTMLInputElement>, keyof OwnTextFieldProps>;
 
 export default function TextField({
   className,
   label,
-  optional,
+  // optional,
   name,
   id = name,
   ...inputProps
