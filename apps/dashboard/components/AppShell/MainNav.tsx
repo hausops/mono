@@ -37,6 +37,7 @@ export function NavSection({
 
 const navLinks: NavLinkProps[] = [
   {
+    exact: true,
     href: '/',
     icon: SpaceDashboard,
     text: 'Dashboard',
