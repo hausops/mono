@@ -5,7 +5,7 @@ import * as s from './Select.css';
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 type OwnSelectProps = {
@@ -14,7 +14,7 @@ type OwnSelectProps = {
   id?: string;
   label: string;
   name: string;
-  // optional?: boolean;
+  // required?: boolean;
   options: Option[];
 };
 
@@ -36,8 +36,11 @@ export default function Select({
       </label>
       <div className={s.InputWrapper}>
         <select {...passthroughProps} className={s.Input} id={id} name={name}>
+          <option></option>
           {options.map((o) => (
-            <option key={o.value}>{o.label}</option>
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
           ))}
         </select>
         <div className={s.ExpandIcon}>

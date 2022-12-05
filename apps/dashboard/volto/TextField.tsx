@@ -8,7 +8,7 @@ type OwnTextFieldProps = {
   id?: string;
   label: string;
   name: string;
-  // optional?: boolean;
+  // required?: boolean;
 };
 
 type TextFieldProps = OwnTextFieldProps &
@@ -17,7 +17,7 @@ type TextFieldProps = OwnTextFieldProps &
 export default function TextField({
   className,
   label,
-  // optional,
+  // required,
   name,
   id = name,
   ...inputProps
