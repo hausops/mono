@@ -8,6 +8,7 @@ type RadioGroupProps = {
   isReadOnly?: boolean;
   isRequired?: boolean;
   isDisabled?: boolean;
+  orientation?: Orientation;
 };
 
 type RadioGroup = {
@@ -18,15 +19,19 @@ type RadioGroup = {
     'aria-readonly'?: boolean;
     'aria-required'?: boolean;
     'aria-disabled'?: boolean;
+    'aria-orientation': Orientation;
   };
   radioProps: {name: string};
 };
+
+type Orientation = 'horizontal' | 'vertical';
 
 export function useRadioGroup({
   name,
   isReadOnly,
   isRequired,
   isDisabled,
+  orientation = 'vertical',
 }: RadioGroupProps): RadioGroup {
   const labelId = useId();
   return {
@@ -41,6 +46,7 @@ export function useRadioGroup({
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,
       'aria-disabled': isDisabled || undefined,
+      'aria-orientation': orientation,
     },
     // pass to useRadio
     radioProps: {
