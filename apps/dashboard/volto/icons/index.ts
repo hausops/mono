@@ -1,5 +1,6 @@
 export {Add} from './Add';
 export {Chair} from './Chair';
+export {Check} from './Check';
 export {CreditCard} from './CreditCard';
 export {Description} from './Description';
 export {HomeFilled} from './HomeFilled';
