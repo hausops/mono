@@ -61,7 +61,7 @@ export function useMultiFamilyFormState(): MultiFamilyFormState {
     },
     insertUnitAfter(i, unit) {
       const next = [...units];
-      next.splice(i, 0, unit);
+      next.splice(i + 1, 0, unit);
       setUnits(next);
     },
     updateUnit(i, unit) {
