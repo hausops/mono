@@ -1,6 +1,6 @@
-import {RentalUnit} from '@/services/property';
 import Select, {toOption} from '@/volto/Select';
 import TextField from '@/volto/TextField';
+import {RentalUnit} from './RentalUnit';
 import * as s from './UnitEntry.css';
 
 type UnitEntryProps = {
@@ -67,14 +67,14 @@ export function UnitEntry({
           label="Size"
           name="size"
           value={state.size}
-          onChange={(e) => onChange({...state, size: +e.target.value})}
+          onChange={(e) => onChange({...state, size: e.target.value})}
         />
         <TextField
           type="number"
           label="Rent"
           name="rentAmount"
           value={state.rentAmount}
-          onChange={(e) => onChange({...state, rentAmount: +e.target.value})}
+          onChange={(e) => onChange({...state, rentAmount: e.target.value})}
         />
       </div>
     </li>

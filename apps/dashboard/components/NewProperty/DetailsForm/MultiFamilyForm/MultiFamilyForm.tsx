@@ -1,7 +1,7 @@
-import {RentalUnit} from '@/services/property';
 import Button from '@/volto/Button';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import * as s from './MultiFamilyForm.css';
+import {RentalUnit} from './RentalUnit';
 import {UnitEntry} from './UnitEntry';
 
 export type MultiFamilyFormState = {
@@ -13,11 +13,6 @@ export type MultiFamilyFormState = {
   removeUnit(index: number): void;
 };
 
-// Bug 1: React doesn't update the DOM for UnitEntry correctly
-//        when removing items due to using index as key
-
-// Bug 2: numeric TextField won't remove 0
-
 export function MultiFamilyForm({state}: {state: MultiFamilyFormState}) {
   return (
     <div className={s.MultiFamilyForm}>
@@ -25,7 +20,7 @@ export function MultiFamilyForm({state}: {state: MultiFamilyFormState}) {
       <ul className={s.UnitEntries}>
         {state.units.map((unit, i) => (
           <UnitEntry
-            key={i}
+            key={unit.id}
             index={i}
             state={unit}
             onChange={(unit) => state.updateUnit(i, unit)}
@@ -41,7 +36,7 @@ export function MultiFamilyForm({state}: {state: MultiFamilyFormState}) {
         ))}
       </ul>
       <footer>
-        <Button variant="text" onClick={() => state.addUnit({})}>
+        <Button variant="text" onClick={() => state.addUnit(emptyUnit())}>
           + Add unit
         </Button>
       </footer>
@@ -49,18 +44,27 @@ export function MultiFamilyForm({state}: {state: MultiFamilyFormState}) {
   );
 }
 
-// starts with one unit with no data
-const initialUnits: RentalUnit[] = [{}];
-
 export function useMultiFamilyFormState(): MultiFamilyFormState {
-  const [units, setUnits] = useState(initialUnits);
+  // Starts with one unit with no data.
+  const [units, setUnits] = useState<RentalUnit[]>([{...emptyUnit(), id: '0'}]);
+
+  // Keep track of unique ids instead of using array index as key
+  // to avoid reconciliation bug when items are added or removed
+  // in the middle of the array.
+  //
+  // This cannot be randomized (i.e. using nanoid) because of SSR.
+  const nextIdRef = useRef(1);
+  const nextId = (): string => `${nextIdRef.current++}`;
+
   return {
     units,
     addUnit(unit) {
+      unit = {...unit, id: nextId()};
       setUnits([...units, unit]);
     },
     insertUnitAfter(i, unit) {
       const next = [...units];
+      unit = {...unit, id: nextId()};
       next.splice(i + 1, 0, unit);
       setUnits(next);
     },
@@ -75,4 +79,8 @@ export function useMultiFamilyFormState(): MultiFamilyFormState {
       setUnits(next);
     },
   };
+}
+
+function emptyUnit(): RentalUnit {
+  return {id: '', number: '', size: '', rentAmount: ''};
 }

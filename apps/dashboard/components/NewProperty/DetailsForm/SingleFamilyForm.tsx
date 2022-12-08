@@ -6,8 +6,8 @@ import * as s from './SingleFamilyForm.css';
 export type SingleFamilyFormState = FieldsState<{
   bedrooms?: number;
   bathrooms?: number;
-  size?: number;
-  rentAmount?: number;
+  size: string;
+  rentAmount: string;
 }>;
 
 // TODO: refactor
@@ -45,19 +45,24 @@ export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
         name="property.single.size"
         placeholder="Sq.ft."
         value={state.size}
-        onChange={(e) => state.updateField('size', +e.target.value)}
+        onChange={(e) => state.updateField('size', e.target.value)}
       />
       <TextField
         type="number"
         label="Rent"
         name="property.single.rent"
         value={state.rentAmount}
-        onChange={(e) => state.updateField('rentAmount', +e.target.value)}
+        onChange={(e) => state.updateField('rentAmount', e.target.value)}
       />
     </div>
   );
 }
 
+const initialState = {
+  size: '',
+  rentAmount: '',
+};
+
 export function useSingleFamilyFormState(): SingleFamilyFormState {
-  return useFieldsState({});
+  return useFieldsState(initialState);
 }
