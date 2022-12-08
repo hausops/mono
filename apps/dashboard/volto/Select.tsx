@@ -54,3 +54,9 @@ export default function Select({
     </div>
   );
 }
+
+export function toOption<T extends number | string>(
+  value: T
+): {label: string; value: T} {
+  return {label: `${value}`, value};
+}
