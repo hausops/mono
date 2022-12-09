@@ -32,6 +32,7 @@ export const InputWrapper = style({
 export const Input = style([
   {
     appearance: 'none', // remove user agent caret
+    backgroundColor: 'transparent', // reset for Firefox
     border: `${border.width[1]} solid ${color.neutral[90]}`,
     borderRadius: vars.border.radius,
     lineHeight: 1,
