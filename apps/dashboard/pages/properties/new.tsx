@@ -51,9 +51,6 @@ export default function Page() {
             Save
           </Button>
         </div>
-
-        <h3>DEBUG: multi-family property state</h3>
-        <pre>{JSON.stringify(detailsForm.multiFamily.units)}</pre>
       </PageLayout>
     </AddressServiceProvider>
   );

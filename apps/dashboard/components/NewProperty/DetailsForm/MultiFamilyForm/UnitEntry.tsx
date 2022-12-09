@@ -1,3 +1,4 @@
+import {Close, Copy} from '@/volto/icons';
 import Select, {toOption} from '@/volto/Select';
 import TextField from '@/volto/TextField';
 import {RentalUnit} from './RentalUnit';
@@ -35,9 +36,19 @@ export function UnitEntry({
       <header className={s.Header}>
         <h3 className={s.Title}>Unit {index + 1}</h3>
         <div className={s.Actions}>
-          <button onClick={() => onClone(index)}>Clone</button>
+          <button className={s.ActionButton} onClick={() => onClone(index)}>
+            <span className={s.ActionButtonIcon}>
+              <Copy />
+            </span>
+            Clone
+          </button>
           {onRemove && (
-            <button onClick={() => onRemove(index)}>Remove X</button>
+            <button className={s.ActionButton} onClick={() => onRemove(index)}>
+              <span className={s.ActionButtonIcon}>
+                <Close />
+              </span>
+              Remove
+            </button>
           )}
         </div>
       </header>
