@@ -1,5 +1,5 @@
 import Button from '@/volto/Button';
-import {useRef, useState} from 'react';
+import {useReducer} from 'react';
 import * as s from './MultiFamilyForm.css';
 import {RentalUnit} from './RentalUnit';
 import {UnitEntry} from './UnitEntry';
@@ -45,41 +45,73 @@ export function MultiFamilyForm({state}: {state: MultiFamilyFormState}) {
 }
 
 export function useMultiFamilyFormState(): MultiFamilyFormState {
-  // Starts with one unit with no data.
-  const [units, setUnits] = useState<RentalUnit[]>([{...emptyUnit(), id: '0'}]);
+  const [{units}, dispatch] = useReducer(reducer, initialState);
+  return {
+    units,
+    addUnit(unit) {
+      dispatch({type: 'INSERT', index: units.length, unit});
+    },
+    insertUnitAfter(i, unit) {
+      dispatch({type: 'INSERT', index: i + 1, unit});
+    },
+    updateUnit(index, unit) {
+      dispatch({type: 'UPDATE', index, unit});
+    },
+    removeUnit(index) {
+      dispatch({type: 'REMOVE', index});
+    },
+  };
+}
 
+type State = {
+  nextId: number;
+  units: RentalUnit[];
+};
+
+type Action =
+  | {type: 'INSERT'; index: number; unit: RentalUnit}
+  | {type: 'UPDATE'; index: number; unit: RentalUnit}
+  | {type: 'REMOVE'; index: number};
+
+function reducer(state: State, action: Action): State {
+  const id = state.nextId;
+  let units: RentalUnit[];
+
+  switch (action.type) {
+    case 'INSERT':
+      const newUnit = {...action.unit, id: `${id}`};
+      units = [...state.units];
+      units.splice(action.index, 0, newUnit);
+      return {
+        nextId: id + 1,
+        units,
+      };
+
+    case 'UPDATE':
+      units = [...state.units];
+      units[action.index] = action.unit;
+      return {...state, units};
+
+    case 'REMOVE':
+      units = [...state.units];
+      units.splice(action.index, 1);
+      return {...state, units};
+
+    default:
+      return state;
+  }
+}
+
+const initialState: State = {
   // Keep track of unique ids instead of using array index as key
   // to avoid reconciliation bug when items are added or removed
   // in the middle of the array.
   //
   // This cannot be randomized (i.e. using nanoid) because of SSR.
-  const nextIdRef = useRef(1);
-  const nextId = (): string => `${nextIdRef.current++}`;
-
-  return {
-    units,
-    addUnit(unit) {
-      unit = {...unit, id: nextId()};
-      setUnits([...units, unit]);
-    },
-    insertUnitAfter(i, unit) {
-      const next = [...units];
-      unit = {...unit, id: nextId()};
-      next.splice(i + 1, 0, unit);
-      setUnits(next);
-    },
-    updateUnit(i, unit) {
-      const next = [...units];
-      next[i] = unit;
-      setUnits(next);
-    },
-    removeUnit(i) {
-      const next = [...units];
-      next.splice(i, 1);
-      setUnits(next);
-    },
-  };
-}
+  nextId: 1,
+  // Starts with one unit with no data.
+  units: [{...emptyUnit(), id: '0'}],
+};
 
 function emptyUnit(): RentalUnit {
   return {id: '', number: '', size: '', rentAmount: ''};
