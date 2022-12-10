@@ -50,6 +50,7 @@ export const surface = {
 
 export const text = {
   $: neutral[35],
+  muted: neutral[70],
   // disabled: '#8c9196',
   primary: {
     $: primaryPallete[35], // hsl(230, 52%, 44%)

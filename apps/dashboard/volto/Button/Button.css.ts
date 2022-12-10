@@ -1,3 +1,4 @@
+import * as border from '@/volto/border.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
@@ -42,7 +43,7 @@ export const variant = styleVariants<{
     },
   },
   outlined: {
-    border: `1px solid ${color.primaryPallete[35]}`,
+    border: `${border.width[1]} solid ${color.primaryPallete[35]}`,
     backgroundColor: color.background.transparent,
     color: color.primaryPallete[35],
     ':hover': {

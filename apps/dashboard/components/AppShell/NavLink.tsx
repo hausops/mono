@@ -5,14 +5,22 @@ import {ComponentType} from 'react';
 import * as s from './NavLink.css';
 
 export type NavLinkProps = {
+  // exact matches active state only if the pathname matches the href exactly
+  // otherwise (default: false) it matches pathname that starts with href.
+  exact?: boolean;
   href: string;
   icon: ComponentType;
   text: string;
 };
 
-export default function NavLink({href, icon: Icon, text}: NavLinkProps) {
+export default function NavLink({
+  exact = false,
+  href,
+  icon: Icon,
+  text,
+}: NavLinkProps) {
   const {pathname} = useRouter();
-  const active = href === pathname;
+  const active = exact ? pathname === href : pathname.startsWith(href);
   const linkClassName = clsx(s.link, {
     [s.state.active]: active,
   });

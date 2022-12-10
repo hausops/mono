@@ -3,6 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
+      "@/layouts/*": ["layouts/*"],
+      "@/services/*": ["services/*"],
       "@/volto/*": ["volto/*"]
     },
     "target": "ES2020",

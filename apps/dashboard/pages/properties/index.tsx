@@ -1,5 +1,7 @@
 import PropertySummary from '@/components/PropertySummary';
 import Button from '@/volto/Button';
+import PageLayout from '@/layouts/Page';
+import PageHeader from '@/layouts/PageHeader';
 import Head from 'next/head';
 import Link from 'next/link';
 import data from './data.json';
@@ -15,15 +17,17 @@ export default function Page() {
         <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
       </Head>
 
-      <section className={s.Page}>
+      <PageLayout>
         {/* breadcrumb */}
 
-        <header className={s.Header}>
-          <h1 className={s.Title}>Properties</h1>
-          <Button as={Link} variant="contained" href="/properties/new">
-            Add property
-          </Button>
-        </header>
+        <PageHeader
+          title="Properties"
+          actions={
+            <Button as={Link} variant="contained" href="/properties/new">
+              Add property
+            </Button>
+          }
+        />
 
         <ul className={s.PropertyList}>
           {properties.map((p) => (
@@ -32,7 +36,7 @@ export default function Page() {
             </li>
           ))}
         </ul>
-      </section>
+      </PageLayout>
     </>
   );
 }
