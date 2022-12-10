@@ -14,10 +14,6 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.10.13",
     "@react-aria/focus": "3.10.0",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
@@ -26,7 +22,6 @@
     "clsx": "^1.2.1",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.4",
-    "framer-motion": "^7.6.5",
     "nanoid": "^4.0.0",
     "next": "13.0.4",
     "normalize.css": "^8.0.1",
