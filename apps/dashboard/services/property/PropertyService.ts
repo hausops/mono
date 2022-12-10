@@ -1,16 +1,20 @@
-import {nanoid} from 'nanoid';
 import {PropertyData, PropertyModel} from './PropertyModel';
 
-export class PropertyService {
-  private readonly properties: Map<string, PropertyModel> = new Map();
+export interface PropertyService {
+  getAll(): Promise<PropertyModel[]>;
 
-  createProperty(newPropertyData: PropertyData): void {
-    const id = nanoid();
-    const property = {...newPropertyData, id};
-    this.properties.set(id, property);
-  }
+  // creates a new property from newPropertyData.
+  // The service will assign the property id.
+  create(newPropertyData: PropertyData): Promise<PropertyModel>;
 
-  deleteProperty(id: string): void {
-    this.properties.delete(id);
+  // deletes the property matching id.
+  // If success, resolves to the id of the property being deleted
+  // If a property with the id is not found, it will reject with an error.
+  delete(id: string): Promise<string>;
+}
+
+export class PropertyNotFoundErr extends Error {
+  constructor(readonly id: string) {
+    super(`Cannot find property with id=${id}.`);
   }
 }

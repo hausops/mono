@@ -6,20 +6,22 @@ import {
 } from '@/components/NewProperty';
 import PageLayout from '@/layouts/Page';
 import PageHeader from '@/layouts/PageHeader';
-import {AddressServiceProvider, LocalAddressService} from '@/services/address';
+import {PropertyData, usePropertyService} from '@/services/property';
 import Button from '@/volto/Button';
 import Head from 'next/head';
 import Link from 'next/link';
-import {useMemo} from 'react';
+import {useRouter} from 'next/router';
 import * as s from './new.css';
 
 export default function Page() {
-  const addressSvc = useMemo(() => new LocalAddressService(), []);
+  const router = useRouter();
+  const propertySvc = usePropertyService();
+
   const addressForm = useAddressFormState();
   const detailsForm = useDetailsFormState();
 
   return (
-    <AddressServiceProvider service={addressSvc}>
+    <>
       <Head>
         <title>Add property - HausOps</title>
         <meta name="description" content="HausOps" />
@@ -38,20 +40,56 @@ export default function Page() {
           </Button>
           <Button
             variant="contained"
-            onClick={() =>
-              console.log({
-                type: detailsForm.propertyType.selectedValue,
-                address: addressForm,
-                ...(detailsForm.propertyType.selectedValue === 'single-family'
-                  ? detailsForm.singleFamily
-                  : detailsForm.multiFamily),
-              })
-            }
+            // TODO: validation
+            onClick={async () => {
+              const d = toPropertyData(addressForm, detailsForm);
+              const created = await propertySvc.create(d);
+              console.log('property created', created);
+              router.push('/properties');
+            }}
           >
             Save
           </Button>
         </div>
       </PageLayout>
-    </AddressServiceProvider>
+    </>
   );
+}
+
+function toPropertyData(
+  addressForm: ReturnType<typeof useAddressFormState>,
+  detailsForm: ReturnType<typeof useDetailsFormState>
+): PropertyData {
+  // TODO: validate required
+  const propertyType =
+    detailsForm.propertyType.selectedValue ?? 'single-family';
+
+  if (propertyType === 'single-family') {
+    const unit = detailsForm.singleFamily;
+    return {
+      type: propertyType,
+      name: addressForm.line1, // TEMPORARY
+      address: addressForm,
+      ...unit,
+      size: stringInputToNumber(unit.size),
+      rentAmount: stringInputToNumber(unit.rentAmount),
+    };
+  }
+
+  const {units} = detailsForm.multiFamily;
+  return {
+    type: propertyType,
+    name: addressForm.line1, // TEMPORARY
+    address: addressForm,
+    units: units.map((unit) => ({
+      ...unit,
+      size: stringInputToNumber(unit.size),
+      rentAmount: stringInputToNumber(unit.rentAmount),
+    })),
+  };
+}
+
+// convert input state (string) to a number, return undefined for an empty string
+function stringInputToNumber(str: string): number | undefined {
+  return str ? +str : undefined;
 }
