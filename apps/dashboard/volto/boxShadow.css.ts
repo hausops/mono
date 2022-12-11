@@ -5,6 +5,6 @@ export const boxShadow = {
 };
 
 function asBorder(width: BorderWidthKey, color: string): string {
-  const w = border.width(width);
+  const w = border.width[width];
   return `0 0 0 ${w} ${color}`;
 }

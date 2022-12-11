@@ -10,14 +10,10 @@ export type BorderWidthKey = keyof typeof borderWidth;
 
 export const border = {
   solid,
-  width,
+  width: borderWidth,
 };
 
 function solid(width: BorderWidthKey, color: string) {
-  const w = border.width(width);
+  const w = borderWidth[width];
   return `${w} solid ${color}`;
-}
-
-function width(width: BorderWidthKey): string {
-  return borderWidth[width];
 }
