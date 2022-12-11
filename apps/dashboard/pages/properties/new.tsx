@@ -1,6 +1,8 @@
 import {
   AddressForm,
+  AddressFormState,
   DetailsForm,
+  DetailsFormState,
   useAddressFormState,
   useDetailsFormState,
 } from '@/components/NewProperty';
@@ -57,19 +59,20 @@ export default function Page() {
 }
 
 function toPropertyData(
-  addressForm: ReturnType<typeof useAddressFormState>,
-  detailsForm: ReturnType<typeof useDetailsFormState>
+  addressForm: AddressFormState,
+  detailsForm: DetailsFormState
 ): PropertyData {
   // TODO: validate required
   const propertyType =
     detailsForm.propertyType.selectedValue ?? 'single-family';
+  const address = addressForm.toJSON();
 
   if (propertyType === 'single-family') {
-    const unit = detailsForm.singleFamily;
+    const unit = detailsForm.singleFamily.toJSON();
     return {
       type: propertyType,
-      name: addressForm.line1, // TEMPORARY
-      address: addressForm,
+      name: address.line1, // TEMPORARY
+      address: address,
       ...unit,
       size: stringInputToNumber(unit.size),
       rentAmount: stringInputToNumber(unit.rentAmount),
@@ -79,8 +82,8 @@ function toPropertyData(
   const {units} = detailsForm.multiFamily;
   return {
     type: propertyType,
-    name: addressForm.line1, // TEMPORARY
-    address: addressForm,
+    name: address.line1, // TEMPORARY
+    address: address,
     units: units.map((unit) => ({
       ...unit,
       size: stringInputToNumber(unit.size),

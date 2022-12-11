@@ -15,7 +15,7 @@ import {
   useMultiFamilyFormState,
 } from './MultiFamilyForm/MultiFamilyForm';
 
-type DetailsFormState = {
+export type DetailsFormState = {
   propertyType: RadioGroupState<PropertyType>;
   singleFamily: SingleFamilyFormState;
   multiFamily: MultiFamilyFormState;

@@ -23,20 +23,21 @@ const bathsOptions = [
 ];
 
 export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
+  const unit = state.toJSON();
   return (
     <div className={s.SingleFamilyForm}>
       <Select
         label="Beds"
         name="property.single.beds"
         options={bedsOptions}
-        value={state.bedrooms}
+        value={unit.bedrooms}
         onChange={(e) => state.updateField('bedrooms', +e.target.value)}
       />
       <Select
         label="Baths"
         name="property.single.baths"
         options={bathsOptions}
-        value={state.bathrooms}
+        value={unit.bathrooms}
         onChange={(e) => state.updateField('bathrooms', +e.target.value)}
       />
       <TextField
@@ -44,14 +45,14 @@ export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
         label="Size"
         name="property.single.size"
         placeholder="Sq.ft."
-        value={state.size}
+        value={unit.size}
         onChange={(e) => state.updateField('size', e.target.value)}
       />
       <TextField
         type="number"
         label="Rent"
         name="property.single.rent"
-        value={state.rentAmount}
+        value={unit.rentAmount}
         onChange={(e) => state.updateField('rentAmount', e.target.value)}
       />
     </div>

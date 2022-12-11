@@ -13,11 +13,12 @@ type AddressFormProps = {
   state: AddressFormState;
 };
 
-type AddressFormState = FieldsState<AddressFields>;
+export type AddressFormState = FieldsState<AddressFields>;
 type AddressFields = Required<AddressModel>;
 
 export function AddressForm({namePrefix = '', state}: AddressFormProps) {
   const addressSvc = useAddressService();
+  const fields = state.toJSON();
   return (
     <Section title="Address">
       <div className={s.Address}>
@@ -26,21 +27,21 @@ export function AddressForm({namePrefix = '', state}: AddressFormProps) {
           label="Street address"
           name={`${namePrefix}AddressLine1`}
           placeholder="200 Main St."
-          value={state.line1}
+          value={fields.line1}
           onChange={(e) => state.updateField('line1', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[2]}
           label="Apartment, suite, etc."
           name={`${namePrefix}AddressLine2`}
-          value={state.line2}
+          value={fields.line2}
           onChange={(e) => state.updateField('line2', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[2]}
           label="City"
           name={`${namePrefix}AddressCity`}
-          value={state.city}
+          value={fields.city}
           onChange={(e) => state.updateField('city', e.target.value)}
         />
         <Select
@@ -51,14 +52,14 @@ export function AddressForm({namePrefix = '', state}: AddressFormProps) {
             () => addressSvc.getAllStates().map((s) => toOption(s.code)),
             [addressSvc]
           )}
-          value={state.state}
+          value={fields.state}
           onChange={(e) => state.updateField('state', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[1]}
           label="ZIP code"
           name={`${namePrefix}AddressZip`}
-          value={state.zip}
+          value={fields.zip}
           onChange={(e) => state.updateField('zip', e.target.value)}
         />
       </div>
