@@ -1,4 +1,4 @@
-import * as border from '@/volto/border.css';
+import {border} from '@/volto/border.css';
 import {boxShadow} from '@/volto/boxShadow.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
@@ -32,7 +32,7 @@ export const Input = style([
   {
     appearance: 'none', // remove user agent caret
     backgroundColor: 'transparent', // reset for Firefox
-    border: `${border.width[1]} solid ${color.neutral[90]}`,
+    border: border.solid(1, color.neutral[90]),
     borderRadius: vars.border.radius,
     lineHeight: 1,
     minHeight: vars.size[36],

@@ -1,4 +1,4 @@
-import * as border from '@/volto/border.css';
+import {border} from '@/volto/border.css';
 import * as color from '@/volto/color.css';
 import {style} from '@vanilla-extract/css';
 
@@ -10,7 +10,7 @@ export const Radio = style({
   height: '1em',
   padding: '0.2em',
   borderRadius: '50%',
-  border: `${border.width[1]} solid ${color.neutral[70]}`,
+  border: border.solid(1, color.neutral[70]),
 
   ':focus': {
     outline: 'none',

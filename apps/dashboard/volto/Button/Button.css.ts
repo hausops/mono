@@ -1,4 +1,4 @@
-import * as border from '@/volto/border.css';
+import {border} from '@/volto/border.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';

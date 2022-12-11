@@ -1,4 +1,4 @@
-import * as border from '@/volto/border.css';
+import {border} from '@/volto/border.css';
 import {boxShadow} from '@/volto/boxShadow.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
@@ -17,7 +17,7 @@ export const Options = style({
 });
 
 export const Option = style({
-  border: `${border.width[1]} solid ${color.neutral[90]}`,
+  border: border.solid(1, color.neutral[90]),
   borderRadius: vars.border.radius,
   cursor: 'pointer',
   flexBasis: '50%',
