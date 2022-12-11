@@ -16,7 +16,7 @@ export function PropertyTypeSelector({state}: PropertyTypeSelectorProps) {
   });
 
   return (
-    <div {...radioGroupProps} className={s.PropertyTypeSelector}>
+    <div {...radioGroupProps}>
       <h3 {...labelProps} className={s.Label}>
         Property type
       </h3>
@@ -25,14 +25,14 @@ export function PropertyTypeSelector({state}: PropertyTypeSelectorProps) {
           {...radioProps}
           value="single-family"
           label="Single-family property"
-          description="A property with one renter associates with one address such as a house."
+          description="A property with one renter associates with one address such as a house or a townhouse."
           state={state}
         />
         <PropertyTypeOption
           {...radioProps}
           value="multi-family"
           label="Multi-family property"
-          description="A building with multiple rental units such as an apartment or a condo."
+          description="A building with multiple rental units such as a duplex, an apartment, or a condo."
           state={state}
         />
       </div>

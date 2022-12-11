@@ -1,4 +1,5 @@
 import * as border from '@/volto/border.css';
+import {boxShadow} from '@/volto/boxShadow.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
@@ -15,13 +16,11 @@ export const Label = style({
 });
 
 const inputFocus = style({
-  outline: `${border.width[2]} solid transparent`,
-  outlineOffset: `-${border.width[1]}`,
+  outline: 'none',
 
-  ':focus': {
-    borderRadius: vars.border.radius,
-    borderColor: 'transparent',
-    outlineColor: color.primaryPallete[50],
+  ':focus-visible': {
+    borderColor: color.primaryPallete[50],
+    boxShadow: boxShadow.asBorder(1, color.primaryPallete[50]),
   },
 });
 

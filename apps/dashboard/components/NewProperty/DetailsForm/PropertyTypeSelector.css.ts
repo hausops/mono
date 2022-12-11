@@ -1,11 +1,10 @@
 import * as border from '@/volto/border.css';
+import {boxShadow} from '@/volto/boxShadow.css';
 import * as color from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style, styleVariants} from '@vanilla-extract/css';
-
-export const PropertyTypeSelector = style({});
 
 export const Label = style({
   fontWeight: font.weight.semibold,
@@ -23,18 +22,20 @@ export const Option = style({
   cursor: 'pointer',
   flexBasis: '50%',
   maxWidth: '25rem',
-  outline: `${border.width[2]} solid transparent`,
-  outlineOffset: `-${border.width[1]}`,
+  outline: 'none',
   padding: unit(4),
 });
 
 export const OptionState = styleVariants({
   selected: {
-    borderColor: 'transparent',
-    outlineColor: color.primaryPallete[35],
+    borderColor: color.primaryPallete[35],
+    boxShadow: boxShadow.asBorder(1, color.primaryPallete[35]),
   },
   focusVisible: {
-    boxShadow: `0 0 0 ${border.width[4]} ${color.primaryPallete[90]}`,
+    boxShadow: [
+      boxShadow.asBorder(1, color.primaryPallete[35]),
+      boxShadow.asBorder(4, color.primaryPallete[90]),
+    ].join(','),
   },
 });
 
