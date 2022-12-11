@@ -1,5 +1,5 @@
 import {border} from '@/volto/border.css';
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
@@ -33,34 +33,34 @@ export const variant = styleVariants<{
   [K in ButtonVariant]: ComplexStyleRule;
 }>({
   contained: {
-    backgroundColor: color.primaryPallete[35],
+    backgroundColor: color.primary[35],
     color: 'white',
     ':hover': {
-      backgroundColor: color.primaryPallete[30],
+      backgroundColor: color.primary[30],
     },
     ':active': {
-      backgroundColor: color.primaryPallete[25],
+      backgroundColor: color.primary[25],
     },
   },
   outlined: {
-    border: `${border.width[1]} solid ${color.primaryPallete[35]}`,
+    border: `${border.width[1]} solid ${color.primary[35]}`,
     backgroundColor: color.background.transparent,
-    color: color.primaryPallete[35],
+    color: color.primary[35],
     ':hover': {
-      backgroundColor: color.primaryPallete[95],
+      backgroundColor: color.primary[95],
     },
     ':active': {
-      backgroundColor: color.primaryPallete[90],
+      backgroundColor: color.primary[90],
     },
   },
   text: {
     backgroundColor: color.background.transparent,
-    color: color.primaryPallete[35],
+    color: color.primary[35],
     ':hover': {
-      backgroundColor: color.primaryPallete[95],
+      backgroundColor: color.primary[95],
     },
     ':active': {
-      backgroundColor: color.primaryPallete[90],
+      backgroundColor: color.primary[90],
     },
   },
 });

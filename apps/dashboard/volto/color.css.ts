@@ -1,4 +1,4 @@
-export const primaryPallete = {
+const primary = {
   0: '#000000',
   10: '#00105c',
   20: '#08218a',
@@ -17,7 +17,7 @@ export const primaryPallete = {
   100: '#ffffff',
 };
 
-export const neutral = {
+const neutral = {
   0: '#000000',
   10: '#121212',
   20: '#1f1f1f',
@@ -36,7 +36,7 @@ export const neutral = {
   100: '#ffffff',
 };
 
-export const background = {
+const background = {
   $: neutral[98], // hsl(0, 0, 96%)
   hovered: '#f1f1f1', // hsl(0, 0, 95%)
   pressed: '#ececec', // hsl(0, 0, 93%)
@@ -44,19 +44,28 @@ export const background = {
   transparent: 'transparent',
 };
 
-export const surface = {
+const surface = {
   $: neutral[100],
 };
 
-export const text = {
+const text = {
   $: neutral[35],
   muted: neutral[70],
   // disabled: '#8c9196',
   primary: {
-    $: primaryPallete[35], // hsl(230, 52%, 44%)
+    $: primary[35], // hsl(230, 52%, 44%)
     // hovered: '#32449f', // hsl(230, 52%, 41%)
     // pressed: '#2f3f93', // hsl(230, 52%, 38%)
   },
 };
 
-export const divider = neutral[95];
+const divider = neutral[95];
+
+export const color = {
+  primary,
+  neutral,
+  background,
+  surface,
+  text,
+  divider,
+};

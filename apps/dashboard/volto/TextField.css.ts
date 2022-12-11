@@ -1,6 +1,6 @@
 import {border} from '@/volto/border.css';
 import {boxShadow} from '@/volto/boxShadow.css';
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {style} from '@vanilla-extract/css';
@@ -19,8 +19,8 @@ const inputFocus = style({
   outline: 'none',
 
   ':focus-visible': {
-    borderColor: color.primaryPallete[50],
-    boxShadow: boxShadow.asBorder(1, color.primaryPallete[50]),
+    borderColor: color.primary[50],
+    boxShadow: boxShadow.asBorder(1, color.primary[50]),
   },
 });
 

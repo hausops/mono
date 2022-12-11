@@ -1,5 +1,5 @@
 import {border} from '@/volto/border.css';
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {style} from '@vanilla-extract/css';
 
 export const Radio = style({
@@ -25,12 +25,12 @@ export const Radio = style({
   },
 
   ':checked': {
-    borderColor: color.primaryPallete[35],
+    borderColor: color.primary[35],
   },
 
   selectors: {
     '&:checked::before': {
-      backgroundColor: color.primaryPallete[35],
+      backgroundColor: color.primary[35],
     },
   },
 });

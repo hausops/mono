@@ -1,6 +1,6 @@
 import {border} from '@/volto/border.css';
 import {boxShadow} from '@/volto/boxShadow.css';
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
@@ -28,13 +28,13 @@ export const Option = style({
 
 export const OptionState = styleVariants({
   selected: {
-    borderColor: color.primaryPallete[35],
-    boxShadow: boxShadow.asBorder(1, color.primaryPallete[35]),
+    borderColor: color.primary[35],
+    boxShadow: boxShadow.asBorder(1, color.primary[35]),
   },
   focusVisible: {
     boxShadow: [
-      boxShadow.asBorder(1, color.primaryPallete[35]),
-      boxShadow.asBorder(4, color.primaryPallete[90]),
+      boxShadow.asBorder(1, color.primary[35]),
+      boxShadow.asBorder(4, color.primary[90]),
     ].join(','),
   },
 });
