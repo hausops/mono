@@ -1,4 +1,4 @@
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
@@ -28,7 +28,7 @@ export const Body = style({
 });
 
 export const Title = style({
-  color: color.primaryPallete[50],
+  color: color.primary[50],
   // fontSize: '1rem',
   fontWeight: font.weight.medium,
   transition: 'color 240ms',

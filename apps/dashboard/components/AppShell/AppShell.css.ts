@@ -1,4 +1,4 @@
-import * as color from '@/volto/color.css';
+import {color} from '@/volto/color.css';
 import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
 

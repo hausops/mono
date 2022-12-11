@@ -1,10 +1,10 @@
+import {border} from '@/volto/border.css';
+import {color} from '@/volto/color.css';
 import {createGlobalTheme} from '@vanilla-extract/css';
-import * as border from './border.css';
-import * as color from './color.css';
 
 export const vars = createGlobalTheme(':root', {
   border: {
-    divider: `${border.width[1]} solid ${color.divider}`,
+    divider: border.solid(1, color.divider),
     radius: '0.375rem',
   },
   size: {
