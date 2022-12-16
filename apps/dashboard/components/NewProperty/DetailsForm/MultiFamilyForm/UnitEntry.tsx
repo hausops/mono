@@ -1,6 +1,6 @@
 import {Close, Copy} from '@/volto/icons';
-import Select, {toOption} from '@/volto/Select';
-import TextField from '@/volto/TextField';
+import {Select, toOption} from '@/volto/Select';
+import {TextField} from '@/volto/TextField';
 import {RentalUnit} from './RentalUnit';
 import * as s from './UnitEntry.css';
 

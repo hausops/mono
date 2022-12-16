@@ -13,12 +13,7 @@ export type NavLinkProps = {
   text: string;
 };
 
-export default function NavLink({
-  exact = false,
-  href,
-  icon: Icon,
-  text,
-}: NavLinkProps) {
+export function NavLink({exact = false, href, icon: Icon, text}: NavLinkProps) {
   const {pathname} = useRouter();
   const active = exact ? pathname === href : pathname.startsWith(href);
   const linkClassName = clsx(s.link, {

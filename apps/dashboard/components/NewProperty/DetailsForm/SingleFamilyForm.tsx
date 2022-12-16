@@ -1,6 +1,6 @@
 import {FieldsState, useFieldsState} from '@/components/useFieldsState';
-import Select, {toOption} from '@/volto/Select';
-import TextField from '@/volto/TextField';
+import {Select, toOption} from '@/volto/Select';
+import {TextField} from '@/volto/TextField';
 import * as s from './SingleFamilyForm.css';
 
 export type SingleFamilyFormState = FieldsState<{

@@ -9,7 +9,7 @@ type StackProps = PropsWithChildren<{
   gap?: number;
 }>;
 
-export default function Stack(props: StackProps) {
+export function Stack(props: StackProps) {
   const {as: Root = 'div', direction = 'column', gap, children} = props;
   return (
     <Root className={clsx(s.Stack, s.direction[direction], props.className)}>

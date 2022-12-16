@@ -15,7 +15,7 @@ type ButtonProps<As extends ElementType> = {
   // color
 };
 
-export default function Button<As extends ElementType = 'button'>({
+export function Button<As extends ElementType = 'button'>({
   as,
   className,
   variant,

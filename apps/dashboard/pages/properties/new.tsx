@@ -6,10 +6,10 @@ import {
   useAddressFormState,
   useDetailsFormState,
 } from '@/components/NewProperty';
-import PageLayout from '@/layouts/Page';
-import PageHeader from '@/layouts/PageHeader';
+import {PageLayout} from '@/layouts/Page';
+import {PageHeader} from '@/layouts/PageHeader';
 import {PropertyData, usePropertyService} from '@/services/property';
-import Button from '@/volto/Button';
+import {Button} from '@/volto/Button';
 import Head from 'next/head';
 import Link from 'next/link';
 import {useRouter} from 'next/router';

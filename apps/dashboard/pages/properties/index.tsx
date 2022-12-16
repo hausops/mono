@@ -2,10 +2,10 @@ import {
   PropertySummary,
   PropertySummarySkeleton,
 } from '@/components/PropertySummary';
-import PageLayout from '@/layouts/Page';
-import PageHeader from '@/layouts/PageHeader';
+import {PageLayout} from '@/layouts/Page';
+import {PageHeader} from '@/layouts/PageHeader';
 import {usePropertyService} from '@/services/property';
-import Button from '@/volto/Button';
+import {Button} from '@/volto/Button';
 import Head from 'next/head';
 import Link from 'next/link';
 import useSWR from 'swr';

@@ -10,9 +10,9 @@ import {
 } from '@/volto/icons';
 import {PropsWithChildren} from 'react';
 import * as s from './MainNav.css';
-import NavLink, {NavLinkProps} from './NavLink';
+import {NavLink, NavLinkProps} from './NavLink';
 
-export default function MainNav() {
+export function MainNav() {
   return (
     <aside className={s.MainNav}>
       <header className={s.Header}>Logo</header>

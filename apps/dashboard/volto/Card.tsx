@@ -5,6 +5,6 @@ type CardProps = PropsWithChildren<{
   as?: ElementType<{className: string; children: ReactNode}>;
 }>;
 
-export default function Card({as: Root = 'div', children}: CardProps) {
+export function Card({as: Root = 'div', children}: CardProps) {
   return <Root className={s.Card}>{children}</Root>;
 }
