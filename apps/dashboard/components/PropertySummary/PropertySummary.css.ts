@@ -29,10 +29,13 @@ export const Body = style({
 
 export const Title = style({
   color: color.primary[50],
-  // fontSize: '1rem',
   fontWeight: font.weight.medium,
   transition: 'color 240ms',
   ':hover': {
     color: 'inherit',
   },
+});
+
+export const SkeletonBody = style({
+  padding: unit(4),
 });

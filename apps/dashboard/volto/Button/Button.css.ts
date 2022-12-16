@@ -43,7 +43,7 @@ export const variant = styleVariants<{
     },
   },
   outlined: {
-    border: `${border.width[1]} solid ${color.primary[35]}`,
+    border: border.solid(1, color.primary[35]),
     backgroundColor: color.background.transparent,
     color: color.primary[35],
     ':hover': {

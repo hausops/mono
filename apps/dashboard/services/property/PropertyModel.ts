@@ -8,6 +8,7 @@ export type PropertyData = SingleFamilyProperty | MultiFamilyProperty;
 export type SingleFamilyProperty = {
   type: 'single-family';
   name: string;
+  coverImageUrl?: string;
   address: AddressModel;
   builtYear?: number;
   // ...
@@ -20,6 +21,7 @@ export type SingleFamilyProperty = {
 export type MultiFamilyProperty = {
   type: 'multi-family';
   name: string;
+  coverImageUrl?: string;
   address: AddressModel;
   builtYear?: number;
   //
