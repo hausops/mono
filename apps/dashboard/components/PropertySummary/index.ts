@@ -1,1 +1,1 @@
-export {default} from './PropertySummary';
+export * from './PropertySummary';

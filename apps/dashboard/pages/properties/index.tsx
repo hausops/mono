@@ -1,14 +1,17 @@
-import PropertySummary from '@/components/PropertySummary';
-import Button from '@/volto/Button';
+import {
+  PropertySummary,
+  PropertySummarySkeleton,
+} from '@/components/PropertySummary';
 import PageLayout from '@/layouts/Page';
 import PageHeader from '@/layouts/PageHeader';
+import {usePropertyService} from '@/services/property';
+import Button from '@/volto/Button';
 import Head from 'next/head';
 import Link from 'next/link';
-import data from './data.json';
+import useSWR from 'swr';
 import * as s from './index.css';
 
 export default function Page() {
-  const properties = Object.values(data);
   return (
     <>
       <Head>
@@ -28,15 +31,27 @@ export default function Page() {
             </Button>
           }
         />
-
-        <ul className={s.PropertyList}>
-          {properties.map((p) => (
-            <li key={p.id}>
-              <PropertySummary property={p} />
-            </li>
-          ))}
-        </ul>
+        <PropertyList />
       </PageLayout>
     </>
   );
+}
+
+function PropertyList() {
+  const propertySvc = usePropertyService();
+  const {data} = useSWR('properties', () => propertySvc.getAll());
+
+  const properties = data
+    ? data.map((p) => (
+        <li key={p.id}>
+          <PropertySummary property={p} />
+        </li>
+      ))
+    : Array.from({length: 8}).map((_, i) => (
+        <li key={i}>
+          <PropertySummarySkeleton />
+        </li>
+      ));
+
+  return <ul className={s.PropertyList}>{properties}</ul>;
 }

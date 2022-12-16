@@ -1,1 +1,1 @@
-export {DetailsForm, useDetailsFormState} from './DetailsForm';
+export * from './DetailsForm';
