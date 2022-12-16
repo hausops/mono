@@ -1,4 +1,4 @@
-import Card from '@/volto/Card';
+import {Card} from '@/volto/Card';
 import {PropsWithChildren} from 'react';
 import * as s from './Section.css';
 

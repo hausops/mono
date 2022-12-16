@@ -13,7 +13,7 @@ type OwnTextFieldProps = {
 type TextFieldProps = OwnTextFieldProps &
   Omit<InputHTMLAttributes<HTMLInputElement>, keyof OwnTextFieldProps>;
 
-export default function TextField({
+export function TextField({
   className,
   label,
   name,

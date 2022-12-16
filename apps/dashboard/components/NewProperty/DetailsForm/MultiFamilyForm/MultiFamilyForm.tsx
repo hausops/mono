@@ -1,4 +1,4 @@
-import Button from '@/volto/Button';
+import {Button} from '@/volto/Button';
 import {useReducer} from 'react';
 import * as s from './MultiFamilyForm.css';
 import {RentalUnit} from './RentalUnit';

@@ -1,7 +1,7 @@
 import {FieldsState, useFieldsState} from '@/components/useFieldsState';
 import {AddressModel, useAddressService} from '@/services/address';
-import Select, {toOption} from '@/volto/Select';
-import TextField from '@/volto/TextField';
+import {Select, toOption} from '@/volto/Select';
+import {TextField} from '@/volto/TextField';
 import {useMemo} from 'react';
 import * as s from './AddressForm.css';
 import {Section} from './Section';

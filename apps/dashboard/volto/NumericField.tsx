@@ -1,5 +1,5 @@
 import {ComponentPropsWithoutRef} from 'react';
-import TextField from './TextField';
+import {TextField} from './TextField';
 
 type NumericFieldProps = {
   value?: number;
@@ -9,7 +9,7 @@ type NumericFieldProps = {
 
 // state -> formatted number (string)
 // onValueChange(value: number | undefined): void;
-export default function NumericField({
+export function NumericField({
   label,
   name,
   value,

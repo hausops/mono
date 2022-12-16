@@ -20,7 +20,7 @@ type OwnSelectProps = {
 type SelectProps = OwnSelectProps &
   Omit<SelectHTMLAttributes<HTMLSelectElement>, keyof OwnSelectProps>;
 
-export default function Select({
+export function Select({
   className,
   label,
   name,

@@ -8,7 +8,7 @@ type AspectRatioProps = PropsWithChildren<{
   ratio: keyof typeof s.ratio;
 }>;
 
-export default function AspectRatio({
+export function AspectRatio({
   as: Root = 'div',
   children,
   className,

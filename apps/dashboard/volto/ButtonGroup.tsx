@@ -1,4 +1,4 @@
-import Button from '@/volto/Button';
+import {Button} from '@/volto/Button';
 import {ComponentPropsWithoutRef, ReactElement} from 'react';
 import * as s from './ButtonGroup.css';
 
