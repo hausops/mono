@@ -1,4 +1,4 @@
-name: dashboard.test
+name: apps.dashboard.test
 
 on:
   pull_request:
@@ -16,6 +16,5 @@ jobs:
         with:
           node-version: 16
           cache: yarn
-      # - run: yarn --frozen-lockfile
       - run: yarn tsc
       - run: yarn lint
