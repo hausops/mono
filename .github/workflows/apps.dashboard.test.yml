@@ -1,0 +1,20 @@
+name: apps.dashboard.test
+
+on:
+  pull_request:
+    paths:
+      - apps/dashboard/**
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+      - run: yarn tsc
+      - run: yarn lint
