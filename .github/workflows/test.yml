@@ -1,7 +1,9 @@
-name: Test
+name: dashboard.test
 
 on:
   pull_request:
+    paths:
+      - apps/dashboard/**
 
 jobs:
   test:
