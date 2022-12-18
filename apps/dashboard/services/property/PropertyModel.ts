@@ -7,7 +7,7 @@ export type PropertyData = SingleFamilyProperty | MultiFamilyProperty;
 
 export type SingleFamilyProperty = {
   type: 'single-family';
-  coverImageUrl?: string;
+  // coverImageUrl?: string;
   address: AddressModel;
   builtYear?: number;
   // ...
