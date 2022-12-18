@@ -21,5 +21,6 @@ jobs:
           node-version: 16
           cache: yarn
           cache-dependency-path: apps/dashboard/yarn.lock
+      - run: yarn --frozen-lockfile
       - run: yarn tsc
       - run: yarn lint
