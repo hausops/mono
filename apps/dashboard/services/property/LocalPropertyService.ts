@@ -31,7 +31,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '1029599': {
     id: '1029599',
     type: 'single-family',
-    name: '527 Bridle Street',
     coverImageUrl: '/images/pexels-scott-webb-1029599.jpg',
     address: {
       line1: '527 Bridle Street',
@@ -43,7 +42,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '2724749': {
     id: '2724749',
     type: 'single-family',
-    name: '495 Ohio Street',
     coverImageUrl: '/images/pexels-mark-mccammon-2724749.jpg',
     address: {
       line1: '495 Ohio Street',
@@ -55,7 +53,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '3288102': {
     id: '3288102',
     type: 'single-family',
-    name: '9026 Washington Dr.',
     coverImageUrl: '/images/pexels-curtis-adams-3288102.jpg',
     address: {
       line1: '9026 Washington Dr.',
@@ -67,7 +64,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '9999990': {
     id: '9999990',
     type: 'single-family',
-    name: '9189 South Argyle Dr.',
     address: {
       line1: '9189 South Argyle Dr.',
       city: 'Natchez',
@@ -78,7 +74,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '9999991': {
     id: '9999991',
     type: 'single-family',
-    name: '9189 South Argyle Dr.',
     address: {
       line1: '9189 South Argyle Dr.',
       city: 'Natchez',
@@ -89,7 +84,6 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
   '9999992': {
     id: '9999992',
     type: 'single-family',
-    name: '9189 South Argyle Dr.',
     address: {
       line1: '9189 South Argyle Dr.',
       city: 'Natchez',

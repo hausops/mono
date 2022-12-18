@@ -13,11 +13,11 @@ type PropertySummaryProps = {
 };
 
 export function PropertySummary({
-  property: {coverImageUrl, name, address},
+  property: {coverImageUrl, address},
 }: PropertySummaryProps) {
   return (
     <Card as="article">
-      <Cover image={coverImageUrl} caption={name} />
+      <Cover image={coverImageUrl} caption={address.line1} />
       <div className={s.Body}>
         <div>
           <p className={s.Title}>
@@ -35,7 +35,7 @@ export function PropertySummary({
   );
 }
 
-function Cover({image, caption}: {image?: string; caption: string}) {
+function Cover({image, caption = ''}: {image?: string; caption?: string}) {
   return (
     <AspectRatio as="figure" ratio="2:1" className={s.Cover}>
       {image ? (

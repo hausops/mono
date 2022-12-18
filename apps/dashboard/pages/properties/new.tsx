@@ -71,7 +71,6 @@ function toPropertyData(
     const unit = detailsForm.singleFamily.toJSON();
     return {
       type: propertyType,
-      name: address.line1, // TEMPORARY
       address: address,
       ...unit,
       size: stringInputToNumber(unit.size),
@@ -82,7 +81,6 @@ function toPropertyData(
   const {units} = detailsForm.multiFamily;
   return {
     type: propertyType,
-    name: address.line1, // TEMPORARY
     address: address,
     units: units.map((unit) => ({
       ...unit,
