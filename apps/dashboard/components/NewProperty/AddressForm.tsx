@@ -18,7 +18,7 @@ type AddressFields = Required<AddressModel>;
 
 export function AddressForm({namePrefix = '', state}: AddressFormProps) {
   const addressSvc = useAddressService();
-  const fields = state.toJSON();
+  const {fields, updateField} = state;
   return (
     <Section title="Address">
       <div className={s.Address}>
@@ -28,21 +28,21 @@ export function AddressForm({namePrefix = '', state}: AddressFormProps) {
           name={`${namePrefix}AddressLine1`}
           placeholder="200 Main St."
           value={fields.line1}
-          onChange={(e) => state.updateField('line1', e.target.value)}
+          onChange={(e) => updateField('line1', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[2]}
           label="Apartment, suite, etc."
           name={`${namePrefix}AddressLine2`}
           value={fields.line2}
-          onChange={(e) => state.updateField('line2', e.target.value)}
+          onChange={(e) => updateField('line2', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[2]}
           label="City"
           name={`${namePrefix}AddressCity`}
           value={fields.city}
-          onChange={(e) => state.updateField('city', e.target.value)}
+          onChange={(e) => updateField('city', e.target.value)}
         />
         <Select
           className={s.gridColumnSpan[1]}
@@ -53,14 +53,14 @@ export function AddressForm({namePrefix = '', state}: AddressFormProps) {
             [addressSvc]
           )}
           value={fields.state}
-          onChange={(e) => state.updateField('state', e.target.value)}
+          onChange={(e) => updateField('state', e.target.value)}
         />
         <TextField
           className={s.gridColumnSpan[1]}
           label="ZIP code"
           name={`${namePrefix}AddressZip`}
           value={fields.zip}
-          onChange={(e) => state.updateField('zip', e.target.value)}
+          onChange={(e) => updateField('zip', e.target.value)}
         />
       </div>
     </Section>
