@@ -23,37 +23,37 @@ const bathsOptions = [
 ];
 
 export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
-  const unit = state.toJSON();
+  const {fields, updateField} = state;
   return (
     <div className={s.SingleFamilyForm}>
       <Select
         label="Beds"
         name="property.single.beds"
         options={bedsOptions}
-        value={unit.bedrooms}
-        onChange={(e) => state.updateField('bedrooms', +e.target.value)}
+        value={fields.bedrooms}
+        onChange={(e) => updateField('bedrooms', +e.target.value)}
       />
       <Select
         label="Baths"
         name="property.single.baths"
         options={bathsOptions}
-        value={unit.bathrooms}
-        onChange={(e) => state.updateField('bathrooms', +e.target.value)}
+        value={fields.bathrooms}
+        onChange={(e) => updateField('bathrooms', +e.target.value)}
       />
       <TextField
         type="number"
         label="Size"
         name="property.single.size"
         placeholder="Sq.ft."
-        value={unit.size}
-        onChange={(e) => state.updateField('size', e.target.value)}
+        value={fields.size}
+        onChange={(e) => updateField('size', e.target.value)}
       />
       <TextField
         type="number"
         label="Rent"
         name="property.single.rent"
-        value={unit.rentAmount}
-        onChange={(e) => state.updateField('rentAmount', e.target.value)}
+        value={fields.rentAmount}
+        onChange={(e) => updateField('rentAmount', e.target.value)}
       />
     </div>
   );

@@ -65,10 +65,10 @@ function toPropertyData(
   // TODO: validate required
   const propertyType =
     detailsForm.propertyType.selectedValue ?? 'single-family';
-  const address = addressForm.toJSON();
+  const address = addressForm.fields;
 
   if (propertyType === 'single-family') {
-    const unit = detailsForm.singleFamily.toJSON();
+    const unit = detailsForm.singleFamily.fields;
     return {
       type: propertyType,
       address: address,
