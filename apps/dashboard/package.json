@@ -23,7 +23,7 @@
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.4",
     "nanoid": "^4.0.0",
-    "next": "13.0.4",
+    "next": "13.0.7",
     "normalize.css": "^8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
