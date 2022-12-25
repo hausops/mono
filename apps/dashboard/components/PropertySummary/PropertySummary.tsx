@@ -13,7 +13,7 @@ type PropertySummaryProps = {
 };
 
 export function PropertySummary({
-  property: {coverImageUrl, address},
+  property: {id, coverImageUrl, address},
 }: PropertySummaryProps) {
   return (
     <Card as="article">
@@ -21,7 +21,7 @@ export function PropertySummary({
       <div className={s.Body}>
         <div>
           <p className={s.Title}>
-            <Link href="#">{address.line1}</Link>
+            <Link href={`/properties/${id}`}>{address.line1}</Link>
           </p>
           <p>
             {address.city}, {address.state} {address.zip}
