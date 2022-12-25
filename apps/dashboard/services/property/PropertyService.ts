@@ -5,7 +5,7 @@ export interface PropertyService {
 
   // creates a new property from newPropertyData.
   // The service will assign the property id.
-  create(newPropertyData: PropertyData): Promise<PropertyModel>;
+  add(newPropertyData: PropertyData): Promise<PropertyModel>;
 
   // deletes the property matching id.
   // If success, resolves to the id of the property being deleted

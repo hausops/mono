@@ -11,7 +11,7 @@ export class LocalPropertyService implements PropertyService {
     return [...this.properties.values()];
   }
 
-  async create(newPropertyData: PropertyData): Promise<PropertyModel> {
+  async add(newPropertyData: PropertyData): Promise<PropertyModel> {
     const id = nanoid();
     const property = {...newPropertyData, id};
     this.properties.set(id, property);

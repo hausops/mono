@@ -45,7 +45,7 @@ export default function Page() {
             // TODO: validation
             onClick={async () => {
               const d = toPropertyData(addressForm, detailsForm);
-              const created = await propertySvc.create(d);
+              const created = await propertySvc.add(d);
               console.log('property created', created);
               router.push('/properties');
             }}
