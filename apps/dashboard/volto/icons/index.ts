@@ -5,6 +5,7 @@ export {Close} from './Close';
 export {Copy} from './Copy';
 export {CreditCard} from './CreditCard';
 export {Description} from './Description';
+export {Home} from './Home';
 export {HomeFilled} from './HomeFilled';
 export {Image} from './Image';
 export {MoreH} from './MoreH';
