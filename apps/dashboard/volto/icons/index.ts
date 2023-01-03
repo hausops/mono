@@ -9,5 +9,6 @@ export {Home} from './Home';
 export {HomeFilled} from './HomeFilled';
 export {Image} from './Image';
 export {MoreH} from './MoreH';
+export {PersonFilled} from './PersonFilled';
 export {Settings} from './Settings';
 export {SpaceDashboard} from './SpaceDashboard';

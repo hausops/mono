@@ -21,17 +21,20 @@ export default function Page(props: PageProps) {
 
   const {property} = props;
   const [streetAddr] = Address.from(property.address).format();
+  // Cannot do in JSX due to next.js bug:
+  // https://github.com/vercel/next.js/discussions/38256
+  const pageTitle = `${streetAddr} - HausOps`;
   return (
     <>
       <Head>
-        <title>{streetAddr} - HausOps</title>
+        <title>{pageTitle}</title>
         <meta name="description" content="HausOps" />
         <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
       </Head>
 
       <PageLayout>
         <PageHeader title={streetAddr} />
-        <pre>{JSON.stringify(property, null, 2)}</pre>
+        <PropertyDetail property={property} />
       </PageLayout>
     </>
   );
