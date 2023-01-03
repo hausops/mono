@@ -2,16 +2,16 @@ import {Address} from '@/services/address';
 import {PropertyModel, SingleFamilyProperty} from '@/services/property';
 import {Section} from '@/volto/Section';
 import Link from 'next/link';
-import * as s from './PropertyDetail.css';
+import * as s from './PropertyDetails.css';
 import {RecentPayments} from './RecentPayments';
 import {TenantProfile} from './TenantProfile';
 import {UpcomingRent} from './UpcomingRent';
 
-type PropertyDetailProps = {
+type PropertyDetailsProps = {
   property: PropertyModel;
 };
 
-export function PropertyDetail({property}: PropertyDetailProps) {
+export function PropertyDetails({property}: PropertyDetailsProps) {
   if (property.type === 'single-family') {
     return <SingleFamily property={property} />;
   }

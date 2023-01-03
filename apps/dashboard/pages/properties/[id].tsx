@@ -1,4 +1,4 @@
-import {PropertyDetail} from '@/components/PropertyDetail';
+import {PropertyDetails} from '@/components/PropertyDetails';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
 import {Address} from '@/services/address';
@@ -34,7 +34,7 @@ export default function Page(props: PageProps) {
 
       <PageLayout>
         <PageHeader title={streetAddr} />
-        <PropertyDetail property={property} />
+        <PropertyDetails property={property} />
       </PageLayout>
     </>
   );
