@@ -1,4 +1,4 @@
-import {PropertyData, PropertyModel} from './PropertyModel';
+import {NewPropertyData, PropertyModel} from './PropertyModel';
 
 export interface PropertyService {
   getAll(): Promise<PropertyModel[]>;
@@ -7,7 +7,7 @@ export interface PropertyService {
 
   // creates a new property from newPropertyData.
   // The service will assign the property id.
-  add(newPropertyData: PropertyData): Promise<PropertyModel>;
+  add(newPropertyData: NewPropertyData): Promise<PropertyModel>;
 
   // deletes the property matching id.
   // If success, resolves to the id of the property being deleted

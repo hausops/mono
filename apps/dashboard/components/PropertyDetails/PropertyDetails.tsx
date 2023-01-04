@@ -19,7 +19,7 @@ export function PropertyDetails({property}: PropertyDetailsProps) {
 }
 
 function SingleFamily({property}: {property: SingleFamilyProperty}) {
-  const {coverImageUrl, address, bedrooms, bathrooms, size} = property;
+  const {coverImageUrl, address, unit} = property;
   const addr = Address.from(address);
   return (
     <section className={s.SingleFamily}>

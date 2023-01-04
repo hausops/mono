@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import {PropertyData, PropertyModel} from './PropertyModel';
+import {NewPropertyData, PropertyModel} from './PropertyModel';
 import {PropertyNotFoundErr, PropertyService} from './PropertyService';
 
 export class LocalPropertyService implements PropertyService {
@@ -15,9 +15,13 @@ export class LocalPropertyService implements PropertyService {
     return this.properties.get(id);
   }
 
-  async add(newPropertyData: PropertyData): Promise<PropertyModel> {
+  async add(newPropertyData: NewPropertyData): Promise<PropertyModel> {
     const id = nanoid();
-    const property = {...newPropertyData, id};
+    const p = withId(newPropertyData);
+    const property: PropertyModel =
+      p.type === 'single-family'
+        ? {...p, unit: withId(p.unit)}
+        : {...p, units: p.units.map(withId)};
     this.properties.set(id, property);
     return property;
   }
@@ -31,6 +35,10 @@ export class LocalPropertyService implements PropertyService {
   }
 }
 
+function withId<T>(o: T): T & {id: string} {
+  return {...o, id: nanoid()};
+}
+
 const DEMO_PROPERTIES: PropertyModel[] = [
   {
     id: '1029599',
@@ -42,9 +50,12 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'GA',
       zip: '30542',
     },
-    bedrooms: 3,
-    bathrooms: 2.5,
-    size: 1024,
+    unit: {
+      id: '1029599-0',
+      bedrooms: 3,
+      bathrooms: 2.5,
+      size: 1024,
+    },
   },
   {
     id: '2724749',
@@ -56,6 +67,7 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'PA',
       zip: '19438',
     },
+    unit: {id: '2724749-0'},
   },
   {
     id: '3288102',
@@ -67,6 +79,7 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'IL',
       zip: '60462',
     },
+    unit: {id: '3288102-0'},
   },
   {
     id: '9999990',
@@ -77,6 +90,7 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'MS',
       zip: '39120',
     },
+    unit: {id: '9999990'},
   },
   {
     id: '9999991',
@@ -87,6 +101,7 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'MS',
       zip: '39120',
     },
+    unit: {id: '9999991'},
   },
   {
     id: '9999992',
@@ -97,5 +112,6 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'MS',
       zip: '39120',
     },
+    unit: {id: '9999992'},
   },
 ];
