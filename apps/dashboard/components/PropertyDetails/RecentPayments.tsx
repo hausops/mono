@@ -1,29 +1,40 @@
+import {RentPayment} from '@/services/lease';
 import {Badge} from '@/volto/Badge';
-import {ComponentType, PropsWithChildren, ReactElement, ReactNode} from 'react';
+import {useMemo} from 'react';
 import * as s from './RecentPayments.css';
 
 type RecentPaymentsProps = {
-  // payments: {
-  //   date: string;
-  //   amount: number;
-  //   status?: 'overdue' | 'paid';
-  // }[];
+  payments: RentPayment[];
 };
 
-export function RecentPayments(props: RecentPaymentsProps) {
+export function RecentPayments({payments}: RecentPaymentsProps) {
+  const currencyFormatter = useMemo(
+    () =>
+      Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumSignificantDigits: 2,
+      }),
+    []
+  );
+
   return (
     <table className={s.Table}>
       <thead className={s.TableHeader}>
         <HeaderRow />
       </thead>
       <tbody>
-        <Row
-          date="12/1/2022"
-          amount="$4,000"
-          badge={<Badge status="attention">Overdue</Badge>}
-        />
-        <Row date="11/1/2022" amount="$4,000" badge={<Badge>Paid</Badge>} />
-        <Row date="10/1/2022" amount="$4,000" badge={<Badge>Paid</Badge>} />
+        {payments.map((p) => {
+          const date = new Date(p.dueDate).toLocaleDateString();
+          return (
+            <Row
+              key={date}
+              date={date}
+              amount={currencyFormatter.format(p.amount)}
+              status={p.status}
+            />
+          );
+        })}
       </tbody>
     </table>
   );
@@ -32,7 +43,7 @@ export function RecentPayments(props: RecentPaymentsProps) {
 function HeaderRow() {
   return (
     <tr>
-      <td scope="col" className={s.TableCell}>
+      <td scope="col" className={s.TableCell} width="50%">
         <span className={s.HeaderLabel}>Date</span>
       </td>
       <td scope="col" className={s.TableCell}>
@@ -46,11 +57,11 @@ function HeaderRow() {
 function Row({
   date,
   amount,
-  badge,
+  status,
 }: {
   date: string;
   amount: string;
-  badge?: ReactElement<typeof Badge>;
+  status: RentPayment['status'];
 }) {
   return (
     <tr>
@@ -61,8 +72,19 @@ function Row({
         {amount}
       </td>
       <td scope="col" className={s.BadgeCell}>
-        {badge}
+        <StatusBadge status={status} />
       </td>
     </tr>
   );
+}
+
+function StatusBadge({status}: {status: RentPayment['status']}) {
+  switch (status) {
+    case 'fully-paid':
+      return <Badge>Paid</Badge>;
+    case 'overdue':
+      return <Badge status="attention">Overdue</Badge>;
+    default:
+      return null;
+  }
 }

@@ -4,7 +4,7 @@ import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
 
-export const SingleFamily = style({
+export const SingleFamilyPropertyDetails = style({
   display: 'grid',
   gap: unit(8),
 

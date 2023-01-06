@@ -1,9 +1,10 @@
 import clsx from 'clsx';
+import {CSSProperties} from 'react';
 import * as s from './Skeleton.css';
 
 type SkeletonProps = {
   variant?: keyof typeof s.variants;
-  width?: string;
+  width?: CSSProperties['width'];
 };
 
 export function Skeleton({variant = 'text', width}: SkeletonProps) {

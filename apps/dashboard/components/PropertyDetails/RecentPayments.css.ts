@@ -23,7 +23,6 @@ export const HeaderLabel = style({
 });
 
 export const TableCell = style({
-  paddingInline: unit(2),
   paddingBlock: unit(1),
 });
 

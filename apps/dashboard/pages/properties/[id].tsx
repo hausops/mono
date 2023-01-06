@@ -5,14 +5,18 @@ import {Address} from '@/services/address';
 import {LocalPropertyService, PropertyModel} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
-
 import {Home as HomeIcon} from '@/volto/icons';
 import {GetServerSideProps} from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import * as s from './id.css';
 
-type PageProps = {notFound: true} | {notFound?: false; property: PropertyModel};
+type PageProps =
+  | {notFound: true}
+  | {
+      notFound?: false;
+      property: PropertyModel;
+    };
 
 export default function Page(props: PageProps) {
   if (props.notFound) {
