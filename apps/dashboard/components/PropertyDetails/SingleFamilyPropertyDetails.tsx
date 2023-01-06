@@ -1,4 +1,5 @@
 import {SingleFamilyProperty} from '@/services/property';
+import {PropertyImages} from './PropertyImages';
 import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';
 import * as s from './SingleFamilyPropertyDetails.css';
@@ -12,6 +13,7 @@ export function SingleFamilyPropertyDetails({property}: Props) {
     <section className={s.SingleFamilyPropertyDetails}>
       <article className={s.Column}>
         <PropertyInfo property={property} />
+        <PropertyImages property={property} />
       </article>
 
       <aside className={s.Column}>
