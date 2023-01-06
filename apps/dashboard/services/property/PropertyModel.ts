@@ -28,6 +28,9 @@ export type RentalUnit = {
   bathrooms?: number;
   size?: number; // in sq.m.
   rentAmount?: number;
+  activeListing?: {
+    id: string;
+  };
 };
 
 export type NewPropertyData =

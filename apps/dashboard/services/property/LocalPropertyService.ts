@@ -67,7 +67,10 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       state: 'PA',
       zip: '19438',
     },
-    unit: {id: '2724749-0'},
+    unit: {
+      id: '2724749-0',
+      activeListing: {id: '8d5f11ed'},
+    },
   },
   {
     id: '3288102',
