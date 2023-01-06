@@ -5,10 +5,9 @@ import {EmptyState} from '@/volto/EmptyState';
 import {Home} from '@/volto/icons';
 import {Section, SectionSkeleton} from '@/volto/Section';
 import Link from 'next/link';
-import {ReactNode} from 'react';
 import useSWR from 'swr';
 import {RecentPayments} from './RecentPayments';
-import * as s from './SingleFamilyPropertyDetails.css';
+import * as s from './RentInfo.css';
 import {TenantProfile} from './TenantProfile';
 import {UpcomingRent} from './UpcomingRent';
 

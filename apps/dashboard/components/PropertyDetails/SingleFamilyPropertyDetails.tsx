@@ -1,6 +1,5 @@
-import {Address} from '@/services/address';
 import {SingleFamilyProperty} from '@/services/property';
-import {Section} from '@/volto/Section';
+import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';
 import * as s from './SingleFamilyPropertyDetails.css';
 
@@ -9,13 +8,10 @@ type Props = {
 };
 
 export function SingleFamilyPropertyDetails({property}: Props) {
-  const {coverImageUrl, address, unit} = property;
-  const addr = Address.from(address);
-
   return (
     <section className={s.SingleFamilyPropertyDetails}>
       <article className={s.Column}>
-        <Section title="Property info"></Section>
+        <PropertyInfo property={property} />
       </article>
 
       <aside className={s.Column}>
