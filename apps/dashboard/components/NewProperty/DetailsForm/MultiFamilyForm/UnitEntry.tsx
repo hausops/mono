@@ -1,5 +1,5 @@
+import {BedroomsSelect, BathroomsSelect} from '@/components/PropertyForm';
 import {Close, Copy} from '@/volto/icons';
-import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import {RentalUnit} from './RentalUnit';
 import * as s from './UnitEntry.css';
@@ -11,18 +11,6 @@ type UnitEntryProps = {
   onClone(index: number): void;
   onRemove?(index: number): void;
 };
-
-// TODO: refactor
-const bedsOptions = [
-  {label: 'Studio', value: 0},
-  ...[1, 2, 3, 4, 5].map(toOption),
-];
-
-// TODO: refactor
-const bathsOptions = [
-  {label: 'None', value: 0},
-  ...[1, 1.5, 2, 2.5, 3, 3.5, 4].map(toOption),
-];
 
 export function UnitEntry({
   index,
@@ -59,17 +47,13 @@ export function UnitEntry({
           value={state.number}
           onChange={(e) => onChange({...state, number: e.target.value})}
         />
-        <Select
-          label="Beds"
+        <BedroomsSelect
           name="bedrooms"
-          options={bedsOptions}
           value={state.bedrooms}
           onChange={(e) => onChange({...state, bedrooms: +e.target.value})}
         />
-        <Select
-          label="Baths"
+        <BathroomsSelect
           name="bathrooms"
-          options={bathsOptions}
           value={state.bathrooms}
           onChange={(e) => onChange({...state, bathrooms: +e.target.value})}
         />
