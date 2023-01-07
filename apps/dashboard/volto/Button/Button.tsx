@@ -24,7 +24,10 @@ export function Button<As extends ElementType = 'button'>({
   Omit<ComponentPropsWithoutRef<As>, keyof ButtonProps<As>>) {
   const Root = as ?? 'button';
   return (
-    <Root {...props} className={clsx(s.base, s.variant[variant], className)} />
+    <Root
+      {...props}
+      className={clsx(s.Button, s.ButtonVariants[variant], className)}
+    />
   );
 }
 
@@ -34,4 +37,22 @@ type IconButtonProps = PropsWithChildren<{
 
 export function IconButton({icon}: IconButtonProps) {
   return <button className={s.IconButton}>{icon}</button>;
+}
+
+type MiniTextButtonProps = PropsWithChildren<{
+  icon?: ReactElement;
+}> &
+  ComponentPropsWithoutRef<'button'>;
+
+export function MiniTextButton({
+  children,
+  icon,
+  ...buttonProps
+}: MiniTextButtonProps) {
+  return (
+    <button {...buttonProps} className={s.MiniTextButton}>
+      {icon && <div className={s.MiniTextButtonIcon}>{icon}</div>}
+      {children}
+    </button>
+  );
 }

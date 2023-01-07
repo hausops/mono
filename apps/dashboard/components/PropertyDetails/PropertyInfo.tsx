@@ -1,13 +1,13 @@
+import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address, useAddressService} from '@/services/address';
 import {SingleFamilyProperty} from '@/services/property';
-import {Button} from '@/volto/Button';
+import {Button, MiniTextButton} from '@/volto/Button';
 import {Close, EditFilled} from '@/volto/icons';
 import {Section} from '@/volto/Section';
 import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import {useMemo, useState} from 'react';
-import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {Attribute, AttributeList} from './AttributeList';
 import * as s from './PropertyInfo.css';
 
@@ -21,7 +21,12 @@ export function PropertyInfo({property}: PropertyInfoProps) {
     <Section
       title="Property info"
       actions={
-        <EditToggle editing={editing} onClick={() => setEditing(!editing)} />
+        <MiniTextButton
+          icon={editing ? <Close /> : <EditFilled />}
+          onClick={() => setEditing(!editing)}
+        >
+          {editing ? 'Cancel' : 'Edit'}
+        </MiniTextButton>
       }
     >
       {editing ? (
@@ -30,23 +35,6 @@ export function PropertyInfo({property}: PropertyInfoProps) {
         <Viewing property={property} />
       )}
     </Section>
-  );
-}
-
-function EditToggle({
-  editing,
-  onClick,
-}: {
-  editing: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button className={s.EditToggle} onClick={onClick}>
-      <span className={s.EditToggleIcon}>
-        {editing ? <Close /> : <EditFilled />}
-      </span>
-      {editing ? 'Cancel' : 'Edit'}
-    </button>
   );
 }
 
