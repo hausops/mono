@@ -1,30 +1,47 @@
-import {border} from '@/volto/border.css';
 import {color} from '@/volto/color.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {style} from '@vanilla-extract/css';
 
-export const Images = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  gap: unit(1),
-  userSelect: 'none',
-});
-
-export const ImageContainer = style({
-  border: border.solid(1, color.neutral[90]),
+export const EditToggle = style({
+  alignItems: 'center',
+  background: 'none',
+  border: 0,
   borderRadius: vars.border.radius,
-  overflow: 'hidden',
+  color: color.text.muted,
+  columnGap: unit(1),
+  cursor: 'pointer',
+  display: 'inline-flex',
+  fontSize: '0.75rem',
+  justifyContent: 'center',
+  lineHeight: 1,
+  padding: unit(1),
+  transition: 'color 240ms',
+  userSelect: 'none',
+
+  ':hover': {
+    backgroundColor: color.primary[95],
+    color: color.text.$,
+  },
 });
 
-export const CoverImageContainer = style([
-  ImageContainer,
-  {
-    gridColumn: '1/span 2',
-    gridRow: '1/span 2',
-  },
-]);
+export const EditToggleIcon = style({
+  fill: 'currentcolor',
+  height: '1em',
+  width: '1em',
+});
 
-export const Image = style({
-  objectFit: 'contain',
+export const EditingAttributeList = style({
+  gap: unit(8),
+});
+
+export const AddressForm = style({
+  display: 'grid',
+  rowGap: unit(4),
+});
+
+export const EditActions = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  columnGap: unit(2),
 });

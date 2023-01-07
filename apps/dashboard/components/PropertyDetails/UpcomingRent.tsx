@@ -1,7 +1,7 @@
 import {RentPayment} from '@/services/lease';
 import {Badge} from '@/volto/Badge';
 import {useMemo} from 'react';
-import {Entry, EntryList} from './EntryList';
+import {Attribute, AttributeList} from './AttributeList';
 import * as s from './UpcomingRent.css';
 
 type UpcomingRentProps = RentPayment;
@@ -24,8 +24,8 @@ export function UpcomingRent({
   );
 
   return (
-    <EntryList>
-      <Entry
+    <AttributeList>
+      <Attribute
         label="Due date"
         value={
           <p className={s.DueDate}>
@@ -34,16 +34,16 @@ export function UpcomingRent({
           </p>
         }
       />
-      <Entry label="Rent amount" value={currencyFormatter.format(amount)} />
+      <Attribute label="Rent amount" value={currencyFormatter.format(amount)} />
       {paid ? (
-        <Entry label="Paid" value={currencyFormatter.format(paid)} />
+        <Attribute label="Paid" value={currencyFormatter.format(paid)} />
       ) : null}
       {paymentPending ? (
-        <Entry
+        <Attribute
           label="Payment pending"
           value={currencyFormatter.format(paymentPending)}
         />
       ) : null}
-    </EntryList>
+    </AttributeList>
   );
 }
