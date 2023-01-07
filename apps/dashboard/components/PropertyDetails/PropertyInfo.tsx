@@ -64,17 +64,16 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
           </>
         }
       />
-      {/* TODO: always render Attribute but show "-" if no data */}
-      {unit.bedrooms ? <Attribute label="Beds" value={unit.bedrooms} /> : null}
-      {unit.bathrooms ? (
-        <Attribute label="Baths" value={unit.bathrooms} />
-      ) : null}
-      {unit.size ? (
-        <Attribute
-          label="Size"
-          value={`${Intl.NumberFormat('en-US').format(unit.size)} sq.ft.`}
-        />
-      ) : null}
+      <Attribute label="Beds" value={unit.bedrooms} />
+      <Attribute label="Baths" value={unit.bathrooms} />
+      <Attribute
+        label="Size"
+        value={
+          unit.size == null
+            ? null
+            : `${Intl.NumberFormat('en-US').format(unit.size)} sq.ft.`
+        }
+      />
     </AttributeList>
   );
 }

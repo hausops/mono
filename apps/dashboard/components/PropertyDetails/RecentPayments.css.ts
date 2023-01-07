@@ -1,11 +1,8 @@
 import {border} from '@/volto/border.css';
 import {color} from '@/volto/color.css';
-import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
-
-export const RecentPayments = style({});
 
 export const Table = style({
   minWidth: '100%',

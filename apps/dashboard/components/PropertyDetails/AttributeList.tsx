@@ -9,11 +9,19 @@ export function AttributeList({
   return <div className={clsx(s.AttributeList, className)}>{children}</div>;
 }
 
-export function Attribute({label, value}: {label: string; value: ReactNode}) {
+export function Attribute({
+  label,
+  value,
+  fallbackValue = '-',
+}: {
+  label: string;
+  value: ReactNode;
+  fallbackValue?: ReactNode;
+}) {
   return (
     <dl className={s.Attribute}>
       <dt>{label}</dt>
-      <dd>{value}</dd>
+      <dd>{value ?? fallbackValue}</dd>
     </dl>
   );
 }
