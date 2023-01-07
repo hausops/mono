@@ -1,4 +1,7 @@
-import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
+import {
+  NumBathroomsSelector,
+  NumBedroomsSelector,
+} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address, useAddressService} from '@/services/address';
 import {SingleFamilyProperty} from '@/services/property';
@@ -129,7 +132,7 @@ function Editing({
         <Attribute
           label="Beds"
           value={
-            <BedroomsSelect
+            <NumBedroomsSelector
               name={`${namePrefix}Beds`}
               value={unit.fields.bedrooms}
               onChange={(e) => unit.updateField('bedrooms', +e.target.value)}
@@ -139,7 +142,7 @@ function Editing({
         <Attribute
           label="Baths"
           value={
-            <BathroomsSelect
+            <NumBathroomsSelector
               name={`${namePrefix}Baths`}
               value={unit.fields.bathrooms}
               onChange={(e) => unit.updateField('bathrooms', +e.target.value)}
