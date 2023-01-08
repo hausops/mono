@@ -1,6 +1,6 @@
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
-import {Address, useAddressService} from '@/services/address';
+import {Address, AddressModel, useAddressService} from '@/services/address';
 import {
   RentalUnit,
   SingleFamilyProperty,
@@ -90,7 +90,8 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
   );
 }
 
-type EditingUnitState = Omit<RentalUnit, 'size'> & {size?: string};
+type AddressFields = Required<AddressModel>;
+type UnitFields = Omit<RentalUnit, 'size'> & {size?: string};
 
 function Editing({
   property,
@@ -105,8 +106,12 @@ function Editing({
   const addressSvc = useAddressService();
   const propertySvc = usePropertyService();
 
-  const address = useFieldsState(property.address);
-  const unit = useFieldsState<EditingUnitState>({
+  const address = useFieldsState<AddressFields>({
+    line2: '', // fallback when we don't have data for this field
+    ...property.address,
+  });
+
+  const unit = useFieldsState<UnitFields>({
     ...property.unit,
     size: property.unit.size ? `${property.unit.size}` : undefined,
   });
@@ -216,8 +221,8 @@ function Editing({
 }
 
 function toPropertyModel(
-  address: SingleFamilyProperty['address'],
-  unit: EditingUnitState
+  address: AddressFields,
+  unit: UnitFields
 ): Partial<SingleFamilyProperty> {
   return {
     address,
