@@ -4,13 +4,18 @@ import {
 } from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address, useAddressService} from '@/services/address';
-import {SingleFamilyProperty} from '@/services/property';
+import {
+  RentalUnit,
+  SingleFamilyProperty,
+  usePropertyService,
+} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {Close, EditFilled} from '@/volto/icons';
 import {Section} from '@/volto/Section';
 import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import {useMemo, useState} from 'react';
+import useSWR from 'swr';
 import {Attribute, AttributeList} from './AttributeList';
 import * as s from './PropertyInfo.css';
 
@@ -18,8 +23,20 @@ type PropertyInfoProps = {
   property: SingleFamilyProperty;
 };
 
-export function PropertyInfo({property}: PropertyInfoProps) {
+export function PropertyInfo(props: PropertyInfoProps) {
+  const propertySvc = usePropertyService();
+  const {data, mutate: mutateProperty} = useSWR(
+    `/api/property/${props.property.id}`,
+    async () => {
+      const p = await propertySvc.get(props.property.id);
+      return p?.type === 'single-family' ? p : undefined;
+    }
+  );
+  const property = data ?? props.property;
+
   const [editing, setEditing] = useState(false);
+  const exitEditing = () => setEditing(false);
+
   return (
     <Section
       title="Property info"
@@ -33,7 +50,14 @@ export function PropertyInfo({property}: PropertyInfoProps) {
       }
     >
       {editing ? (
-        <Editing property={property} onCancelClick={() => setEditing(false)} />
+        <Editing
+          property={property}
+          onEditSuccess={(updatedProperty: SingleFamilyProperty) => {
+            mutateProperty(updatedProperty, {revalidate: false});
+            exitEditing();
+          }}
+          onCancelClick={exitEditing}
+        />
       ) : (
         <Viewing property={property} />
       )}
@@ -68,20 +92,26 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
     </AttributeList>
   );
 }
+
+type EditingUnitState = Omit<RentalUnit, 'size'> & {size?: string};
+
 function Editing({
   property,
   onCancelClick,
+  onEditSuccess,
 }: {
   property: SingleFamilyProperty;
   onCancelClick: () => void;
+  onEditSuccess: (updatedProperty: SingleFamilyProperty) => void;
 }) {
   const namePrefix = 'PropertyInfo';
   const addressSvc = useAddressService();
+  const propertySvc = usePropertyService();
 
   const address = useFieldsState(property.address);
-  const unit = useFieldsState({
+  const unit = useFieldsState<EditingUnitState>({
     ...property.unit,
-    size: property.unit.size && `${property.unit.size}`,
+    size: property.unit.size ? `${property.unit.size}` : undefined,
   });
 
   return (
@@ -167,8 +197,36 @@ function Editing({
         <Button variant="text" onClick={onCancelClick}>
           Cancel
         </Button>
-        <Button variant="contained">Save</Button>
+        <Button
+          variant="contained"
+          // TODO: disable button and show loading state
+          onClick={async () => {
+            const d = toPropertyModel(address.fields, unit.fields);
+            try {
+              const updated = await propertySvc.update(property.id, d);
+              console.log('property updated', updated);
+              onEditSuccess(updated);
+            } catch (err) {
+              console.error('Cannot update property', err);
+            }
+          }}
+        >
+          Save
+        </Button>
       </div>
     </>
   );
+}
+
+function toPropertyModel(
+  address: SingleFamilyProperty['address'],
+  unit: EditingUnitState
+): Partial<SingleFamilyProperty> {
+  return {
+    address,
+    unit: {
+      ...unit,
+      size: unit.size ? +unit.size : undefined,
+    },
+  };
 }

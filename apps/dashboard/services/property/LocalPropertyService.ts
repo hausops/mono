@@ -26,6 +26,28 @@ export class LocalPropertyService implements PropertyService {
     return property;
   }
 
+  async update<T extends PropertyModel>(
+    id: string,
+    updateProperty: Partial<T>
+  ): Promise<T> {
+    const previous = this.properties.get(id);
+
+    if (!previous) {
+      throw new PropertyNotFoundErr(id);
+    }
+
+    if (updateProperty.type && updateProperty.type !== previous.type) {
+      throw new Error(
+        `Mismatched property type: was=${previous.type}, got=${updateProperty.type}.`
+      );
+    }
+
+    // TODO: figure out how to handle type of previous safer in Typescript
+    const updated = {...(previous as T), ...updateProperty};
+    this.properties.set(id, updated);
+    return updated;
+  }
+
   async delete(id: string): Promise<string> {
     const existed = this.properties.delete(id);
     if (!existed) {

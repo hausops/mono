@@ -49,7 +49,7 @@ export type NewPropertyData =
       units: NewRentalUnit[];
     };
 
-export type NewRentalUnit = {
+type NewRentalUnit = {
   number?: string;
   bedrooms?: number;
   bathrooms?: number;

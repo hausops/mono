@@ -45,9 +45,13 @@ export default function Page() {
             // TODO: validation
             onClick={async () => {
               const d = toNewPropertyData(addressForm, detailsForm);
-              const created = await propertySvc.add(d);
-              console.log('property created', created);
-              router.push('/properties');
+              try {
+                const created = await propertySvc.add(d);
+                console.log('property created', created);
+                router.push('/properties');
+              } catch (err) {
+                console.error('Cannot add property', err);
+              }
             }}
           >
             Save
