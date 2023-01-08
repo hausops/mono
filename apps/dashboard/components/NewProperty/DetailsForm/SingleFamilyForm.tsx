@@ -1,7 +1,4 @@
-import {
-  NumBathroomsSelector,
-  NumBedroomsSelector,
-} from '@/components/PropertyForm';
+import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {FieldsState, useFieldsState} from '@/components/useFieldsState';
 import {TextField} from '@/volto/TextField';
 import * as s from './SingleFamilyForm.css';
@@ -17,12 +14,12 @@ export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
   const {fields, updateField} = state;
   return (
     <div className={s.SingleFamilyForm}>
-      <NumBedroomsSelector
+      <BedroomsSelect
         name="property.single.beds"
         value={fields.bedrooms}
         onChange={(e) => updateField('bedrooms', +e.target.value)}
       />
-      <NumBathroomsSelector
+      <BathroomsSelect
         name="property.single.baths"
         value={fields.bathrooms}
         onChange={(e) => updateField('bathrooms', +e.target.value)}

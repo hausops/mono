@@ -1,7 +1,4 @@
-import {
-  NumBedroomsSelector,
-  NumBathroomsSelector,
-} from '@/components/PropertyForm';
+import {BedroomsSelect, BathroomsSelect} from '@/components/PropertyForm';
 import {MiniTextButton} from '@/volto/Button';
 import {Close, Copy} from '@/volto/icons';
 import {TextField} from '@/volto/TextField';
@@ -45,12 +42,12 @@ export function UnitEntry({
           value={state.number}
           onChange={(e) => onChange({...state, number: e.target.value})}
         />
-        <NumBedroomsSelector
+        <BedroomsSelect
           name="bedrooms"
           value={state.bedrooms}
           onChange={(e) => onChange({...state, bedrooms: +e.target.value})}
         />
-        <NumBathroomsSelector
+        <BathroomsSelect
           name="bathrooms"
           value={state.bathrooms}
           onChange={(e) => onChange({...state, bathrooms: +e.target.value})}
