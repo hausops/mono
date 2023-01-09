@@ -232,8 +232,3 @@ function toPropertyModel(
     },
   };
 }
-
-// convert input state (string) to a number, return undefined for an empty string
-// function stringInputToNumber(str: string): number | undefined {
-//   return str ? +str : undefined;
-// }
