@@ -1,5 +1,5 @@
+import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {FieldsState, useFieldsState} from '@/components/useFieldsState';
-import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import * as s from './SingleFamilyForm.css';
 
@@ -10,35 +10,19 @@ export type SingleFamilyFormState = FieldsState<{
   rentAmount: string;
 }>;
 
-// TODO: refactor
-const bedsOptions = [
-  {label: 'Studio', value: 0},
-  ...[1, 2, 3, 4, 5].map(toOption),
-];
-
-// TODO: refactor
-const bathsOptions = [
-  {label: 'None', value: 0},
-  ...[1, 1.5, 2, 2.5, 3, 3.5, 4].map(toOption),
-];
-
 export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
   const {fields, updateField} = state;
   return (
     <div className={s.SingleFamilyForm}>
-      <Select
-        label="Beds"
+      <BedroomsSelect
         name="property.single.beds"
-        options={bedsOptions}
         value={fields.bedrooms}
-        onChange={(e) => updateField('bedrooms', +e.target.value)}
+        onChange={(selection) => updateField('bedrooms', selection)}
       />
-      <Select
-        label="Baths"
+      <BathroomsSelect
         name="property.single.baths"
-        options={bathsOptions}
         value={fields.bathrooms}
-        onChange={(e) => updateField('bathrooms', +e.target.value)}
+        onChange={(selection) => updateField('bathrooms', selection)}
       />
       <TextField
         type="number"

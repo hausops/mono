@@ -8,7 +8,7 @@ import {
 } from '@/components/NewProperty';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
-import {PropertyData, usePropertyService} from '@/services/property';
+import {NewPropertyData, usePropertyService} from '@/services/property';
 import {Button} from '@/volto/Button';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -44,10 +44,14 @@ export default function Page() {
             variant="contained"
             // TODO: validation
             onClick={async () => {
-              const d = toPropertyData(addressForm, detailsForm);
-              const created = await propertySvc.create(d);
-              console.log('property created', created);
-              router.push('/properties');
+              const d = toNewPropertyData(addressForm, detailsForm);
+              try {
+                const created = await propertySvc.add(d);
+                console.log('property created', created);
+                router.push('/properties');
+              } catch (err) {
+                console.error('Cannot add property', err);
+              }
             }}
           >
             Save
@@ -58,10 +62,10 @@ export default function Page() {
   );
 }
 
-function toPropertyData(
+function toNewPropertyData(
   addressForm: AddressFormState,
   detailsForm: DetailsFormState
-): PropertyData {
+): NewPropertyData {
   // TODO: validate required
   const propertyType =
     detailsForm.propertyType.selectedValue ?? 'single-family';
@@ -72,9 +76,11 @@ function toPropertyData(
     return {
       type: propertyType,
       address: address,
-      ...unit,
-      size: stringInputToNumber(unit.size),
-      rentAmount: stringInputToNumber(unit.rentAmount),
+      unit: {
+        ...unit,
+        size: stringInputToNumber(unit.size),
+        rentAmount: stringInputToNumber(unit.rentAmount),
+      },
     };
   }
 

@@ -1,11 +1,21 @@
-import {PropertyData, PropertyModel} from './PropertyModel';
+import {NewPropertyData, PropertyModel} from './PropertyModel';
 
 export interface PropertyService {
   getAll(): Promise<PropertyModel[]>;
 
+  get(id: string): Promise<PropertyModel | undefined>;
+
   // creates a new property from newPropertyData.
   // The service will assign the property id.
-  create(newPropertyData: PropertyData): Promise<PropertyModel>;
+  add(newPropertyData: NewPropertyData): Promise<PropertyModel>;
+
+  // patches the property matching id with updatePropertyData.
+  // If success, resolves to the updated PropertyModel.
+  // If a property with the id is not found, it will reject with an error.
+  update<T extends PropertyModel>(
+    id: string,
+    updateProperty: Partial<T>
+  ): Promise<T>;
 
   // deletes the property matching id.
   // If success, resolves to the id of the property being deleted

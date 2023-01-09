@@ -1,21 +1,51 @@
 import {nanoid} from 'nanoid';
-import {PropertyData, PropertyModel} from './PropertyModel';
+import {NewPropertyData, PropertyModel} from './PropertyModel';
 import {PropertyNotFoundErr, PropertyService} from './PropertyService';
 
 export class LocalPropertyService implements PropertyService {
   private readonly properties: Map<string, PropertyModel> = new Map(
-    Object.entries(DEMO_PROPERTIES)
+    DEMO_PROPERTIES.map((p) => [p.id, p])
   );
 
   async getAll(): Promise<PropertyModel[]> {
     return [...this.properties.values()];
   }
 
-  async create(newPropertyData: PropertyData): Promise<PropertyModel> {
+  async get(id: string): Promise<PropertyModel | undefined> {
+    return this.properties.get(id);
+  }
+
+  async add(newPropertyData: NewPropertyData): Promise<PropertyModel> {
     const id = nanoid();
-    const property = {...newPropertyData, id};
+    const p = withId(newPropertyData);
+    const property: PropertyModel =
+      p.type === 'single-family'
+        ? {...p, unit: withId(p.unit)}
+        : {...p, units: p.units.map(withId)};
     this.properties.set(id, property);
     return property;
+  }
+
+  async update<T extends PropertyModel>(
+    id: string,
+    updateProperty: Partial<T>
+  ): Promise<T> {
+    const previous = this.properties.get(id);
+
+    if (!previous) {
+      throw new PropertyNotFoundErr(id);
+    }
+
+    if (updateProperty.type && updateProperty.type !== previous.type) {
+      throw new Error(
+        `Mismatched property type: was=${previous.type}, got=${updateProperty.type}.`
+      );
+    }
+
+    // TODO: figure out how to handle type of previous safer in Typescript
+    const updated = {...(previous as T), ...updateProperty};
+    this.properties.set(id, updated);
+    return updated;
   }
 
   async delete(id: string): Promise<string> {
@@ -27,8 +57,12 @@ export class LocalPropertyService implements PropertyService {
   }
 }
 
-const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
-  '1029599': {
+function withId<T>(o: T): T & {id: string} {
+  return {...o, id: nanoid()};
+}
+
+const DEMO_PROPERTIES: PropertyModel[] = [
+  {
     id: '1029599',
     type: 'single-family',
     coverImageUrl: '/images/pexels-scott-webb-1029599.jpg',
@@ -38,8 +72,14 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
       state: 'GA',
       zip: '30542',
     },
+    unit: {
+      id: '1029599-0',
+      bedrooms: 3,
+      bathrooms: 2.5,
+      size: 1024,
+    },
   },
-  '2724749': {
+  {
     id: '2724749',
     type: 'single-family',
     coverImageUrl: '/images/pexels-mark-mccammon-2724749.jpg',
@@ -49,8 +89,12 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
       state: 'PA',
       zip: '19438',
     },
+    unit: {
+      id: '2724749-0',
+      activeListing: {id: '8d5f11ed'},
+    },
   },
-  '3288102': {
+  {
     id: '3288102',
     type: 'single-family',
     coverImageUrl: '/images/pexels-curtis-adams-3288102.jpg',
@@ -60,8 +104,9 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
       state: 'IL',
       zip: '60462',
     },
+    unit: {id: '3288102-0'},
   },
-  '9999990': {
+  {
     id: '9999990',
     type: 'single-family',
     address: {
@@ -70,8 +115,9 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
       state: 'MS',
       zip: '39120',
     },
+    unit: {id: '9999990'},
   },
-  '9999991': {
+  {
     id: '9999991',
     type: 'single-family',
     address: {
@@ -80,15 +126,18 @@ const DEMO_PROPERTIES: {[id: string]: PropertyModel} = {
       state: 'MS',
       zip: '39120',
     },
+    unit: {id: '9999991'},
   },
-  '9999992': {
+  {
     id: '9999992',
     type: 'single-family',
     address: {
-      line1: '9189 South Argyle Dr.',
-      city: 'Natchez',
-      state: 'MS',
-      zip: '39120',
+      line1: '290 County Rd',
+      line2: '#2011',
+      city: 'Vista',
+      state: 'CA',
+      zip: '92081',
     },
+    unit: {id: '9999992'},
   },
-};
+];

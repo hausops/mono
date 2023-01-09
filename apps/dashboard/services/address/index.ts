@@ -1,3 +1,4 @@
+export * from './Address';
 export * from './AddressModel';
 export * from './AddressService';
 export * from './AddressServiceContext';

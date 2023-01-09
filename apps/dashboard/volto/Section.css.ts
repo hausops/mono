@@ -9,8 +9,28 @@ export const Container = style({
   rowGap: unit(8),
 });
 
+export const Header = style({
+  display: 'flex',
+  alignItems: 'baseline',
+});
+
 export const Title = style({
+  flexGrow: 1,
   fontSize: font.size[16],
   fontWeight: font.weight.semibold,
   lineHeight: 1,
+});
+
+export const Actions = style({
+  flexShrink: 0,
+});
+
+export const SectionSkeletonContainer = style([
+  Container,
+  {minHeight: '15rem'},
+]);
+
+export const SectionSkeletonBody = style({
+  display: 'grid',
+  rowGap: unit(2),
 });

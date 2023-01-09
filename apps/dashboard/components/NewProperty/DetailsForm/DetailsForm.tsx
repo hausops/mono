@@ -1,6 +1,6 @@
 import {PropertyType} from '@/services/property';
 import {RadioGroupState, useRadioGroupState} from '@/volto/Radio';
-import {Section} from '../Section';
+import {Section} from '@/volto/Section';
 import {PropertyTypeSelector} from './PropertyTypeSelector';
 
 import {
