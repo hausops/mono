@@ -17,12 +17,12 @@ export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
       <BedroomsSelect
         name="property.single.beds"
         value={fields.bedrooms}
-        onChange={(e) => updateField('bedrooms', +e.target.value)}
+        onChange={(selection) => updateField('bedrooms', selection)}
       />
       <BathroomsSelect
         name="property.single.baths"
         value={fields.bathrooms}
-        onChange={(e) => updateField('bathrooms', +e.target.value)}
+        onChange={(selection) => updateField('bathrooms', selection)}
       />
       <TextField
         type="number"

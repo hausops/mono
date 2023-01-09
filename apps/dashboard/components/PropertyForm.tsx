@@ -2,27 +2,31 @@ import {Select, toOption} from '@/volto/Select';
 import {ComponentPropsWithoutRef, useMemo} from 'react';
 
 type Props = {
-  className?: string;
   name: string;
-} & Pick<ComponentPropsWithoutRef<typeof Select>, 'value' | 'onChange'>;
+  onChange: (selection: number | undefined) => void;
+} & Pick<ComponentPropsWithoutRef<typeof Select>, 'value'>;
 
-export function BedroomsSelect({className, name, value, onChange}: Props) {
+export function BedroomsSelect({name, value, onChange}: Props) {
   const options = useMemo(
     () => [{label: 'Studio', value: 0}, ...[1, 2, 3, 4, 5].map(toOption)],
     []
   );
+
   return (
     <Select
       label="Beds"
       name={name}
       options={options}
       value={value}
-      onChange={onChange}
+      onChange={(e) => {
+        const v = e.target.value;
+        onChange(v ? +v : undefined);
+      }}
     />
   );
 }
 
-export function BathroomsSelect({className, name, value, onChange}: Props) {
+export function BathroomsSelect({name, value, onChange}: Props) {
   const options = useMemo(
     () => [
       {label: 'None', value: 0},
@@ -36,7 +40,10 @@ export function BathroomsSelect({className, name, value, onChange}: Props) {
       name={name}
       options={options}
       value={value}
-      onChange={onChange}
+      onChange={(e) => {
+        const v = e.target.value;
+        onChange(v ? +v : undefined);
+      }}
     />
   );
 }

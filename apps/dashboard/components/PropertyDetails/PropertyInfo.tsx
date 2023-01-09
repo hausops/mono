@@ -91,7 +91,7 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
 }
 
 type AddressFields = Required<AddressModel>;
-type UnitFields = Omit<RentalUnit, 'size'> & {size?: string};
+type UnitFields = Omit<RentalUnit, 'size'> & {size: string};
 
 function Editing({
   property,
@@ -113,7 +113,7 @@ function Editing({
 
   const unit = useFieldsState<UnitFields>({
     ...property.unit,
-    size: property.unit.size ? `${property.unit.size}` : undefined,
+    size: property.unit.size ? `${property.unit.size}` : '',
   });
 
   return (
@@ -167,7 +167,7 @@ function Editing({
             <BedroomsSelect
               name={`${namePrefix}Beds`}
               value={unit.fields.bedrooms}
-              onChange={(e) => unit.updateField('bedrooms', +e.target.value)}
+              onChange={(selection) => unit.updateField('bedrooms', selection)}
             />
           }
         />
@@ -177,7 +177,7 @@ function Editing({
             <BathroomsSelect
               name={`${namePrefix}Baths`}
               value={unit.fields.bathrooms}
-              onChange={(e) => unit.updateField('bathrooms', +e.target.value)}
+              onChange={(selection) => unit.updateField('bathrooms', selection)}
             />
           }
         />
@@ -232,3 +232,8 @@ function toPropertyModel(
     },
   };
 }
+
+// convert input state (string) to a number, return undefined for an empty string
+// function stringInputToNumber(str: string): number | undefined {
+//   return str ? +str : undefined;
+// }
