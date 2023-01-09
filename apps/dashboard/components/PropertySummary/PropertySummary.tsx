@@ -1,3 +1,4 @@
+import {Address} from '@/services/address';
 import {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {IconButton} from '@/volto/Button';
@@ -12,20 +13,21 @@ type PropertySummaryProps = {
   property: PropertyModel;
 };
 
-export function PropertySummary({
-  property: {id, coverImageUrl, address},
-}: PropertySummaryProps) {
+export function PropertySummary({property}: PropertySummaryProps) {
+  const {id, coverImageUrl, address} = property;
+
+  const addr = Address.from(address);
+  const [street, region] = addr.format();
+
   return (
     <Card as="article">
-      <Cover image={coverImageUrl} caption={address.line1} />
+      <Cover image={coverImageUrl} caption={addr.toString()} />
       <div className={s.Body}>
         <div>
           <p className={s.Title}>
-            <Link href={`/properties/${id}`}>{address.line1}</Link>
+            <Link href={`/properties/${id}`}>{street}</Link>
           </p>
-          <p>
-            {address.city}, {address.state} {address.zip}
-          </p>
+          <p>{region}</p>
         </div>
         <div>
           <IconButton icon={<MoreH />} />
@@ -39,13 +41,26 @@ function Cover({image, caption = ''}: {image?: string; caption?: string}) {
   return (
     <AspectRatio as="figure" ratio="2:1" className={s.Cover}>
       {image ? (
-        <Image src={image} alt={caption} className={s.CoverImage} fill />
+        <Image
+          src={image}
+          alt={caption}
+          className={s.CoverImage}
+          fill
+          sizes={coverSizes}
+        />
       ) : (
         <NoImage />
       )}
     </AspectRatio>
   );
 }
+
+const coverSizes = [
+  '(min-width: 75rem) 40vw',
+  '(min-width: 60rem) 34vw',
+  '(min-width: 50rem) 62vw',
+  '54vw',
+].join(', ');
 
 function NoImage() {
   return <div className={s.NoImage}>No image</div>;
