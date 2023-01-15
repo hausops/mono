@@ -33,12 +33,6 @@ export const ContactInfo = style({
   display: 'flex',
 });
 
-export const TooltipContainer = style({
-  position: 'absolute',
-  paddingBlock: unit(2),
-  zIndex: layer.tooltip,
-});
-
 export const ContactTooltipContent = style({
   backgroundColor: color.neutral[35],
   color: color.neutral[98],

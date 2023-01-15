@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import * as s from './Tooltip.css';
+import * as s from './TooltipsManager.css';
 
 type TooltipsManager = {
   portalsContainer: HTMLElement | null;
