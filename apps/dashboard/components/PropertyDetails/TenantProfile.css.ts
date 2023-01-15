@@ -1,5 +1,4 @@
 import {color} from '@/volto/color.css';
-import {layer} from '@/volto/layer.css';
 import {vars} from '@/volto/root.css';
 import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
@@ -33,15 +32,6 @@ export const ContactInfo = style({
   display: 'flex',
 });
 
-export const ContactTooltipContent = style({
-  backgroundColor: color.neutral[35],
-  color: color.neutral[98],
-  fontSize: font.size[14],
-  paddingBlock: unit(2),
-  paddingInline: unit(4),
-  // width: 'max-content',
-});
-
 export const Contact = style({
   backgroundColor: 'transparent',
   border: 0,
@@ -59,20 +49,6 @@ export const Contact = style({
     backgroundColor: color.neutral[98],
     color: color.text.$,
   },
-});
-
-export const CopiedContact = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: unit(1),
-  // width: 'max-content',
-});
-
-export const CopiedContactIcon = style({
-  display: 'inline-flex',
-  fill: 'currentcolor',
-  height: unit(5),
-  width: unit(5),
 });
 
 export const ContactSeparator = style({

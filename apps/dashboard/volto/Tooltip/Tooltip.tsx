@@ -4,7 +4,7 @@ import {createPortal} from 'react-dom';
 import {useTooltipsManager} from './TooltipsManager';
 import * as s from './Tooltip.css';
 
-type TooltipProps = PropsWithChildren<{
+export type TooltipProps = PropsWithChildren<{
   id: string;
   isOpen: boolean;
 }> &

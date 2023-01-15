@@ -1,9 +1,11 @@
 import {Avatar} from '@/volto/Avatar';
-import {Card} from '@/volto/Card';
-import {Check} from '@/volto/icons';
-import {Tooltip, useTooltip} from '@/volto/Tooltip';
+import {
+  CopyToClipboardTooltip,
+  useCopyToClipboardState,
+  useTooltip,
+} from '@/volto/Tooltip';
 import Link from 'next/link';
-import {useEffect, useRef, useState} from 'react';
+import {useRef} from 'react';
 import * as s from './TenantProfile.css';
 
 type TenantProfileProps = {
@@ -45,27 +47,15 @@ export function TenantProfile({
 function Contact({children}: {children: string}) {
   const tooltip = useTooltip();
   const tooltipTriggerRef = useRef<HTMLButtonElement>(null);
-
-  const [isCopied, setCopied] = useState(false);
-
-  async function handleClick() {
-    if (navigator) {
-      await navigator.clipboard.writeText(children);
-      setCopied(true);
-    }
-  }
-
-  function handleTooltipClose() {
-    tooltip.state.close();
-    setCopied(false);
-  }
+  const {isCopied, copyToClipboard, handleTooltipClose} =
+    useCopyToClipboardState(children, tooltip.state);
 
   return (
     <>
       <button
         aria-describedby={tooltip.state.isOpen ? tooltip.id : undefined}
         className={s.Contact}
-        onClick={handleClick}
+        onClick={copyToClipboard}
         onFocus={tooltip.state.open}
         onBlur={handleTooltipClose}
         onMouseEnter={tooltip.state.open}
@@ -74,47 +64,14 @@ function Contact({children}: {children: string}) {
       >
         {children}
       </button>
-      <Tooltip
+      <CopyToClipboardTooltip
         id={tooltip.id}
-        isOpen={tooltip.state.isOpen}
+        isCopied={isCopied}
+        onClose={handleTooltipClose}
         placement="bottom"
+        state={tooltip.state}
         targetRef={tooltipTriggerRef}
-      >
-        <Card>
-          <div className={s.ContactTooltipContent}>
-            {isCopied ? (
-              <CopiedContact timeoutMs={1500} onTimeout={handleTooltipClose} />
-            ) : (
-              'Copy to clipboard'
-            )}
-          </div>
-        </Card>
-      </Tooltip>
+      />
     </>
-  );
-}
-
-function CopiedContact({
-  timeoutMs,
-  onTimeout,
-}: {
-  timeoutMs: number;
-  onTimeout: () => void;
-}) {
-  useEffect(() => {
-    if (timeoutMs < 0) {
-      return;
-    }
-    const timer = setTimeout(onTimeout, timeoutMs);
-    return () => clearTimeout(timer);
-  }, [timeoutMs, onTimeout]);
-
-  return (
-    <div className={s.CopiedContact}>
-      <span className={s.CopiedContactIcon}>
-        <Check />
-      </span>
-      Copied
-    </div>
   );
 }
