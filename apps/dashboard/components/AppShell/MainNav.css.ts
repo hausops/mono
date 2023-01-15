@@ -26,4 +26,5 @@ export const NavSection = style({
   alignItems: 'stretch',
   flexGrow: 1,
   overflow: 'auto',
+  rowGap: unit(1),
 });
