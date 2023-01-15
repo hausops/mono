@@ -67,6 +67,20 @@ export const Contact = style({
   },
 });
 
+export const CopiedContact = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: unit(1),
+  // width: 'max-content',
+});
+
+export const CopiedContactIcon = style({
+  display: 'inline-flex',
+  fill: 'currentcolor',
+  height: unit(5),
+  width: unit(5),
+});
+
 export const ContactSeparator = style({
   color: color.text.muted,
   display: 'inline-flex',

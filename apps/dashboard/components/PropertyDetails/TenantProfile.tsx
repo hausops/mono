@@ -1,5 +1,6 @@
 import {Avatar} from '@/volto/Avatar';
 import {Card} from '@/volto/Card';
+import {Check} from '@/volto/icons';
 import {useTooltipsManager} from '@/volto/Tooltip';
 import {AriaPositionProps, useOverlayPosition} from '@react-aria/overlays';
 import Link from 'next/link';
@@ -47,15 +48,31 @@ function Contact({children}: {children: string}) {
   const tooltipId = useId();
   const tooltipState = useTooltipState(tooltipId);
   const tooltipTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const [isCopied, setCopied] = useState(false);
+
+  async function handleClick() {
+    if (navigator) {
+      await navigator.clipboard.writeText(children);
+      setCopied(true);
+    }
+  }
+
+  function handleTooltipClose() {
+    tooltipState.close();
+    setCopied(false);
+  }
+
   return (
     <>
       <button
         aria-describedby={tooltipState.isOpen ? tooltipId : undefined}
         className={s.Contact}
+        onClick={handleClick}
         onFocus={tooltipState.open}
-        onBlur={tooltipState.close}
+        onBlur={handleTooltipClose}
         onMouseEnter={tooltipState.open}
-        onMouseLeave={tooltipState.close}
+        onMouseLeave={handleTooltipClose}
         ref={tooltipTriggerRef}
       >
         {children}
@@ -67,10 +84,41 @@ function Contact({children}: {children: string}) {
         targetRef={tooltipTriggerRef}
       >
         <Card>
-          <p className={s.ContactTooltipContent}>Copy to clipboard</p>
+          <div className={s.ContactTooltipContent}>
+            {isCopied ? (
+              <CopiedContact timeoutMs={1500} onTimeout={handleTooltipClose} />
+            ) : (
+              'Copy to clipboard'
+            )}
+          </div>
         </Card>
       </Tooltip>
     </>
+  );
+}
+
+function CopiedContact({
+  timeoutMs,
+  onTimeout,
+}: {
+  timeoutMs: number;
+  onTimeout: () => void;
+}) {
+  useEffect(() => {
+    if (timeoutMs < 0) {
+      return;
+    }
+    const timer = setTimeout(onTimeout, timeoutMs);
+    return () => clearTimeout(timer);
+  }, [timeoutMs, onTimeout]);
+
+  return (
+    <div className={s.CopiedContact}>
+      <span className={s.CopiedContactIcon}>
+        <Check />
+      </span>
+      Copied
+    </div>
   );
 }
 
@@ -88,13 +136,20 @@ function Tooltip(props: TooltipProps) {
 
   const {portalsContainer} = useTooltipsManager();
   const overlayRef = useRef<HTMLDivElement>(null);
-  const {overlayProps} = useOverlayPosition({
+  const {overlayProps, updatePosition} = useOverlayPosition({
     boundaryElement: portalsContainer || undefined,
     isOpen,
     overlayRef,
     placement,
     targetRef,
   });
+
+  // update position when content (children) changes
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+    }
+  }, [children, isOpen, updatePosition]);
 
   if (!isOpen || !portalsContainer) {
     return null;
