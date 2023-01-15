@@ -23,9 +23,11 @@ export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
     null
   );
 
+  const {current: visibility} = useRef(new VisibilityManager());
+
   const tooltipsManager: TooltipsManager = {
     portalsContainer,
-    visibility: useVisibilityManager(),
+    visibility,
   };
 
   return (
@@ -46,30 +48,23 @@ export function useTooltipsManager(): TooltipsManager {
 
 const TooltipsManagerContext = createContext<TooltipsManager | null>(null);
 
-interface VisibilityManager {
-  addCloseFunction(id: string, close: () => void): void;
-  removeCloseFunction(id: string): void;
-  closeAll(): void;
-}
+class VisibilityManager {
+  private closeById = new Map<string, () => void>();
 
-function useVisibilityManager(): VisibilityManager {
-  const {current: closeById} = useRef(new Map<string, () => void>());
-  return {
-    addCloseFunction(id, close) {
-      closeById.set(id, close);
-    },
+  addCloseFunction(id: string, close: () => void): void {
+    this.closeById.set(id, close);
+  }
 
-    removeCloseFunction(id) {
-      closeById.delete(id);
-    },
+  removeCloseFunction(id: string): void {
+    this.closeById.delete(id);
+  }
 
-    closeAll() {
-      for (const [, close] of closeById) {
-        close();
-      }
-      closeById.clear();
-    },
-  };
+  closeAll(): void {
+    for (const [, close] of this.closeById) {
+      close();
+    }
+    this.closeById.clear();
+  }
 }
 
 const PortalsContainer = forwardRef<HTMLDivElement>(function PortalsContainer(
