@@ -2,6 +2,7 @@ import {AppShell} from '@/components/AppShell';
 import {AddressServiceProvider, LocalAddressService} from '@/services/address';
 import {LocalPropertyService} from '@/services/property';
 import {PropertyServiceProvider} from '@/services/property/PropertyServiceContext';
+import {TooltipsManagerProvider} from '@/volto/Tooltip';
 import type {AppProps} from 'next/app';
 import './_app.css';
 
@@ -12,9 +13,11 @@ export default function App({Component, pageProps}: AppProps) {
   return (
     <AddressServiceProvider service={addressSvc}>
       <PropertyServiceProvider service={propertySvc}>
-        <AppShell>
-          <Component {...pageProps} />
-        </AppShell>
+        <TooltipsManagerProvider>
+          <AppShell>
+            <Component {...pageProps} />
+          </AppShell>
+        </TooltipsManagerProvider>
       </PropertyServiceProvider>
     </AddressServiceProvider>
   );
