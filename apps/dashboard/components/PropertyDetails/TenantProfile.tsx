@@ -3,7 +3,7 @@ import {Card} from '@/volto/Card';
 import {useTooltipsManager} from '@/volto/Tooltip';
 import {AriaPositionProps, useOverlayPosition} from '@react-aria/overlays';
 import Link from 'next/link';
-import {PropsWithChildren, useRef, useState} from 'react';
+import {PropsWithChildren, useEffect, useId, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import * as s from './TenantProfile.css';
 
@@ -44,12 +44,16 @@ export function TenantProfile({
 }
 
 function Contact({children}: {children: string}) {
-  const tooltipState = useTooltipState();
+  const tooltipId = useId();
+  const tooltipState = useTooltipState(tooltipId);
   const tooltipTriggerRef = useRef<HTMLButtonElement>(null);
   return (
     <>
       <button
+        aria-describedby={tooltipState.isOpen ? tooltipId : undefined}
         className={s.Contact}
+        onFocus={tooltipState.open}
+        onBlur={tooltipState.close}
         onMouseEnter={tooltipState.open}
         onMouseLeave={tooltipState.close}
         ref={tooltipTriggerRef}
@@ -57,6 +61,7 @@ function Contact({children}: {children: string}) {
         {children}
       </button>
       <Tooltip
+        id={tooltipId}
         isOpen={tooltipState.isOpen}
         placement="bottom"
         targetRef={tooltipTriggerRef}
@@ -72,13 +77,14 @@ function Contact({children}: {children: string}) {
 // Tooltip is an element to provide a short context or hint about an UI element.
 
 type TooltipProps = PropsWithChildren<{
+  id: string;
   isOpen: boolean;
 }> &
   Pick<AriaPositionProps, 'placement' | 'targetRef'>;
 
 // Tooltip.Overlay
 function Tooltip(props: TooltipProps) {
-  const {children, isOpen, placement, targetRef} = props;
+  const {children, id, isOpen, placement, targetRef} = props;
 
   const {portalsContainer} = useTooltipsManager();
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -97,6 +103,7 @@ function Tooltip(props: TooltipProps) {
   const position = overlayProps.style ?? {};
   return createPortal(
     <div
+      id={id}
       className={s.TooltipContainer}
       ref={overlayRef}
       role="tooltip"
@@ -113,18 +120,31 @@ function Tooltip(props: TooltipProps) {
   );
 }
 
-function useTooltipState(initialOpen: boolean = false) {
+function useTooltipState(id: string, initialOpen: boolean = false) {
   const [isOpen, setOpen] = useState(initialOpen);
+  const {visibility} = useTooltipsManager();
+
+  useEffect(
+    () => () => {
+      visibility.removeCloseFunction(id);
+    },
+    [id, visibility]
+  );
+
   return {
     isOpen,
+
     open() {
+      visibility.closeAll();
+      visibility.addCloseFunction(id, () => setOpen(false));
       setOpen(true);
     },
+
     close() {
+      // need to unsubscribe on close because closing a tooltip
+      // does not guarantee to cause an unmount.
+      visibility.removeCloseFunction(id);
       setOpen(false);
-    },
-    toggle() {
-      setOpen(!isOpen);
     },
   };
 }

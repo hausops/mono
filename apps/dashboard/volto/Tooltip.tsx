@@ -3,17 +3,15 @@ import {
   forwardRef,
   PropsWithChildren,
   useContext,
+  useRef,
   useState,
 } from 'react';
 import * as s from './Tooltip.css';
 
 type TooltipsManager = {
   portalsContainer: HTMLElement | null;
+  visibility: VisibilityManager;
 };
-
-export const TooltipsManagerContext = createContext<TooltipsManager>({
-  portalsContainer: null,
-});
 
 type TooltipsManagerProviderProps = PropsWithChildren<{}>;
 
@@ -25,8 +23,9 @@ export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
     null
   );
 
-  const tooltipsManager = {
+  const tooltipsManager: TooltipsManager = {
     portalsContainer,
+    visibility: useVisibilityManager(),
   };
 
   return (
@@ -37,6 +36,42 @@ export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
   );
 }
 
+export function useTooltipsManager(): TooltipsManager {
+  const tooltipsManager = useContext(TooltipsManagerContext);
+  if (!tooltipsManager) {
+    throw new Error('TooltipsManager is not provided via context.');
+  }
+  return tooltipsManager;
+}
+
+const TooltipsManagerContext = createContext<TooltipsManager | null>(null);
+
+interface VisibilityManager {
+  addCloseFunction(id: string, close: () => void): void;
+  removeCloseFunction(id: string): void;
+  closeAll(): void;
+}
+
+function useVisibilityManager(): VisibilityManager {
+  const {current: closeById} = useRef(new Map<string, () => void>());
+  return {
+    addCloseFunction(id, close) {
+      closeById.set(id, close);
+    },
+
+    removeCloseFunction(id) {
+      closeById.delete(id);
+    },
+
+    closeAll() {
+      for (const [, close] of closeById) {
+        close();
+      }
+      closeById.clear();
+    },
+  };
+}
+
 const PortalsContainer = forwardRef<HTMLDivElement>(function PortalsContainer(
   _,
   ref
@@ -45,8 +80,3 @@ const PortalsContainer = forwardRef<HTMLDivElement>(function PortalsContainer(
     <div id="tooltips-container" className={s.PortalsContainer} ref={ref} />
   );
 });
-
-export function useTooltipsManager() {
-  const tooltipsManager = useContext(TooltipsManagerContext);
-  return tooltipsManager;
-}
