@@ -1,6 +1,7 @@
 import {Avatar} from '@/volto/Avatar';
 import {Card} from '@/volto/Card';
-import {useOverlayPosition, AriaPositionProps} from '@react-aria/overlays';
+import {useTooltipsManager} from '@/volto/Tooltip';
+import {AriaPositionProps, useOverlayPosition} from '@react-aria/overlays';
 import Link from 'next/link';
 import {PropsWithChildren, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
@@ -73,22 +74,23 @@ function Contact({children}: {children: string}) {
 type TooltipProps = PropsWithChildren<{
   isOpen: boolean;
 }> &
-  Pick<AriaPositionProps, 'boundaryElement' | 'placement' | 'targetRef'>;
+  Pick<AriaPositionProps, 'placement' | 'targetRef'>;
 
 // Tooltip.Overlay
 function Tooltip(props: TooltipProps) {
-  const {boundaryElement, children, isOpen, placement, targetRef} = props;
+  const {children, isOpen, placement, targetRef} = props;
 
+  const {portalsContainer} = useTooltipsManager();
   const overlayRef = useRef<HTMLDivElement>(null);
   const {overlayProps} = useOverlayPosition({
-    // boundaryElement,
+    boundaryElement: portalsContainer || undefined,
     isOpen,
     overlayRef,
     placement,
     targetRef,
   });
 
-  if (!isOpen) {
+  if (!isOpen || !portalsContainer) {
     return null;
   }
 
@@ -107,7 +109,7 @@ function Tooltip(props: TooltipProps) {
     >
       {children}
     </div>,
-    document.body
+    portalsContainer
   );
 }
 
