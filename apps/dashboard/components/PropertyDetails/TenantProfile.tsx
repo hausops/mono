@@ -53,12 +53,10 @@ function Contact({children}: {children: string}) {
   return (
     <>
       <button
-        aria-describedby={tooltip.state.isOpen ? tooltip.id : undefined}
+        {...tooltip.triggerProps}
         className={s.Contact}
         onClick={copyToClipboard}
-        onFocus={tooltip.state.open}
         onBlur={handleTooltipClose}
-        onMouseEnter={tooltip.state.open}
         onMouseLeave={handleTooltipClose}
         ref={tooltipTriggerRef}
       >

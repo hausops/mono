@@ -11,12 +11,12 @@ export type TooltipProps = PropsWithChildren<{
   Pick<AriaPositionProps, 'placement' | 'targetRef'>;
 
 export function Tooltip(props: TooltipProps) {
-  const {children, id, isOpen, placement, targetRef} = props;
+  const {children, id, isOpen, placement = 'top', targetRef} = props;
 
   const {portalsContainer} = useTooltipsManager();
   const overlayRef = useRef<HTMLDivElement>(null);
   const {overlayProps, updatePosition} = useOverlayPosition({
-    boundaryElement: portalsContainer || undefined,
+    boundaryElement: portalsContainer || undefined, // satisfy the type
     isOpen,
     overlayRef,
     placement,

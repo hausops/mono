@@ -8,6 +8,10 @@ import {
 } from 'react';
 import * as s from './TooltipsManager.css';
 
+// TooltipsManager manages states across different tooltips such as ensuring
+// that only one tooltip is open at a given time.
+//
+// It also provides the portal element for tooltips.
 type TooltipsManager = {
   portalsContainer: HTMLElement | null;
   visibility: VisibilityManager;
@@ -17,7 +21,7 @@ type TooltipsManagerProviderProps = PropsWithChildren<{}>;
 
 export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
   const {children} = props;
-  // Cannot use useRef here because it does not cause re-render
+  // Cannot use useRef here because it does not cause a re-render
   // thus the context is not updated after the container mounted.
   const [portalsContainer, setPortalsContainer] = useState<HTMLElement | null>(
     null
@@ -51,11 +55,11 @@ const TooltipsManagerContext = createContext<TooltipsManager | null>(null);
 class VisibilityManager {
   private closeById = new Map<string, () => void>();
 
-  addCloseFunction(id: string, close: () => void): void {
+  registerCloseTooltip(id: string, close: () => void): void {
     this.closeById.set(id, close);
   }
 
-  removeCloseFunction(id: string): void {
+  deregisterCloseTooltip(id: string): void {
     this.closeById.delete(id);
   }
 
