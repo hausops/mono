@@ -8,33 +8,34 @@ export type TooltipState = {
 };
 
 export function useTooltipState(
+  // id is used to identify the tooltip with the TooltipsManager
   id: string,
   initialOpen: boolean = false
 ): TooltipState {
   const [isOpen, setOpen] = useState(initialOpen);
   const {visibility} = useTooltipsManager();
 
+  function open(): void {
+    visibility.closeAll();
+    visibility.registerCloseTooltip(id, close);
+    setOpen(true);
+  }
+
+  function close(): void {
+    visibility.deregisterCloseTooltip(id);
+    setOpen(false);
+  }
+
   useEffect(
     () => () => {
-      visibility.removeCloseFunction(id);
+      visibility.deregisterCloseTooltip(id);
     },
     [id, visibility]
   );
 
   return {
     isOpen,
-
-    open() {
-      visibility.closeAll();
-      visibility.addCloseFunction(id, () => setOpen(false));
-      setOpen(true);
-    },
-
-    close() {
-      // need to unsubscribe on close because closing a tooltip
-      // does not guarantee to cause an unmount.
-      visibility.removeCloseFunction(id);
-      setOpen(false);
-    },
+    open,
+    close,
   };
 }
