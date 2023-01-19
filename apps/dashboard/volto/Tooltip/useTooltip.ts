@@ -1,4 +1,4 @@
-import {DOMAttributes, useId} from 'react';
+import {useId} from 'react';
 import {TooltipState, useTooltipState} from './useTooltipState';
 
 type TriggerProps = {
