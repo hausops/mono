@@ -1,5 +1,4 @@
 import {SingleFamilyProperty} from '@/services/property';
-import {SWRConfig} from 'swr';
 import {PropertyImages} from './PropertyImages';
 import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';
