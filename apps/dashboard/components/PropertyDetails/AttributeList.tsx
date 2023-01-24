@@ -6,7 +6,7 @@ export function AttributeList({
   children,
   className,
 }: PropsWithChildren<{className?: string}>) {
-  return <div className={clsx(s.AttributeList, className)}>{children}</div>;
+  return <dl className={clsx(s.AttributeList, className)}>{children}</dl>;
 }
 
 export function Attribute({
@@ -19,9 +19,9 @@ export function Attribute({
   fallbackValue?: ReactNode;
 }) {
   return (
-    <dl className={s.Attribute}>
+    <div className={s.Attribute}>
       <dt>{label}</dt>
       <dd>{value ?? fallbackValue}</dd>
-    </dl>
+    </div>
   );
 }
