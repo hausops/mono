@@ -1,11 +1,11 @@
 import {Address} from '@/services/address';
-import {SingleFamilyProperty} from '@/services/property';
+import {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {Section} from '@/volto/Section';
 import Image from 'next/image';
 import * as s from './PropertyImages.css';
 
-export function PropertyImages({property}: {property: SingleFamilyProperty}) {
+export function PropertyImages({property}: {property: PropertyModel}) {
   const {coverImageUrl, address} = property;
   const addr = Address.from(address);
   return (

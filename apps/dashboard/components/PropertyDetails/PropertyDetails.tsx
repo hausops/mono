@@ -1,6 +1,7 @@
+import {LeaseServiceProvider, LocalLeaseService} from '@/services/lease';
 import {PropertyModel} from '@/services/property';
+import {MultiFamilyPropertyDetails} from './MultiFamilyPropertyDetails';
 import {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails';
-import {LocalLeaseService, LeaseServiceProvider} from '@/services/lease';
 
 type PropertyDetailsProps = {
   property: PropertyModel;
@@ -16,5 +17,5 @@ export function PropertyDetails({property}: PropertyDetailsProps) {
       </LeaseServiceProvider>
     );
   }
-  return <p>TODO: MultiFamily</p>;
+  return <MultiFamilyPropertyDetails property={property} />;
 }

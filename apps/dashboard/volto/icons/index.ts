@@ -9,6 +9,7 @@ export {EditFilled} from './EditFilled';
 export {Home} from './Home';
 export {HomeFilled} from './HomeFilled';
 export {Image} from './Image';
+export {LocationOn} from './LocationOn';
 export {MoreH} from './MoreH';
 export {PersonFilled} from './PersonFilled';
 export {Settings} from './Settings';
