@@ -3,6 +3,7 @@ import {
   AddressFormState,
   useAddressFormState,
 } from '@/components/AddressForm';
+import {Attribute, AttributeList} from '@/components/AttributeList';
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address} from '@/services/address';
@@ -17,7 +18,6 @@ import {Section} from '@/volto/Section';
 import {TextField} from '@/volto/TextField';
 import {useState} from 'react';
 import useSWR from 'swr';
-import {Attribute, AttributeList} from './AttributeList';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {

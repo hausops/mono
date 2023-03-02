@@ -1,5 +1,5 @@
 import {SingleFamilyProperty} from '@/services/property';
-import {PropertyImages} from './PropertyImages';
+import {PropertyImages} from '../PropertyImages';
 import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';
 import * as s from './SingleFamilyPropertyDetails.css';

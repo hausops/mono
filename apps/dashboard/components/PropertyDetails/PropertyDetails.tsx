@@ -1,7 +1,7 @@
 import {LeaseServiceProvider, LocalLeaseService} from '@/services/lease';
 import {PropertyModel} from '@/services/property';
 import {MultiFamilyPropertyDetails} from './MultiFamilyPropertyDetails';
-import {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails';
+import {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails/SingleFamilyPropertyDetails';
 
 type PropertyDetailsProps = {
   property: PropertyModel;
