@@ -1,74 +1,37 @@
-import {LeaseModel, useLeaseService} from '@/services/lease';
-import {MultiFamilyProperty, RentalUnit} from '@/services/property';
+import {LeaseModel} from '@/services/lease';
+import {RentalUnit} from '@/services/property';
 import {Badge, LivenessBadge} from '@/volto/Badge';
 import {IconButton} from '@/volto/Button';
-import {TextSkeleton} from '@/volto/Skeleton';
 import {MoreH} from '@/volto/icons';
+import {TextSkeleton} from '@/volto/Skeleton';
 import Link from 'next/link';
 import {useMemo} from 'react';
-import useSWR from 'swr';
-import * as s from './UnitList.css';
-
-type UnitListProps = {
-  property: MultiFamilyProperty;
-};
-
-export function UnitList(props: UnitListProps) {
-  const {property} = props;
-
-  const leaseSvc = useLeaseService();
-  const {isLoading, data: leaseByUnitId} = useSWR(
-    `/api/leases?property_id=${property.id}`,
-    async () => {
-      const unitIds = property.units.map((u) => u.id).sort();
-      const leases = await leaseSvc.getManyByUnitIds(unitIds);
-      return new Map(leases.map((lease) => [lease.unitId, lease]));
-    }
-  );
-
-  if (isLoading) {
-    return (
-      <div>
-        <UnitSkeleton />
-        <UnitSkeleton />
-        <UnitSkeleton />
-      </div>
-    );
-  }
-
-  return (
-    <ul>
-      {property.units.map((u) => (
-        <Unit key={u.id} unit={u} lease={leaseByUnitId?.get(u.id)} />
-      ))}
-    </ul>
-  );
-}
+import * as s from './Unit.css';
 
 type UnitProps = {
   lease?: LeaseModel;
   unit: RentalUnit;
 };
 
-function Unit(props: UnitProps) {
+export function Unit(props: UnitProps) {
   const {lease, unit} = props;
   return (
     <li className={s.Unit}>
-      <div className={s.UnitColumn}>
-        <h4 className={s.UnitTitle}>{unit.number}</h4>
-        <ul className={s.UnitInfo}>
-          <li className={s.UnitInfoItem}>
+      <div className={s.Column}>
+        <h4 className={s.Title}>{unit.number}</h4>
+        <ul className={s.Info}>
+          <li className={s.InfoItem}>
             {unit.bedrooms === 0 ? 'Studio' : `${unit.bedrooms} bedrooms`}
           </li>
-          <li className={s.UnitInfoItem}>{unit.bathrooms} bathrooms</li>
-          <li className={s.UnitInfoItem}>
+          <li className={s.InfoItem}>{unit.bathrooms} bathrooms</li>
+          <li className={s.InfoItem}>
             {unit.size == null
               ? null
               : `${formatters.default.format(unit.size)} sq.ft.`}
           </li>
         </ul>
       </div>
-      <div className={s.UnitColumn}>
+      <div className={s.Column}>
         {lease ? (
           <Rented lease={lease} />
         ) : (
@@ -145,11 +108,11 @@ const formatters = {
 export function UnitSkeleton() {
   return (
     <div className={s.Unit}>
-      <div className={s.UnitColumn}>
+      <div className={s.Column}>
         <TextSkeleton width="6rem" />
         <TextSkeleton width="15rem" />
       </div>
-      <div className={s.UnitColumn}>
+      <div className={s.Column}>
         <LivenessBadge>
           <TextSkeleton width="4rem" />
         </LivenessBadge>

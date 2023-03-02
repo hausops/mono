@@ -18,24 +18,24 @@ export const Unit = style({
   },
 });
 
-export const UnitColumn = style({
+export const Column = style({
   display: 'grid',
   alignItems: 'start',
   gap: unit(1),
 });
 
-export const UnitTitle = style({
+export const Title = style({
   lineHeight: 1,
   fontSize: font.size[16],
   fontWeight: font.weight.semibold,
 });
 
-export const UnitInfo = style({
+export const Info = style({
   alignItems: 'center',
   display: 'flex',
 });
 
-export const UnitInfoItem = style({
+export const InfoItem = style({
   selectors: {
     '&:not(:first-of-type)::before': {
       content: '•',
