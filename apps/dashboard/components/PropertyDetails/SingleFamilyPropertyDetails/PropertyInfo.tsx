@@ -13,7 +13,7 @@ import {
   usePropertyService,
 } from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
-import {Close, EditFilled} from '@/volto/icons';
+import {CloseIcon, EditFilledIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
 import {TextField} from '@/volto/TextField';
 import {useState} from 'react';
@@ -43,7 +43,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
       title="Property info"
       actions={
         <MiniTextButton
-          icon={editing ? <Close /> : <EditFilled />}
+          icon={editing ? <CloseIcon /> : <EditFilledIcon />}
           onClick={() => setEditing(!editing)}
         >
           {editing ? 'Cancel' : 'Edit'}

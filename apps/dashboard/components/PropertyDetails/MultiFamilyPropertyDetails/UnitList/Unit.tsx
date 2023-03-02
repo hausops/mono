@@ -2,7 +2,7 @@ import {LeaseModel} from '@/services/lease';
 import {RentalUnit} from '@/services/property';
 import {Badge, LivenessBadge} from '@/volto/Badge';
 import {IconButton} from '@/volto/Button';
-import {MoreH} from '@/volto/icons';
+import {MoreHIcon} from '@/volto/icons';
 import {TextSkeleton} from '@/volto/Skeleton';
 import Link from 'next/link';
 import {useMemo} from 'react';
@@ -39,7 +39,7 @@ export function Unit(props: UnitProps) {
         )}
       </div>
       <div>
-        <IconButton icon={<MoreH />} />
+        <IconButton icon={<MoreHIcon />} />
       </div>
     </li>
   );
@@ -119,7 +119,7 @@ export function UnitSkeleton() {
         <TextSkeleton width="15rem" />
       </div>
       <div>
-        <IconButton icon={<MoreH />} />
+        <IconButton icon={<MoreHIcon />} />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import {LeaseModel, useLeaseService} from '@/services/lease';
 import {SingleFamilyProperty} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
-import {Home} from '@/volto/icons';
+import {HomeIcon} from '@/volto/icons';
 import {Section, SectionSkeleton} from '@/volto/Section';
 import Link from 'next/link';
 import useSWR from 'swr';
@@ -104,7 +104,7 @@ function Vacant({property}: {property: SingleFamilyProperty}) {
   return (
     <Section title="Rent info">
       <EmptyState
-        icon={<Home />}
+        icon={<HomeIcon />}
         title="Not currently rented"
         description={description}
         actions={actions}

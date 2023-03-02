@@ -4,7 +4,7 @@
  */
 
 import {Card} from '@/volto/Card';
-import {Check} from '@/volto/icons';
+import {CheckIcon} from '@/volto/icons';
 import {useEffect, useState} from 'react';
 import * as s from './CopyToClipboardTooltip.css';
 import {Tooltip, TooltipProps} from './Tooltip';
@@ -51,7 +51,7 @@ function Copied({
   return (
     <div className={s.Copied}>
       <span className={s.CopiedIcon}>
-        <Check />
+        <CheckIcon />
       </span>
       Copied
     </div>

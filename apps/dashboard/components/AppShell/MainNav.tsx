@@ -1,12 +1,12 @@
 // import {Stack} from '@/volto/Stack';
 
 import {
-  Chair,
-  CreditCard,
-  Description,
-  HomeFilled,
-  Settings,
-  SpaceDashboard,
+  ChairIcon,
+  CreditCardIcon,
+  DescriptionIcon,
+  HomeFilledIcon,
+  SettingsIcon,
+  SpaceDashboardIcon,
 } from '@/volto/icons';
 import {PropsWithChildren} from 'react';
 import * as s from './MainNav.css';
@@ -22,7 +22,7 @@ export function MainNav() {
         ))}
       </NavSection>
       <footer className={s.Footer}></footer>
-      <NavLink href="/settings" icon={Settings} text="Settings" />
+      <NavLink href="/settings" icon={SettingsIcon} text="Settings" />
     </aside>
   );
 }
@@ -39,27 +39,27 @@ const navLinks: NavLinkProps[] = [
   {
     exact: true,
     href: '/',
-    icon: SpaceDashboard,
+    icon: SpaceDashboardIcon,
     text: 'Dashboard',
   },
   {
     href: '/properties',
-    icon: HomeFilled,
+    icon: HomeFilledIcon,
     text: 'Properties',
   },
   {
     href: '/units',
-    icon: Chair,
+    icon: ChairIcon,
     text: 'Units',
   },
   {
     href: '/applications',
-    icon: Description,
+    icon: DescriptionIcon,
     text: 'Applications',
   },
   {
     href: '/payments',
-    icon: CreditCard,
+    icon: CreditCardIcon,
     text: 'Payments',
   },
 ];
