@@ -1,6 +1,6 @@
-import {BedroomsSelect, BathroomsSelect} from '@/components/PropertyForm';
+import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {MiniTextButton} from '@/volto/Button';
-import {Close, Copy} from '@/volto/icons';
+import {CloseIcon, CopyIcon} from '@/volto/icons';
 import {TextField} from '@/volto/TextField';
 import {RentalUnit} from './RentalUnit';
 import * as s from './UnitEntry.css';
@@ -25,11 +25,14 @@ export function UnitEntry({
       <header className={s.Header}>
         <h3 className={s.Title}>Unit {index + 1}</h3>
         <div className={s.Actions}>
-          <MiniTextButton icon={<Copy />} onClick={() => onClone(index)}>
+          <MiniTextButton icon={<CopyIcon />} onClick={() => onClone(index)}>
             Clone
           </MiniTextButton>
           {onRemove && (
-            <MiniTextButton icon={<Close />} onClick={() => onRemove(index)}>
+            <MiniTextButton
+              icon={<CloseIcon />}
+              onClick={() => onRemove(index)}
+            >
               Remove
             </MiniTextButton>
           )}

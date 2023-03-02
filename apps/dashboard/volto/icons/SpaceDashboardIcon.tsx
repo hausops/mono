@@ -1,6 +1,6 @@
 import {SvgIcon} from './SvgIcon';
 
-export function SpaceDashboard() {
+export function SpaceDashboardIcon() {
   return (
     <SvgIcon>
       <rect fill="none" height="24" width="24" />

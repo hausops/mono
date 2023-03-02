@@ -1,7 +1,7 @@
+import {PersonFilledIcon} from '@/volto/icons';
 import clsx from 'clsx';
 import Image from 'next/image';
 import * as s from './Avatar.css';
-import {PersonFilled} from './icons';
 
 type AvatarProps = {
   imageUrl?: string;
@@ -30,7 +30,7 @@ export function Avatar({size = 'medium', imageUrl, name}: AvatarProps) {
 function Fallback() {
   return (
     <div className={s.Fallback}>
-      <PersonFilled />
+      <PersonFilledIcon />
     </div>
   );
 }

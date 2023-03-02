@@ -6,7 +6,7 @@ import {
 import {Address} from '@/services/address';
 import {MultiFamilyProperty, usePropertyService} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
-import {Close, EditFilled, LocationOn} from '@/volto/icons';
+import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
 import {useState} from 'react';
 import useSWR from 'swr';
@@ -35,7 +35,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
       title="Property info"
       actions={
         <MiniTextButton
-          icon={editing ? <Close /> : <EditFilled />}
+          icon={editing ? <CloseIcon /> : <EditFilledIcon />}
           onClick={() => setEditing(!editing)}
         >
           {editing ? 'Cancel' : 'Edit'}
@@ -63,7 +63,7 @@ function Viewing({property}: {property: MultiFamilyProperty}) {
   return (
     <p className={s.Address}>
       <span className={s.AddressIcon}>
-        <LocationOn />
+        <LocationOnIcon />
       </span>
       {addr.toString()}
     </p>

@@ -1,6 +1,6 @@
+import {ExpandMoreIcon} from '@/volto/icons';
 import clsx from 'clsx';
 import {SelectHTMLAttributes, useId} from 'react';
-import {ExpandMore} from './icons/ExpandMore';
 import * as s from './Select.css';
 
 type Option = {
@@ -48,7 +48,7 @@ export function Select({
           ))}
         </select>
         <div className={s.ExpandIcon}>
-          <ExpandMore />
+          <ExpandMoreIcon />
         </div>
       </div>
     </div>

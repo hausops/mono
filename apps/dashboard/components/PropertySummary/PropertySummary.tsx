@@ -3,7 +3,7 @@ import {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {IconButton} from '@/volto/Button';
 import {Card} from '@/volto/Card';
-import {MoreH} from '@/volto/icons';
+import {MoreHIcon} from '@/volto/icons';
 import {TextSkeleton} from '@/volto/Skeleton';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -30,7 +30,7 @@ export function PropertySummary({property}: PropertySummaryProps) {
           <p>{region}</p>
         </div>
         <div>
-          <IconButton icon={<MoreH />} />
+          <IconButton icon={<MoreHIcon />} />
         </div>
       </div>
     </Card>
