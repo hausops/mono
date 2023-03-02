@@ -1,6 +1,11 @@
+import {
+  AddressForm,
+  AddressFormState,
+  useAddressFormState,
+} from '@/components/AddressForm';
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
-import {Address, AddressModel, useAddressService} from '@/services/address';
+import {Address} from '@/services/address';
 import {
   RentalUnit,
   SingleFamilyProperty,
@@ -9,9 +14,8 @@ import {
 import {Button, MiniTextButton} from '@/volto/Button';
 import {Close, EditFilled} from '@/volto/icons';
 import {Section} from '@/volto/Section';
-import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
-import {useMemo, useState} from 'react';
+import {useState} from 'react';
 import useSWR from 'swr';
 import {Attribute, AttributeList} from './AttributeList';
 import * as s from './PropertyInfo.css';
@@ -49,7 +53,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
       {editing ? (
         <Editing
           property={property}
-          onEditSuccess={(updatedProperty: SingleFamilyProperty) => {
+          onEditSuccess={(updatedProperty) => {
             mutateProperty(updatedProperty, {revalidate: false});
             exitEditing();
           }}
@@ -90,7 +94,6 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
   );
 }
 
-type AddressFields = Required<AddressModel>;
 type UnitFields = Omit<RentalUnit, 'size'> & {size: string};
 
 function Editing({
@@ -103,14 +106,9 @@ function Editing({
   onEditSuccess: (updatedProperty: SingleFamilyProperty) => void;
 }) {
   const namePrefix = 'PropertyInfo';
-  const addressSvc = useAddressService();
   const propertySvc = usePropertyService();
 
-  const address = useFieldsState<AddressFields>({
-    line2: '', // fallback when we don't have data for this field
-    ...property.address,
-  });
-
+  const address = useAddressFormState(property.address);
   const unit = useFieldsState<UnitFields>({
     ...property.unit,
     size: property.unit.size ? `${property.unit.size}` : '',
@@ -121,45 +119,7 @@ function Editing({
       <AttributeList className={s.EditingAttributeList}>
         <Attribute
           label="Address"
-          value={
-            <div className={s.AddressForm}>
-              <TextField
-                label="Street address"
-                name={`${namePrefix}AddressLine1`}
-                placeholder="200 Main St."
-                value={address.fields.line1}
-                onChange={(e) => address.updateField('line1', e.target.value)}
-              />
-              <TextField
-                label="Apartment, suite, etc."
-                name={`${namePrefix}AddressLine2`}
-                value={address.fields.line2}
-                onChange={(e) => address.updateField('line2', e.target.value)}
-              />
-              <TextField
-                label="City"
-                name={`${namePrefix}AddressCity`}
-                value={address.fields.city}
-                onChange={(e) => address.updateField('city', e.target.value)}
-              />
-              <Select
-                label="State"
-                name={`${namePrefix}AddressState`}
-                options={useMemo(
-                  () => addressSvc.getAllStates().map((s) => toOption(s.code)),
-                  [addressSvc]
-                )}
-                value={address.fields.state}
-                onChange={(e) => address.updateField('state', e.target.value)}
-              />
-              <TextField
-                label="ZIP code"
-                name={`${namePrefix}AddressZip`}
-                value={address.fields.zip}
-                onChange={(e) => address.updateField('zip', e.target.value)}
-              />
-            </div>
-          }
+          value={<AddressForm namePrefix={namePrefix} state={address} />}
         />
         <Attribute
           label="Beds"
@@ -221,7 +181,7 @@ function Editing({
 }
 
 function toPropertyModel(
-  address: AddressFields,
+  address: AddressFormState['fields'],
   unit: UnitFields
 ): Partial<SingleFamilyProperty> {
   return {

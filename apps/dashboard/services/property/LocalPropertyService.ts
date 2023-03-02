@@ -107,6 +107,52 @@ const DEMO_PROPERTIES: PropertyModel[] = [
     unit: {id: '3288102-0'},
   },
   {
+    id: '4375210',
+    type: 'multi-family',
+    coverImageUrl: '/images/pexels-quintin-gellar-612949.jpg',
+    address: {
+      line1: '10 Rosa Street',
+      city: 'San Francisco',
+      state: 'CA',
+      zip: '94107',
+    },
+    units: [
+      {
+        id: '4375210-1',
+        number: '201',
+        bedrooms: 0,
+        bathrooms: 1,
+        size: 524,
+        rentAmount: 2075,
+        activeListing: {id: '8d5f11ed'},
+      },
+      {
+        id: '4375210-2',
+        number: '301',
+        bedrooms: 2,
+        bathrooms: 2,
+        size: 950,
+        rentAmount: 3850,
+      },
+      {
+        id: '4375210-3',
+        number: '302',
+        bedrooms: 2,
+        bathrooms: 2,
+        size: 982,
+        rentAmount: 4000,
+      },
+      {
+        id: '4375210-4',
+        number: '303',
+        bedrooms: 2,
+        bathrooms: 2,
+        size: 982,
+        rentAmount: 4000,
+      },
+    ],
+  },
+  {
     id: '9999990',
     type: 'single-family',
     address: {

@@ -1,13 +1,20 @@
 import {unit} from '@/volto/spacing.css';
 import {style, styleVariants} from '@vanilla-extract/css';
 
-export const Address = style({
-  display: 'grid',
-  gap: unit(4),
+export const layout = styleVariants({
+  oneColumn: {
+    display: 'grid',
+    gap: unit(4),
+  },
 
-  '@media': {
-    '(min-width: 64rem)': {
-      gridTemplateColumns: 'repeat(4, 1fr)',
+  foutColumns: {
+    display: 'grid',
+    gap: unit(4),
+
+    '@media': {
+      '(min-width: 64rem)': {
+        gridTemplateColumns: 'repeat(4, 1fr)',
+      },
     },
   },
 });

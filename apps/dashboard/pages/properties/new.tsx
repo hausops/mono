@@ -1,15 +1,18 @@
 import {
-  AddressForm,
-  AddressFormState,
   DetailsForm,
   DetailsFormState,
-  useAddressFormState,
   useDetailsFormState,
 } from '@/components/NewProperty';
+import {
+  AddressForm,
+  AddressFormState,
+  useAddressFormState,
+} from '@/components/AddressForm';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
 import {NewPropertyData, usePropertyService} from '@/services/property';
 import {Button} from '@/volto/Button';
+import {Section} from '@/volto/Section';
 import Head from 'next/head';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -19,8 +22,8 @@ export default function Page() {
   const router = useRouter();
   const propertySvc = usePropertyService();
 
-  const addressForm = useAddressFormState();
-  const detailsForm = useDetailsFormState();
+  const address = useAddressFormState();
+  const details = useDetailsFormState();
 
   return (
     <>
@@ -32,8 +35,14 @@ export default function Page() {
 
       <PageLayout>
         <PageHeader title="Add property" />
-        <AddressForm namePrefix="Property" state={addressForm} />
-        <DetailsForm state={detailsForm} />
+        <Section title="Address">
+          <AddressForm
+            layout="full-width"
+            namePrefix="Property"
+            state={address}
+          />
+        </Section>
+        <DetailsForm state={details} />
 
         <div className={s.Actions}>
           <Button variant="text" as={Link} href="/properties">
@@ -44,7 +53,7 @@ export default function Page() {
             variant="contained"
             // TODO: validation
             onClick={async () => {
-              const d = toNewPropertyData(addressForm, detailsForm);
+              const d = toNewPropertyData(address.fields, details);
               try {
                 const created = await propertySvc.add(d);
                 console.log('property created', created);
@@ -63,19 +72,17 @@ export default function Page() {
 }
 
 function toNewPropertyData(
-  addressForm: AddressFormState,
-  detailsForm: DetailsFormState
+  address: AddressFormState['fields'],
+  details: DetailsFormState
 ): NewPropertyData {
   // TODO: validate required
-  const propertyType =
-    detailsForm.propertyType.selectedValue ?? 'single-family';
-  const address = addressForm.fields;
+  const propertyType = details.propertyType.selectedValue ?? 'single-family';
 
   if (propertyType === 'single-family') {
-    const unit = detailsForm.singleFamily.fields;
+    const unit = details.singleFamily.fields;
     return {
       type: propertyType,
-      address: address,
+      address,
       unit: {
         ...unit,
         size: stringInputToNumber(unit.size),
@@ -84,10 +91,10 @@ function toNewPropertyData(
     };
   }
 
-  const {units} = detailsForm.multiFamily;
+  const {units} = details.multiFamily;
   return {
     type: propertyType,
-    address: address,
+    address,
     units: units.map((unit) => ({
       ...unit,
       size: stringInputToNumber(unit.size),

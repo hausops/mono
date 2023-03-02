@@ -55,6 +55,6 @@ export const ContactSeparator = style({
   color: color.text.muted,
   display: 'inline-flex',
   '::before': {
-    content: ' • ',
+    content: '•',
   },
 });

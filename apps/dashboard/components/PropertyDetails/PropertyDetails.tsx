@@ -1,6 +1,7 @@
+import {LeaseServiceProvider, LocalLeaseService} from '@/services/lease';
 import {PropertyModel} from '@/services/property';
+import {MultiFamilyPropertyDetails} from './MultiFamilyPropertyDetails';
 import {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails';
-import {LocalLeaseService, LeaseServiceProvider} from '@/services/lease';
 
 type PropertyDetailsProps = {
   property: PropertyModel;
@@ -9,12 +10,13 @@ type PropertyDetailsProps = {
 const leaseSvc = new LocalLeaseService();
 
 export function PropertyDetails({property}: PropertyDetailsProps) {
-  if (property.type === 'single-family') {
-    return (
-      <LeaseServiceProvider service={leaseSvc}>
+  return (
+    <LeaseServiceProvider service={leaseSvc}>
+      {property.type === 'single-family' ? (
         <SingleFamilyPropertyDetails property={property} />
-      </LeaseServiceProvider>
-    );
-  }
-  return <p>TODO: MultiFamily</p>;
+      ) : (
+        <MultiFamilyPropertyDetails property={property} />
+      )}
+    </LeaseServiceProvider>
+  );
 }

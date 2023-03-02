@@ -34,7 +34,7 @@ export function TenantProfile({
           <Contact>{email}</Contact>
           {phone && (
             <>
-              <i className={s.ContactSeparator} />
+              <i className={s.ContactSeparator} aria-hidden="true" />
               <Contact>{phone}</Contact>
             </>
           )}

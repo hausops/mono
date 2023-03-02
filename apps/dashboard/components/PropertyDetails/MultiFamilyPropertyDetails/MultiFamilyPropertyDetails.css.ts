@@ -1,7 +1,7 @@
 import {unit} from '@/volto/spacing.css';
 import {style} from '@vanilla-extract/css';
 
-export const SingleFamilyPropertyDetails = style({
+export const TwoColumnsLayout = style({
   display: 'grid',
   columnGap: unit(8),
   rowGap: unit(4),
