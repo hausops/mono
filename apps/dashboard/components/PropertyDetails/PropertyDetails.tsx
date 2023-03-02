@@ -10,12 +10,13 @@ type PropertyDetailsProps = {
 const leaseSvc = new LocalLeaseService();
 
 export function PropertyDetails({property}: PropertyDetailsProps) {
-  if (property.type === 'single-family') {
-    return (
-      <LeaseServiceProvider service={leaseSvc}>
+  return (
+    <LeaseServiceProvider service={leaseSvc}>
+      {property.type === 'single-family' ? (
         <SingleFamilyPropertyDetails property={property} />
-      </LeaseServiceProvider>
-    );
-  }
-  return <MultiFamilyPropertyDetails property={property} />;
+      ) : (
+        <MultiFamilyPropertyDetails property={property} />
+      )}
+    </LeaseServiceProvider>
+  );
 }

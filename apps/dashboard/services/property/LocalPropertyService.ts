@@ -124,6 +124,7 @@ const DEMO_PROPERTIES: PropertyModel[] = [
         bathrooms: 1,
         size: 524,
         rentAmount: 2075,
+        activeListing: {id: '8d5f11ed'},
       },
       {
         id: '4375210-2',
@@ -136,6 +137,14 @@ const DEMO_PROPERTIES: PropertyModel[] = [
       {
         id: '4375210-3',
         number: '302',
+        bedrooms: 2,
+        bathrooms: 2,
+        size: 982,
+        rentAmount: 4000,
+      },
+      {
+        id: '4375210-4',
+        number: '303',
         bedrooms: 2,
         bathrooms: 2,
         size: 982,

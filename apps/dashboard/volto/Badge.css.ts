@@ -21,3 +21,37 @@ export const status = styleVariants({
     backgroundColor: '#ffe359',
   },
 });
+
+export const LivenessBadge = style({
+  alignItems: 'center',
+  display: 'inline-flex',
+  gap: unit(2),
+  fontWeight: font.weight.medium,
+});
+
+export const LivenessBadgeStatus = styleVariants(
+  {
+    idle: {
+      foreground: color.neutral[90],
+      background: color.neutral[98],
+    },
+    live: {
+      foreground: '#36ac52',
+      background: '#36ac5233', // 0.2 alpha
+    },
+  },
+  ({foreground, background}) => ({
+    backgroundColor: background,
+    borderRadius: '50%',
+    display: 'inline-flex',
+    flexShrink: 0,
+    padding: unit(1),
+    '::before': {
+      backgroundColor: foreground,
+      borderRadius: '50%',
+      content: '',
+      height: unit(2),
+      width: unit(2),
+    },
+  })
+);

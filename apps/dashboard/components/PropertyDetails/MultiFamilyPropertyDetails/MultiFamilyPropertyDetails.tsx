@@ -1,13 +1,18 @@
 import {PropertyImages} from '@/components/PropertyDetails/PropertyImages';
 import {MultiFamilyProperty} from '@/services/property';
+import {Section} from '@/volto/Section';
 import * as s from './MultiFamilyPropertyDetails.css';
 import {PropertyInfo} from './PropertyInfo';
+import {UnitList} from './UnitList';
 
-type Props = {
+type MultiFamilyPropertyDetailsProps = {
   property: MultiFamilyProperty;
 };
 
-export function MultiFamilyPropertyDetails({property}: Props) {
+export function MultiFamilyPropertyDetails(
+  props: MultiFamilyPropertyDetailsProps
+) {
+  const {property} = props;
   return (
     <>
       <section className={s.TwoColumnsLayout}>
@@ -18,6 +23,10 @@ export function MultiFamilyPropertyDetails({property}: Props) {
           <PropertyImages property={property} />
         </aside>
       </section>
+
+      <Section title="Units">
+        <UnitList property={property} />
+      </Section>
     </>
   );
 }
