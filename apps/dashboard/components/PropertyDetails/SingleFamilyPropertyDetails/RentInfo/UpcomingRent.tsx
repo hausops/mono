@@ -1,7 +1,7 @@
+import {Attribute, AttributeList} from '@/components/AttributeList';
 import {RentPayment} from '@/services/lease';
 import {Badge} from '@/volto/Badge';
 import {useMemo} from 'react';
-import {Attribute, AttributeList} from './AttributeList';
 import * as s from './UpcomingRent.css';
 
 type UpcomingRentProps = RentPayment;

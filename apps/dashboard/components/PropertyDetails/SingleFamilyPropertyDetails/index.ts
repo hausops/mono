@@ -1,0 +1,1 @@
+export {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails';

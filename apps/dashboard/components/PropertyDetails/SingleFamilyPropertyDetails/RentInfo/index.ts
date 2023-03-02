@@ -1,0 +1,1 @@
+export {RentInfo} from './RentInfo';
