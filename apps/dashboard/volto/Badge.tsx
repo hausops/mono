@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import {ReactNode} from 'react';
 import * as s from './Badge.css';
 
 type BadgeProps = {
@@ -11,7 +12,7 @@ export function Badge({children, status = 'default'}: BadgeProps) {
 }
 
 type LivenessBadgeProps = {
-  children: string;
+  children: ReactNode;
   status?: keyof typeof s.LivenessBadgeStatus;
 };
 

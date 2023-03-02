@@ -2,6 +2,7 @@ import {LeaseModel, useLeaseService} from '@/services/lease';
 import {MultiFamilyProperty, RentalUnit} from '@/services/property';
 import {Badge, LivenessBadge} from '@/volto/Badge';
 import {IconButton} from '@/volto/Button';
+import {TextSkeleton} from '@/volto/Skeleton';
 import {MoreH} from '@/volto/icons';
 import Link from 'next/link';
 import {useMemo} from 'react';
@@ -144,8 +145,16 @@ const formatters = {
 export function UnitSkeleton() {
   return (
     <div className={s.Unit}>
-      <div className={s.UnitColumn}>Loading…</div>
-      <div className={s.UnitColumn}></div>
+      <div className={s.UnitColumn}>
+        <TextSkeleton width="6rem" />
+        <TextSkeleton width="15rem" />
+      </div>
+      <div className={s.UnitColumn}>
+        <LivenessBadge>
+          <TextSkeleton width="4rem" />
+        </LivenessBadge>
+        <TextSkeleton width="15rem" />
+      </div>
       <div>
         <IconButton icon={<MoreH />} />
       </div>

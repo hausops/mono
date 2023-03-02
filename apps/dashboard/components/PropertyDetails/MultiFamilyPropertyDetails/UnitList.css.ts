@@ -5,8 +5,8 @@ import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
 
 export const Unit = style({
-  columnGap: unit(4),
   display: 'grid',
+  gap: unit(4),
   gridTemplateColumns: '1fr 1fr auto',
   selectors: {
     // line separator between Unit
@@ -20,10 +20,12 @@ export const Unit = style({
 
 export const UnitColumn = style({
   display: 'grid',
+  alignItems: 'start',
   gap: unit(1),
 });
 
 export const UnitTitle = style({
+  lineHeight: 1,
   fontSize: font.size[16],
   fontWeight: font.weight.semibold,
 });

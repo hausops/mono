@@ -4,6 +4,7 @@ type TextSkeletonProps = {
   width?: string;
 };
 
+// TextSkeleton has built-in line-height so it matches a body text.
 export function TextSkeleton({width}: TextSkeletonProps) {
   const style = {maxWidth: width};
   return (

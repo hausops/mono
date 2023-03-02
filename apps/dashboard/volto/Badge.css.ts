@@ -24,9 +24,10 @@ export const status = styleVariants({
 
 export const LivenessBadge = style({
   alignItems: 'center',
-  display: 'inline-flex',
-  gap: unit(2),
+  display: 'grid',
   fontWeight: font.weight.medium,
+  gap: unit(2),
+  gridTemplateColumns: 'auto 1fr',
 });
 
 export const LivenessBadgeStatus = styleVariants(
@@ -44,7 +45,6 @@ export const LivenessBadgeStatus = styleVariants(
     backgroundColor: background,
     borderRadius: '50%',
     display: 'inline-flex',
-    flexShrink: 0,
     padding: unit(1),
     '::before': {
       backgroundColor: foreground,
