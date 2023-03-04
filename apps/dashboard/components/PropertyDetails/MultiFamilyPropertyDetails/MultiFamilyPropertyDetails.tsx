@@ -1,12 +1,12 @@
 import {PropertyImages} from '@/components/PropertyDetails/PropertyImages';
-import {MultiFamilyProperty} from '@/services/property';
+import {MultiFamily} from '@/services/property';
 import {Section} from '@/volto/Section';
 import * as s from './MultiFamilyPropertyDetails.css';
 import {PropertyInfo} from './PropertyInfo';
 import {UnitList} from './UnitList';
 
 type MultiFamilyPropertyDetailsProps = {
-  property: MultiFamilyProperty;
+  property: MultiFamily.Property;
 };
 
 export function MultiFamilyPropertyDetails(

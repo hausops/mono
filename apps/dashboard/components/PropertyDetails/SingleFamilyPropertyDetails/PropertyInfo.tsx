@@ -7,11 +7,7 @@ import {Attribute, AttributeList} from '@/components/AttributeList';
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address} from '@/services/address';
-import {
-  RentalUnit,
-  SingleFamilyProperty,
-  usePropertyService,
-} from '@/services/property';
+import {SingleFamily, usePropertyService} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {CloseIcon, EditFilledIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
@@ -21,7 +17,7 @@ import useSWR from 'swr';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {
-  property: SingleFamilyProperty;
+  property: SingleFamily.Property;
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
@@ -66,7 +62,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
   );
 }
 
-function Viewing({property}: {property: SingleFamilyProperty}) {
+function Viewing({property}: {property: SingleFamily.Property}) {
   const {address, unit} = property;
   const [street, region] = Address.from(address).format();
   return (
@@ -94,16 +90,16 @@ function Viewing({property}: {property: SingleFamilyProperty}) {
   );
 }
 
-type UnitFields = Omit<RentalUnit, 'size'> & {size: string};
+type UnitFields = Omit<SingleFamily.Unit, 'size'> & {size: string};
 
 function Editing({
   property,
   onCancelClick,
   onEditSuccess,
 }: {
-  property: SingleFamilyProperty;
+  property: SingleFamily.Property;
   onCancelClick: () => void;
-  onEditSuccess: (updatedProperty: SingleFamilyProperty) => void;
+  onEditSuccess: (updatedProperty: SingleFamily.Property) => void;
 }) {
   const namePrefix = 'PropertyInfo';
   const propertySvc = usePropertyService();
@@ -183,7 +179,7 @@ function Editing({
 function toPropertyModel(
   address: AddressFormState['fields'],
   unit: UnitFields
-): Partial<SingleFamilyProperty> {
+): Partial<SingleFamily.Property> {
   return {
     address,
     unit: {

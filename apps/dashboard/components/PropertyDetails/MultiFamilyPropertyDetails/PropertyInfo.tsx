@@ -4,7 +4,7 @@ import {
   useAddressFormState,
 } from '@/components/AddressForm';
 import {Address} from '@/services/address';
-import {MultiFamilyProperty, usePropertyService} from '@/services/property';
+import {MultiFamily, usePropertyService} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
@@ -13,7 +13,7 @@ import useSWR from 'swr';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {
-  property: MultiFamilyProperty;
+  property: MultiFamily.Property;
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
@@ -58,7 +58,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
   );
 }
 
-function Viewing({property}: {property: MultiFamilyProperty}) {
+function Viewing({property}: {property: MultiFamily.Property}) {
   const addr = Address.from(property.address);
   return (
     <p className={s.Address}>
@@ -76,10 +76,10 @@ function Editing({
   onUpdateSettled,
   onUpdateSuccess,
 }: {
-  property: MultiFamilyProperty;
+  property: MultiFamily.Property;
   onCancel: () => void;
   onUpdateSettled: () => void;
-  onUpdateSuccess: (updatedProperty: MultiFamilyProperty) => void;
+  onUpdateSuccess: (updatedProperty: MultiFamily.Property) => void;
 }) {
   const propertySvc = usePropertyService();
   const address = useAddressFormState(property.address);
@@ -112,6 +112,6 @@ function Editing({
 
 function toPropertyModel(
   address: AddressFormState['fields']
-): Partial<MultiFamilyProperty> {
+): Partial<MultiFamily.Property> {
   return {address};
 }

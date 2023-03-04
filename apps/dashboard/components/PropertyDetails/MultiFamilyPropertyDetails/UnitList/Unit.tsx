@@ -1,5 +1,5 @@
 import {LeaseModel} from '@/services/lease';
-import {RentalUnit} from '@/services/property';
+import {MultiFamily} from '@/services/property';
 import {Badge, LivenessBadge} from '@/volto/Badge';
 import {IconButton} from '@/volto/Button';
 import {MoreHIcon} from '@/volto/icons';
@@ -10,7 +10,7 @@ import * as s from './Unit.css';
 
 type UnitProps = {
   lease?: LeaseModel;
-  unit: RentalUnit;
+  unit: MultiFamily.Unit;
 };
 
 export function Unit(props: UnitProps) {

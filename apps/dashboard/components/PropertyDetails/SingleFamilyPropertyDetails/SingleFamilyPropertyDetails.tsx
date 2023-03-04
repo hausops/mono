@@ -1,11 +1,11 @@
-import {SingleFamilyProperty} from '@/services/property';
+import {SingleFamily} from '@/services/property';
 import {PropertyImages} from '../PropertyImages';
 import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';
 import * as s from './SingleFamilyPropertyDetails.css';
 
 type Props = {
-  property: SingleFamilyProperty;
+  property: SingleFamily.Property;
 };
 
 export function SingleFamilyPropertyDetails({property}: Props) {
