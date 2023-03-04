@@ -1,58 +1,80 @@
 import {AddressModel} from '@/services/address';
 
 export type PropertyType = 'single-family' | 'multi-family';
-export type PropertyModel = SingleFamilyProperty | MultiFamilyProperty;
-
-export type SingleFamilyProperty = {
-  id: string;
-  type: 'single-family';
-  coverImageUrl?: string;
-  address: AddressModel;
-  builtYear?: number;
-  unit: RentalUnit;
-};
-
-export type MultiFamilyProperty = {
-  id: string;
-  type: 'multi-family';
-  coverImageUrl?: string;
-  address: AddressModel;
-  builtYear?: number;
-  units: RentalUnit[];
-};
-
-export type RentalUnit = {
-  id: string;
-  number?: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  size?: number; // in sq.m.
-  rentAmount?: number;
-  activeListing?: {
-    id: string;
-  };
-};
+export type PropertyModel = SingleFamily.Property | MultiFamily.Property;
 
 export type NewPropertyData =
-  | {
-      type: 'single-family';
-      coverImageUrl?: string;
-      address: AddressModel;
-      builtYear?: number;
-      unit: NewRentalUnit;
-    }
-  | {
-      type: 'multi-family';
-      coverImageUrl?: string;
-      address: AddressModel;
-      builtYear?: number;
-      units: NewRentalUnit[];
-    };
+  | SingleFamily.NewPropertyData
+  | MultiFamily.NewPropertyData;
 
-type NewRentalUnit = {
-  number?: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  size?: number; // in sq.m.
-  rentAmount?: number;
-};
+export namespace SingleFamily {
+  export type Property = {
+    id: string;
+    type: 'single-family';
+    coverImageUrl?: string;
+    address: AddressModel;
+    builtYear?: number;
+    unit: Unit;
+  };
+
+  export type Unit = {
+    id: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    size?: number; // in sq.m.
+    rentAmount?: number;
+    activeListing?: {
+      id: string;
+    };
+  };
+
+  export type NewPropertyData = {
+    type: 'single-family';
+    coverImageUrl?: string;
+    address: AddressModel;
+    builtYear?: number;
+    unit: {
+      bedrooms?: number;
+      bathrooms?: number;
+      size?: number; // in sq.m.
+      rentAmount?: number;
+    };
+  };
+}
+
+export namespace MultiFamily {
+  export type Property = {
+    id: string;
+    type: 'multi-family';
+    coverImageUrl?: string;
+    address: AddressModel;
+    builtYear?: number;
+    units: Unit[];
+  };
+
+  export type Unit = {
+    id: string;
+    number: string; // unit.number; should be a string
+    bedrooms?: number;
+    bathrooms?: number;
+    size?: number; // in sq.m.
+    rentAmount?: number;
+    activeListing?: {
+      id: string;
+    };
+  };
+
+  export type NewPropertyData = {
+    type: 'multi-family';
+    coverImageUrl?: string;
+    address: AddressModel;
+    builtYear?: number;
+    units: Array<{
+      number: string;
+      bedrooms?: number;
+      bathrooms?: number;
+      size?: number; // in sq.m.
+      rentAmount?: number;
+    }>;
+  };
+}

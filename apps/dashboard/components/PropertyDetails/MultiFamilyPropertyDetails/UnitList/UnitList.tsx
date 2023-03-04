@@ -1,10 +1,10 @@
 import {useLeaseService} from '@/services/lease';
-import {MultiFamilyProperty} from '@/services/property';
+import {MultiFamily} from '@/services/property';
 import useSWR from 'swr';
 import {Unit, UnitSkeleton} from './Unit';
 
 type UnitListProps = {
-  property: MultiFamilyProperty;
+  property: MultiFamily.Property;
 };
 
 export function UnitList(props: UnitListProps) {

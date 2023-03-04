@@ -1,5 +1,5 @@
 import {LeaseModel, useLeaseService} from '@/services/lease';
-import {SingleFamilyProperty} from '@/services/property';
+import {SingleFamily} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
 import {HomeIcon} from '@/volto/icons';
@@ -12,7 +12,7 @@ import {TenantProfile} from './TenantProfile';
 import {UpcomingRent} from './UpcomingRent';
 
 type RentInfoProps = {
-  property: SingleFamilyProperty;
+  property: SingleFamily.Property;
 };
 
 export function RentInfo({property}: RentInfoProps) {
@@ -72,7 +72,7 @@ function take<T>(n: number, items: T[]): T[] {
   return items.slice(0, n);
 }
 
-function Vacant({property}: {property: SingleFamilyProperty}) {
+function Vacant({property}: {property: SingleFamily.Property}) {
   const {description, actions} = property.unit.activeListing
     ? {
         description: 'The property has an active listing.',
