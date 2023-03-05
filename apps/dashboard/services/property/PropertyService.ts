@@ -3,7 +3,7 @@ import {NewPropertyData, PropertyModel} from './PropertyModel';
 export interface PropertyService {
   getAll(): Promise<PropertyModel[]>;
 
-  get(id: string): Promise<PropertyModel | undefined>;
+  getById(id: string): Promise<PropertyModel | undefined>;
 
   // creates a new property from newPropertyData.
   // The service will assign the property id.

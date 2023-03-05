@@ -11,18 +11,17 @@ export class LocalPropertyService implements PropertyService {
     return [...this.properties.values()];
   }
 
-  async get(id: string): Promise<PropertyModel | undefined> {
+  async getById(id: string): Promise<PropertyModel | undefined> {
     return this.properties.get(id);
   }
 
   async add(newPropertyData: NewPropertyData): Promise<PropertyModel> {
-    const id = nanoid();
     const p = withId(newPropertyData);
     const property: PropertyModel =
       p.type === 'single-family'
         ? {...p, unit: withId(p.unit)}
         : {...p, units: p.units.map(withId)};
-    this.properties.set(id, property);
+    this.properties.set(p.id, property);
     return property;
   }
 

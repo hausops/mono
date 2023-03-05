@@ -1,13 +1,13 @@
 import {
-  DetailsForm,
-  DetailsFormState,
-  useDetailsFormState,
-} from '@/components/NewProperty';
-import {
   AddressForm,
   AddressFormState,
   useAddressFormState,
 } from '@/components/AddressForm';
+import {
+  DetailsForm,
+  DetailsFormState,
+  useDetailsFormState,
+} from '@/components/NewProperty';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
 import {NewPropertyData, usePropertyService} from '@/services/property';
@@ -16,6 +16,7 @@ import {Section} from '@/volto/Section';
 import Head from 'next/head';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
+import useSWRMutation from 'swr/mutation';
 import * as s from './new.css';
 
 export default function Page() {
@@ -24,6 +25,11 @@ export default function Page() {
 
   const address = useAddressFormState();
   const details = useDetailsFormState();
+
+  const addPropertyMutation = useSWRMutation('/api/properties', () => {
+    const d = toNewPropertyData(address.fields, details);
+    return propertySvc.add(d);
+  });
 
   return (
     <>
@@ -51,11 +57,10 @@ export default function Page() {
           </Button>
           <Button
             variant="contained"
-            // TODO: validation
+            disabled={addPropertyMutation.isMutating}
             onClick={async () => {
-              const d = toNewPropertyData(address.fields, details);
               try {
-                const created = await propertySvc.add(d);
+                const created = await addPropertyMutation.trigger();
                 console.log('property created', created);
                 router.push('/properties');
               } catch (err) {

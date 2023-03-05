@@ -12,7 +12,6 @@ type OwnSelectProps = {
   className?: string;
   // disabled?: boolean;
   label: string;
-  name: string;
   // required?: boolean;
   options: Option[];
 };
@@ -23,7 +22,6 @@ type SelectProps = OwnSelectProps &
 export function Select({
   className,
   label,
-  name,
   options,
   ...passthroughProps
 }: SelectProps) {
@@ -34,12 +32,7 @@ export function Select({
         {label}
       </label>
       <div className={s.InputWrapper}>
-        <select
-          {...passthroughProps}
-          className={s.Input}
-          id={fieldId}
-          name={name}
-        >
+        <select {...passthroughProps} className={s.Input} id={fieldId}>
           <option></option>
           {options.map((o) => (
             <option key={o.value} value={o.value}>

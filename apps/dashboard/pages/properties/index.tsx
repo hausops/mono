@@ -39,7 +39,7 @@ export default function Page() {
 
 function PropertyList() {
   const propertySvc = usePropertyService();
-  const {data} = useSWR('properties', () => propertySvc.getAll());
+  const {data} = useSWR('/api/properties', () => propertySvc.getAll());
 
   const properties = data
     ? data.map((p) => (

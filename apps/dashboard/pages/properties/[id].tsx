@@ -2,28 +2,36 @@ import {PropertyDetails} from '@/components/PropertyDetails';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
 import {Address} from '@/services/address';
-import {LocalPropertyService, PropertyModel} from '@/services/property';
+import {usePropertyService} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
 import {HomeIcon} from '@/volto/icons';
-import {GetServerSideProps} from 'next';
+import {Skeleton} from '@/volto/Skeleton';
 import Head from 'next/head';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
+import useSWR from 'swr';
 import * as s from './id.css';
 
-type PageProps =
-  | {notFound: true}
-  | {
-      notFound?: false;
-      property: PropertyModel;
-    };
+export default function Page() {
+  const router = useRouter();
+  const propertyId = router.query.id;
 
-export default function Page(props: PageProps) {
-  if (props.notFound) {
+  const propertySvc = usePropertyService();
+  const {isLoading, data: property} = useSWR(
+    `/api/properties/${propertyId}`,
+    () =>
+      typeof propertyId === 'string' ? propertySvc.getById(propertyId) : null
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!property) {
     return <NotFound />;
   }
 
-  const {property} = props;
   const [streetAddr] = Address.from(property.address).format();
   // Cannot do in JSX due to next.js bug:
   // https://github.com/vercel/next.js/discussions/38256
@@ -44,21 +52,22 @@ export default function Page(props: PageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  PageProps,
-  {id: string}
-> = async ({params}) => {
-  const propertySvc = new LocalPropertyService();
+function Loading() {
+  return (
+    <>
+      <Head>
+        <title>Property Details - HausOps</title>
+        <meta name="description" content="HausOps" />
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+      </Head>
 
-  if (params?.id) {
-    const property = await propertySvc.get(params.id);
-    return {
-      props: property ? {property} : {notFound: true},
-    };
-  }
-
-  return {props: {notFound: true}};
-};
+      {/* TODO better loading state */}
+      <PageLayout>
+        <Skeleton width="10rem" />
+      </PageLayout>
+    </>
+  );
+}
 
 function NotFound() {
   return (
