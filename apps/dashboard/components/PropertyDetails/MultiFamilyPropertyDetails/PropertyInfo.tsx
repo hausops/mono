@@ -21,7 +21,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
   const {data, mutate: mutateProperty} = useSWR(
     `/api/property/${props.property.id}`,
     async () => {
-      const p = await propertySvc.get(props.property.id);
+      const p = await propertySvc.getById(props.property.id);
       return p?.type === 'multi-family' ? p : undefined;
     }
   );
@@ -94,10 +94,12 @@ function Editing({
           variant="contained"
           // TODO: disable button and show loading state
           onClick={async () => {
+            const d = toPropertyModel(address.fields);
             try {
-              const d = toPropertyModel(address.fields);
               const updated = await propertySvc.update(property.id, d);
               onUpdateSuccess(updated);
+            } catch (err) {
+              console.error('Cannot update property', err);
             } finally {
               onUpdateSettled();
             }

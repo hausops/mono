@@ -25,7 +25,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
   const {data, mutate: mutateProperty} = useSWR(
     `/api/property/${props.property.id}`,
     async () => {
-      const p = await propertySvc.get(props.property.id);
+      const p = await propertySvc.getById(props.property.id);
       return p?.type === 'single-family' ? p : undefined;
     }
   );
@@ -49,11 +49,11 @@ export function PropertyInfo(props: PropertyInfoProps) {
       {editing ? (
         <Editing
           property={property}
-          onEditSuccess={(updatedProperty) => {
+          onCancel={exitEditing}
+          onUpdateSettled={exitEditing}
+          onUpdateSuccess={(updatedProperty) => {
             mutateProperty(updatedProperty, {revalidate: false});
-            exitEditing();
           }}
-          onCancelClick={exitEditing}
         />
       ) : (
         <Viewing property={property} />
@@ -94,16 +94,16 @@ type UnitFields = Omit<SingleFamily.Unit, 'size'> & {size: string};
 
 function Editing({
   property,
-  onCancelClick,
-  onEditSuccess,
+  onCancel,
+  onUpdateSettled,
+  onUpdateSuccess,
 }: {
   property: SingleFamily.Property;
-  onCancelClick: () => void;
-  onEditSuccess: (updatedProperty: SingleFamily.Property) => void;
+  onCancel: () => void;
+  onUpdateSettled: () => void;
+  onUpdateSuccess: (updatedProperty: SingleFamily.Property) => void;
 }) {
-  const namePrefix = 'PropertyInfo';
   const propertySvc = usePropertyService();
-
   const address = useAddressFormState(property.address);
   const unit = useFieldsState<UnitFields>({
     ...property.unit,
@@ -115,13 +115,12 @@ function Editing({
       <AttributeList className={s.EditingAttributeList}>
         <Attribute
           label="Address"
-          value={<AddressForm namePrefix={namePrefix} state={address} />}
+          value={<AddressForm namePrefix="PropertyInfo" state={address} />}
         />
         <Attribute
           label="Beds"
           value={
             <BedroomsSelect
-              name={`${namePrefix}Beds`}
               value={unit.fields.bedrooms}
               onChange={(selection) => unit.updateField('bedrooms', selection)}
             />
@@ -131,7 +130,6 @@ function Editing({
           label="Baths"
           value={
             <BathroomsSelect
-              name={`${namePrefix}Baths`}
               value={unit.fields.bathrooms}
               onChange={(selection) => unit.updateField('bathrooms', selection)}
             />
@@ -143,7 +141,6 @@ function Editing({
             <TextField
               type="number"
               label="Size"
-              name={`${namePrefix}Size`}
               placeholder="Sq.ft."
               value={unit.fields.size}
               onChange={(e) => unit.updateField('size', e.target.value)}
@@ -152,7 +149,7 @@ function Editing({
         />
       </AttributeList>
       <div className={s.EditActions}>
-        <Button variant="text" onClick={onCancelClick}>
+        <Button variant="text" onClick={onCancel}>
           Cancel
         </Button>
         <Button
@@ -162,10 +159,11 @@ function Editing({
             const d = toPropertyModel(address.fields, unit.fields);
             try {
               const updated = await propertySvc.update(property.id, d);
-              console.log('property updated', updated);
-              onEditSuccess(updated);
+              onUpdateSuccess(updated);
             } catch (err) {
               console.error('Cannot update property', err);
+            } finally {
+              onUpdateSettled();
             }
           }}
         >
