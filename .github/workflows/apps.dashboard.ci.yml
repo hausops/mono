@@ -1,13 +1,16 @@
-name: apps.dashboard.test
+name: apps.dashboard.ci
 
 on:
+  push:
+    paths:
+      - apps/dashboard/**
   pull_request:
     paths:
       - apps/dashboard/**
 
 jobs:
-  test:
-    name: apps.dashboard.test
+  ci:
+    name: Run type checks, lint, prettier
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,4 +26,5 @@ jobs:
           cache-dependency-path: apps/dashboard/yarn.lock
       - run: yarn --frozen-lockfile
       - run: yarn tsc
-      - run: yarn lint
+      - run: yarn lint  
+      - run: yarn prettier --check .
