@@ -46,12 +46,10 @@ export function UnitEntry({
           onChange={(e) => onChange({...state, number: e.target.value})}
         />
         <BedroomsSelect
-          name="bedrooms"
           value={state.bedrooms}
           onChange={(selection) => onChange({...state, bedrooms: selection})}
         />
         <BathroomsSelect
-          name="bathrooms"
           value={state.bathrooms}
           onChange={(selection) => onChange({...state, bathrooms: selection})}
         />
