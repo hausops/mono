@@ -1,9 +1,6 @@
 name: apps.dashboard.ci
 
 on:
-  push:
-    paths:
-      - apps/dashboard/**
   pull_request:
     paths:
       - apps/dashboard/**
