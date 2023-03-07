@@ -22,6 +22,6 @@ jobs:
           cache: yarn
           cache-dependency-path: apps/dashboard/yarn.lock
       - run: yarn --frozen-lockfile
-      - run: yarn tsc
-      - run: yarn lint  
       - run: yarn prettier --check .
+      - run: yarn lint
+      - run: yarn tsc
