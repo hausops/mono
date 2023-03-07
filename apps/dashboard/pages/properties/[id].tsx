@@ -21,6 +21,7 @@ export default function Page() {
   const {isLoading, data: property} = useSWR(
     `/api/properties/${propertyId}`,
     () =>
+      // this is undefined during SSR
       typeof propertyId === 'string' ? propertySvc.getById(propertyId) : null
   );
 
