@@ -1,5 +1,5 @@
-import {unit} from '@/volto/spacing.css';
 import {vars} from '@/volto/root.css';
+import {unit} from '@/volto/spacing.css';
 import {style} from '@vanilla-extract/css';
 
 export const MainNav = style({
