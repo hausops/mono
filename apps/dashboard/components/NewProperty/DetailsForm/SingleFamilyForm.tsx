@@ -15,12 +15,10 @@ export function SingleFamilyForm({state}: {state: SingleFamilyFormState}) {
   return (
     <div className={s.SingleFamilyForm}>
       <BedroomsSelect
-        name="property.single.beds"
         value={fields.bedrooms}
         onChange={(selection) => updateField('bedrooms', selection)}
       />
       <BathroomsSelect
-        name="property.single.baths"
         value={fields.bathrooms}
         onChange={(selection) => updateField('bathrooms', selection)}
       />
