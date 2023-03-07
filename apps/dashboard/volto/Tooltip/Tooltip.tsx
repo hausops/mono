@@ -1,8 +1,8 @@
 import {AriaPositionProps, useOverlayPosition} from '@react-aria/overlays';
 import {PropsWithChildren, useEffect, useRef} from 'react';
 import {createPortal} from 'react-dom';
-import {useTooltipsManager} from './TooltipsManager';
 import * as s from './Tooltip.css';
+import {useTooltipsManager} from './TooltipsManager';
 
 export type TooltipProps = PropsWithChildren<{
   id: string;

@@ -1,5 +1,5 @@
 import {PropertyType} from '@/services/property';
-import {Radio, useRadio, useRadioGroup, RadioGroupState} from '@/volto/Radio';
+import {Radio, RadioGroupState, useRadio, useRadioGroup} from '@/volto/Radio';
 import {useFocusRing} from '@react-aria/focus';
 import clsx from 'clsx';
 import {useId, useRef} from 'react';
