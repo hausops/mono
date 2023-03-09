@@ -10,5 +10,5 @@ Copy `.env.example` to `.env`
 
 ```sh
 # from apps/dashboard-api
-dotenv go run cmd/server.go
+make run
 ```
