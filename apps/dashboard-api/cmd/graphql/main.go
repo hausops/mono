@@ -19,17 +19,19 @@ func main() {
 		port = defaultPort
 	}
 
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", newGraphqlServer())
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func newGraphqlServer() *handler.Server {
 	propertySvc := local.NewPropertyService()
-	config := graphql.Config{
+	c := graphql.Config{
 		Resolvers: &graphql.Resolver{
 			Property: propertySvc,
 		},
 	}
-	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(config))
-
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
-
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	return handler.NewDefaultServer(graphql.NewExecutableSchema(c))
 }
