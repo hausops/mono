@@ -12,17 +12,17 @@ import (
 
 // CreateSingleFamilyProperty is the resolver for the createSingleFamilyProperty field.
 func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
-	return r.propertyRepo.CreateSingleFamilyProperty(input)
+	return r.Property.CreateSingleFamilyProperty(input)
 }
 
 // CreateMultiFamilyProperty is the resolver for the createMultiFamilyProperty field.
 func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
-	return r.propertyRepo.CreateMultiFamilyProperty(input)
+	return r.Property.CreateMultiFamilyProperty(input)
 }
 
 // Properties is the resolver for the properties field.
 func (r *queryResolver) Properties(ctx context.Context) ([]property.Property, error) {
-	return r.propertyRepo.FindAll()
+	return r.Property.FindAll()
 }
 
 // Mutation returns MutationResolver implementation.

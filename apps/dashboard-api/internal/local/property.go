@@ -5,15 +5,15 @@ import (
 	"github.com/hausops/mono/apps/dashboard-api/domain/property"
 )
 
-type PropertyRepository struct {
+type PropertyService struct {
 	byId map[string]property.Property
 }
 
-func NewPropertyRepository() *PropertyRepository {
-	return &PropertyRepository{byId: make(map[string]property.Property)}
+func NewPropertyService() *PropertyService {
+	return &PropertyService{byId: make(map[string]property.Property)}
 }
 
-func (r *PropertyRepository) CreateSingleFamilyProperty(input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+func (r *PropertyService) CreateSingleFamilyProperty(input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
 	p := input.ToProperty()
 	p.ID = uuid.New().String()
 	p.Unit.ID = uuid.New().String()
@@ -21,7 +21,7 @@ func (r *PropertyRepository) CreateSingleFamilyProperty(input property.CreateSin
 	return &p, nil
 }
 
-func (r *PropertyRepository) CreateMultiFamilyProperty(input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+func (r *PropertyService) CreateMultiFamilyProperty(input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
 	units := make([]property.MultiFamilyPropertyUnit, 0, len(input.Units))
 	for _, iu := range input.Units {
 		u := iu.ToUnit()
@@ -35,7 +35,7 @@ func (r *PropertyRepository) CreateMultiFamilyProperty(input property.CreateMult
 	return &p, nil
 }
 
-func (r *PropertyRepository) FindAll() ([]property.Property, error) {
+func (r *PropertyService) FindAll() ([]property.Property, error) {
 	ps := make([]property.Property, 0, len(r.byId))
 	for _, p := range r.byId {
 		ps = append(ps, p)
@@ -43,4 +43,4 @@ func (r *PropertyRepository) FindAll() ([]property.Property, error) {
 	return ps, nil
 }
 
-var _ property.Repository = (*PropertyRepository)(nil)
+var _ property.Service = (*PropertyService)(nil)

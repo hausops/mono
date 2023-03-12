@@ -19,9 +19,11 @@ func main() {
 		port = defaultPort
 	}
 
-	propertyRepo := local.NewPropertyRepository()
+	propertySvc := local.NewPropertyService()
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
-		Resolvers: graph.NewResolver(propertyRepo),
+		Resolvers: &graph.Resolver{
+			Property: propertySvc,
+		},
 	}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

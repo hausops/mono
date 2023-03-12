@@ -1,6 +1,6 @@
 package property
 
-type Repository interface {
+type Service interface {
 	CreateSingleFamilyProperty(
 		CreateSingleFamilyPropertyInput,
 	) (*SingleFamilyProperty, error)
