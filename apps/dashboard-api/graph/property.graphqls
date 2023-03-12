@@ -1,0 +1,113 @@
+"""
+Query
+"""
+union Property = SingleFamilyProperty | MultiFamilyProperty
+
+# enum PropertyType {
+#   SINGLE_FAMILY
+#   MULTI_FAMILY
+# }
+
+interface PropertyModel {
+  id: ID!
+  # type: PropertyType!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+}
+
+type SingleFamilyProperty implements PropertyModel {
+  id: ID!
+  # type: PropertyType!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+
+  unit: SingleFamilyUnit!
+}
+
+type SingleFamilyUnit {
+  id: ID!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+  activeListing: RentalListing
+}
+
+type MultiFamilyProperty implements PropertyModel {
+  id: ID!
+  # type: PropertyType!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+
+  units: [MultiFamilyPropertyUnit!]!
+}
+
+type MultiFamilyPropertyUnit {
+  id: ID!
+  # unit number; should be a string
+  number: String!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+  activeListing: RentalListing
+}
+
+type Address {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  zip: String!
+}
+
+# rental listing for a unit
+type RentalListing {
+  id: ID!
+}
+
+"""
+Mutation
+"""
+input CreateSingleFamilyPropertyInput {
+  coverImageUrl: String
+  address: NewAddressInput!
+  buildYear: Int
+
+  unit: CreateSingleFamilyUnitInput!
+}
+
+input CreateSingleFamilyUnitInput {
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+}
+
+input CreateMultiFamilyPropertyInput {
+  coverImageUrl: String
+  address: NewAddressInput!
+  buildYear: Int
+
+  units: CreateMultiFamilyPropertyUnitInput!
+}
+
+input CreateMultiFamilyPropertyUnitInput {
+  # unit number; should be a string
+  number: String!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+}
+
+input NewAddressInput {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  zip: String!
+}

@@ -29,6 +29,9 @@ resolver:
 # Optional: turn on to use []Thing instead of []*Thing
 # omit_slice_element_pointers: false
 
+# Optional: turn on to skip generation of ComplexityRoot struct content and Complexity function
+omit_complexity: true
+
 # Optional: turn off to make struct-type struct fields not use pointers
 # e.g. type Thing struct { FieldA OtherThing } instead of { FieldA *OtherThing }
 # struct_fields_always_pointers: true
@@ -42,7 +45,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-  - "github.com/hausops/mono/apps/dashboard-api/graph/model"
+  - "github.com/hausops/mono/apps/dashboard-api/domain/property"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -61,7 +64,15 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  Todo:
-    fields:
-      user:
-        resolver: true
+  # Address:
+  #   model:
+  #     - github.com/hausops/mono/apps/dashboard-api/domain/property.Address
+  # NewAddressInput:
+  #   model:
+  #     - github.com/hausops/mono/apps/dashboard-api/domain/property.Address
+  # Property:
+  #   model:
+  #     - github.com/hausops/mono/apps/dashboard-api/domain/property.Property
+  # NewPropertyInput:
+  #   model:
+  #     - github.com/hausops/mono/apps/dashboard-api/domain/property.NewPropertyInput

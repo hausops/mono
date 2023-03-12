@@ -6,35 +6,23 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 
-	"github.com/hausops/mono/apps/dashboard-api/graph/model"
+	"github.com/hausops/mono/apps/dashboard-api/domain/property"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	todo := &model.Todo{
-		ID:   fmt.Sprintf("T%d", rand.Int()),
-		Text: input.Text,
-		User: &model.User{
-			ID:   input.UserID,
-			Name: "user " + input.UserID,
-		},
-		UserID: input.UserID,
-	}
-	r.todos = append(r.todos, todo)
-	return todo, nil
+// CreateSingleFamilyProperty is the resolver for the createSingleFamilyProperty field.
+func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+	return r.propertyRepo.CreateSingleFamilyProperty(input)
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
+// CreateMultiFamilyProperty is the resolver for the createMultiFamilyProperty field.
+func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+	return r.propertyRepo.CreateMultiFamilyProperty(input)
 }
 
-// User is the resolver for the user field.
-func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
-	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
+// Properties is the resolver for the properties field.
+func (r *queryResolver) Properties(ctx context.Context) ([]property.Property, error) {
+	return r.propertyRepo.FindAll()
 }
 
 // Mutation returns MutationResolver implementation.
@@ -43,9 +31,5 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-// Todo returns TodoResolver implementation.
-func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
-
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type todoResolver struct{ *Resolver }

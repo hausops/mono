@@ -1,28 +1,19 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
-
-type User {
-  id: ID!
-  name: String!
-}
-
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  properties: [Property!]!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createSingleFamilyProperty(
+    input: CreateSingleFamilyPropertyInput!
+  ): SingleFamilyProperty!
+
+  createMultiFamilyProperty(
+    input: CreateMultiFamilyPropertyInput!
+  ): MultiFamilyProperty!
+}
+
+# gqlgen errors with "failed to load schema: graph/schema.graphqls: ..."
+# when no models are be generated i.e. all manually defined.
+type EmptyModel {
+  id: ID!
 }
