@@ -14,7 +14,7 @@ type PropertyModel interface {
 
 type Address struct {
 	Line1 string  `json:"line1"`
-	Line2 *string `json:"line2"`
+	Line2 *string `json:"line2,omitempty"`
 	City  string  `json:"city"`
 	State string  `json:"state"`
 	Zip   string  `json:"zip"`
@@ -22,10 +22,10 @@ type Address struct {
 
 type SingleFamilyProperty struct {
 	ID            string            `json:"id"`
-	CoverImageURL *string           `json:"coverImageUrl"`
-	Address       *Address          `json:"address"`
-	BuildYear     *int              `json:"buildYear"`
-	Unit          *SingleFamilyUnit `json:"unit"`
+	CoverImageURL *string           `json:"coverImageUrl,omitempty"`
+	Address       *Address          `json:"address,omitempty"`
+	BuildYear     *int              `json:"buildYear,omitempty"`
+	Unit          *SingleFamilyUnit `json:"unit,omitempty"`
 }
 
 func (SingleFamilyProperty) IsProperty()      {}
@@ -38,18 +38,18 @@ func (sp SingleFamilyProperty) GetBuildYear() *int        { return sp.BuildYear 
 
 type SingleFamilyUnit struct {
 	ID            string         `json:"id"`
-	Bedrooms      *float64       `json:"bedrooms"`
-	Bathrooms     *float64       `json:"bathrooms"`
-	Size          *float64       `json:"size"`
-	RentAmount    *float64       `json:"rentAmount"`
-	ActiveListing *RentalListing `json:"activeListing"`
+	Bedrooms      *float64       `json:"bedrooms,omitempty"`
+	Bathrooms     *float64       `json:"bathrooms,omitempty"`
+	Size          *float64       `json:"size,omitempty"`
+	RentAmount    *float64       `json:"rentAmount,omitempty"`
+	ActiveListing *RentalListing `json:"activeListing,omitempty"`
 }
 
 type MultiFamilyProperty struct {
 	ID            string                     `json:"id"`
-	CoverImageURL *string                    `json:"coverImageUrl"`
-	Address       *Address                   `json:"address"`
-	BuildYear     *int                       `json:"buildYear"`
+	CoverImageURL *string                    `json:"coverImageUrl,omitempty"`
+	Address       *Address                   `json:"address,omitempty"`
+	BuildYear     *int                       `json:"buildYear,omitempty"`
 	Units         []*MultiFamilyPropertyUnit `json:"units"`
 }
 
@@ -64,11 +64,11 @@ func (mp MultiFamilyProperty) GetBuildYear() *int        { return mp.BuildYear }
 type MultiFamilyPropertyUnit struct {
 	ID            string         `json:"id"`
 	Number        string         `json:"number"`
-	Bedrooms      *float64       `json:"bedrooms"`
-	Bathrooms     *float64       `json:"bathrooms"`
-	Size          *float64       `json:"size"`
-	RentAmount    *float64       `json:"rentAmount"`
-	ActiveListing *RentalListing `json:"activeListing"`
+	Bedrooms      *float64       `json:"bedrooms,omitempty"`
+	Bathrooms     *float64       `json:"bathrooms,omitempty"`
+	Size          *float64       `json:"size,omitempty"`
+	RentAmount    *float64       `json:"rentAmount,omitempty"`
+	ActiveListing *RentalListing `json:"activeListing,omitempty"`
 }
 
 type RentalListing struct {
