@@ -20,11 +20,12 @@ func main() {
 	}
 
 	propertySvc := local.NewPropertyService()
-	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{
+	config := graphql.Config{
 		Resolvers: &graphql.Resolver{
 			Property: propertySvc,
 		},
-	}))
+	}
+	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(config))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
