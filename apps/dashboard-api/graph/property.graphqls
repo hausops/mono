@@ -3,14 +3,8 @@ Query
 """
 union Property = SingleFamilyProperty | MultiFamilyProperty
 
-# enum PropertyType {
-#   SINGLE_FAMILY
-#   MULTI_FAMILY
-# }
-
 interface PropertyModel {
   id: ID!
-  # type: PropertyType!
   coverImageUrl: String
   address: Address!
   buildYear: Int
@@ -18,15 +12,14 @@ interface PropertyModel {
 
 type SingleFamilyProperty implements PropertyModel {
   id: ID!
-  # type: PropertyType!
   coverImageUrl: String
   address: Address!
   buildYear: Int
 
-  unit: SingleFamilyUnit!
+  unit: SingleFamilyPropertyUnit!
 }
 
-type SingleFamilyUnit {
+type SingleFamilyPropertyUnit {
   id: ID!
   bedrooms: Float
   bathrooms: Float
@@ -37,7 +30,6 @@ type SingleFamilyUnit {
 
 type MultiFamilyProperty implements PropertyModel {
   id: ID!
-  # type: PropertyType!
   coverImageUrl: String
   address: Address!
   buildYear: Int
@@ -77,10 +69,10 @@ input CreateSingleFamilyPropertyInput {
   address: NewAddressInput!
   buildYear: Int
 
-  unit: CreateSingleFamilyUnitInput!
+  unit: CreateSingleFamilyPropertyUnitInput!
 }
 
-input CreateSingleFamilyUnitInput {
+input CreateSingleFamilyPropertyUnitInput {
   bedrooms: Float
   bathrooms: Float
   size: Float
@@ -92,7 +84,7 @@ input CreateMultiFamilyPropertyInput {
   address: NewAddressInput!
   buildYear: Int
 
-  units: CreateMultiFamilyPropertyUnitInput!
+  units: [CreateMultiFamilyPropertyUnitInput!]!
 }
 
 input CreateMultiFamilyPropertyUnitInput {

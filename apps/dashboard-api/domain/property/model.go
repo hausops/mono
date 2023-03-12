@@ -8,7 +8,7 @@ type PropertyModel interface {
 	IsPropertyModel()
 	GetID() string
 	GetCoverImageURL() *string
-	GetAddress() *Address
+	GetAddress() Address
 	GetBuildYear() *int
 }
 
@@ -21,11 +21,11 @@ type Address struct {
 }
 
 type SingleFamilyProperty struct {
-	ID            string            `json:"id"`
-	CoverImageURL *string           `json:"coverImageUrl,omitempty"`
-	Address       *Address          `json:"address,omitempty"`
-	BuildYear     *int              `json:"buildYear,omitempty"`
-	Unit          *SingleFamilyUnit `json:"unit,omitempty"`
+	ID            string                   `json:"id"`
+	CoverImageURL *string                  `json:"coverImageUrl,omitempty"`
+	Address       Address                  `json:"address"`
+	BuildYear     *int                     `json:"buildYear,omitempty"`
+	Unit          SingleFamilyPropertyUnit `json:"unit,omitempty"`
 }
 
 func (SingleFamilyProperty) IsProperty()      {}
@@ -33,10 +33,10 @@ func (SingleFamilyProperty) IsPropertyModel() {}
 
 func (sp SingleFamilyProperty) GetID() string             { return sp.ID }
 func (sp SingleFamilyProperty) GetCoverImageURL() *string { return sp.CoverImageURL }
-func (sp SingleFamilyProperty) GetAddress() *Address      { return sp.Address }
+func (sp SingleFamilyProperty) GetAddress() Address       { return sp.Address }
 func (sp SingleFamilyProperty) GetBuildYear() *int        { return sp.BuildYear }
 
-type SingleFamilyUnit struct {
+type SingleFamilyPropertyUnit struct {
 	ID            string         `json:"id"`
 	Bedrooms      *float64       `json:"bedrooms,omitempty"`
 	Bathrooms     *float64       `json:"bathrooms,omitempty"`
@@ -46,11 +46,11 @@ type SingleFamilyUnit struct {
 }
 
 type MultiFamilyProperty struct {
-	ID            string                     `json:"id"`
-	CoverImageURL *string                    `json:"coverImageUrl,omitempty"`
-	Address       *Address                   `json:"address,omitempty"`
-	BuildYear     *int                       `json:"buildYear,omitempty"`
-	Units         []*MultiFamilyPropertyUnit `json:"units"`
+	ID            string                    `json:"id"`
+	CoverImageURL *string                   `json:"coverImageUrl,omitempty"`
+	Address       Address                   `json:"address"`
+	BuildYear     *int                      `json:"buildYear,omitempty"`
+	Units         []MultiFamilyPropertyUnit `json:"units"`
 }
 
 func (MultiFamilyProperty) IsProperty()      {}
@@ -58,7 +58,7 @@ func (MultiFamilyProperty) IsPropertyModel() {}
 
 func (mp MultiFamilyProperty) GetID() string             { return mp.ID }
 func (mp MultiFamilyProperty) GetCoverImageURL() *string { return mp.CoverImageURL }
-func (mp MultiFamilyProperty) GetAddress() *Address      { return mp.Address }
+func (mp MultiFamilyProperty) GetAddress() Address       { return mp.Address }
 func (mp MultiFamilyProperty) GetBuildYear() *int        { return mp.BuildYear }
 
 type MultiFamilyPropertyUnit struct {

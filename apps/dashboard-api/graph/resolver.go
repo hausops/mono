@@ -11,3 +11,9 @@ import "github.com/hausops/mono/apps/dashboard-api/domain/property"
 type Resolver struct {
 	propertyRepo property.Repository
 }
+
+func NewResolver(propertyRepo property.Repository) *Resolver {
+	return &Resolver{
+		propertyRepo: propertyRepo,
+	}
+}

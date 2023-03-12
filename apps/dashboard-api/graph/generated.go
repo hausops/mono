@@ -79,7 +79,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateMultiFamilyPropertyInput,
 		ec.unmarshalInputCreateMultiFamilyPropertyUnitInput,
 		ec.unmarshalInputCreateSingleFamilyPropertyInput,
-		ec.unmarshalInputCreateSingleFamilyUnitInput,
+		ec.unmarshalInputCreateSingleFamilyPropertyUnitInput,
 		ec.unmarshalInputNewAddressInput,
 	)
 	first := true
@@ -616,9 +616,9 @@ func (ec *executionContext) _MultiFamilyProperty_address(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*property.Address)
+	res := resTmp.(property.Address)
 	fc.Result = res
-	return ec.marshalNAddress2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx, field.Selections, res)
+	return ec.marshalNAddress2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MultiFamilyProperty_address(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -713,9 +713,9 @@ func (ec *executionContext) _MultiFamilyProperty_units(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*property.MultiFamilyPropertyUnit)
+	res := resTmp.([]property.MultiFamilyPropertyUnit)
 	fc.Result = res
-	return ec.marshalNMultiFamilyPropertyUnit2ᚕᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitᚄ(ctx, field.Selections, res)
+	return ec.marshalNMultiFamilyPropertyUnit2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MultiFamilyProperty_units(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1501,9 +1501,9 @@ func (ec *executionContext) _SingleFamilyProperty_address(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*property.Address)
+	res := resTmp.(property.Address)
 	fc.Result = res
-	return ec.marshalNAddress2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx, field.Selections, res)
+	return ec.marshalNAddress2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SingleFamilyProperty_address(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1598,9 +1598,9 @@ func (ec *executionContext) _SingleFamilyProperty_unit(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*property.SingleFamilyUnit)
+	res := resTmp.(property.SingleFamilyPropertyUnit)
 	fc.Result = res
-	return ec.marshalNSingleFamilyUnit2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyUnit(ctx, field.Selections, res)
+	return ec.marshalNSingleFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyUnit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SingleFamilyProperty_unit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1612,26 +1612,26 @@ func (ec *executionContext) fieldContext_SingleFamilyProperty_unit(ctx context.C
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SingleFamilyUnit_id(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_id(ctx, field)
 			case "bedrooms":
-				return ec.fieldContext_SingleFamilyUnit_bedrooms(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_bedrooms(ctx, field)
 			case "bathrooms":
-				return ec.fieldContext_SingleFamilyUnit_bathrooms(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_bathrooms(ctx, field)
 			case "size":
-				return ec.fieldContext_SingleFamilyUnit_size(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_size(ctx, field)
 			case "rentAmount":
-				return ec.fieldContext_SingleFamilyUnit_rentAmount(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_rentAmount(ctx, field)
 			case "activeListing":
-				return ec.fieldContext_SingleFamilyUnit_activeListing(ctx, field)
+				return ec.fieldContext_SingleFamilyPropertyUnit_activeListing(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SingleFamilyUnit", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SingleFamilyPropertyUnit", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_id(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_id(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_id(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1661,9 +1661,9 @@ func (ec *executionContext) _SingleFamilyUnit_id(ctx context.Context, field grap
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1674,8 +1674,8 @@ func (ec *executionContext) fieldContext_SingleFamilyUnit_id(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_bedrooms(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_bedrooms(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_bedrooms(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_bedrooms(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1702,9 +1702,9 @@ func (ec *executionContext) _SingleFamilyUnit_bedrooms(ctx context.Context, fiel
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_bedrooms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_bedrooms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1715,8 +1715,8 @@ func (ec *executionContext) fieldContext_SingleFamilyUnit_bedrooms(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_bathrooms(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_bathrooms(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_bathrooms(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_bathrooms(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1743,9 +1743,9 @@ func (ec *executionContext) _SingleFamilyUnit_bathrooms(ctx context.Context, fie
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_bathrooms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_bathrooms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1756,8 +1756,8 @@ func (ec *executionContext) fieldContext_SingleFamilyUnit_bathrooms(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_size(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_size(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_size(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_size(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1784,9 +1784,9 @@ func (ec *executionContext) _SingleFamilyUnit_size(ctx context.Context, field gr
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_size(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_size(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1797,8 +1797,8 @@ func (ec *executionContext) fieldContext_SingleFamilyUnit_size(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_rentAmount(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_rentAmount(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_rentAmount(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_rentAmount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1825,9 +1825,9 @@ func (ec *executionContext) _SingleFamilyUnit_rentAmount(ctx context.Context, fi
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_rentAmount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_rentAmount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1838,8 +1838,8 @@ func (ec *executionContext) fieldContext_SingleFamilyUnit_rentAmount(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyUnit_activeListing(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyUnit) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyUnit_activeListing(ctx, field)
+func (ec *executionContext) _SingleFamilyPropertyUnit_activeListing(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyPropertyUnit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyPropertyUnit_activeListing(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1866,9 +1866,9 @@ func (ec *executionContext) _SingleFamilyUnit_activeListing(ctx context.Context,
 	return ec.marshalORentalListing2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐRentalListing(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyUnit_activeListing(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyPropertyUnit_activeListing(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SingleFamilyUnit",
+		Object:     "SingleFamilyPropertyUnit",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3682,7 +3682,7 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNNewAddressInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
+			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3698,7 +3698,7 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("units"))
-			it.Units, err = ec.unmarshalNCreateMultiFamilyPropertyUnitInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx, v)
+			it.Units, err = ec.unmarshalNCreateMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3794,7 +3794,7 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNNewAddressInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
+			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3810,7 +3810,7 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("unit"))
-			it.Unit, err = ec.unmarshalNCreateSingleFamilyUnitInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyUnitInput(ctx, v)
+			it.Unit, err = ec.unmarshalNCreateSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyUnitInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3820,8 +3820,8 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateSingleFamilyUnitInput(ctx context.Context, obj interface{}) (property.CreateSingleFamilyUnitInput, error) {
-	var it property.CreateSingleFamilyUnitInput
+func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyUnitInput(ctx context.Context, obj interface{}) (property.CreateSingleFamilyPropertyUnitInput, error) {
+	var it property.CreateSingleFamilyPropertyUnitInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -4346,42 +4346,42 @@ func (ec *executionContext) _SingleFamilyProperty(ctx context.Context, sel ast.S
 	return out
 }
 
-var singleFamilyUnitImplementors = []string{"SingleFamilyUnit"}
+var singleFamilyPropertyUnitImplementors = []string{"SingleFamilyPropertyUnit"}
 
-func (ec *executionContext) _SingleFamilyUnit(ctx context.Context, sel ast.SelectionSet, obj *property.SingleFamilyUnit) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, singleFamilyUnitImplementors)
+func (ec *executionContext) _SingleFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, obj *property.SingleFamilyPropertyUnit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, singleFamilyPropertyUnitImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SingleFamilyUnit")
+			out.Values[i] = graphql.MarshalString("SingleFamilyPropertyUnit")
 		case "id":
 
-			out.Values[i] = ec._SingleFamilyUnit_id(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "bedrooms":
 
-			out.Values[i] = ec._SingleFamilyUnit_bedrooms(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_bedrooms(ctx, field, obj)
 
 		case "bathrooms":
 
-			out.Values[i] = ec._SingleFamilyUnit_bathrooms(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_bathrooms(ctx, field, obj)
 
 		case "size":
 
-			out.Values[i] = ec._SingleFamilyUnit_size(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_size(ctx, field, obj)
 
 		case "rentAmount":
 
-			out.Values[i] = ec._SingleFamilyUnit_rentAmount(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_rentAmount(ctx, field, obj)
 
 		case "activeListing":
 
-			out.Values[i] = ec._SingleFamilyUnit_activeListing(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyPropertyUnit_activeListing(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -4712,14 +4712,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAddress2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx context.Context, sel ast.SelectionSet, v *property.Address) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Address(ctx, sel, v)
+func (ec *executionContext) marshalNAddress2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐAddress(ctx context.Context, sel ast.SelectionSet, v property.Address) graphql.Marshaler {
+	return ec._Address(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
@@ -4742,9 +4736,26 @@ func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyInput2githubᚗco
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyUnitInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx context.Context, v interface{}) (*property.CreateMultiFamilyPropertyUnitInput, error) {
+func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.CreateMultiFamilyPropertyUnitInput, error) {
 	res, err := ec.unmarshalInputCreateMultiFamilyPropertyUnitInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInputᚄ(ctx context.Context, v interface{}) ([]property.CreateMultiFamilyPropertyUnitInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]property.CreateMultiFamilyPropertyUnitInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalNCreateSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyInput(ctx context.Context, v interface{}) (property.CreateSingleFamilyPropertyInput, error) {
@@ -4752,9 +4763,9 @@ func (ec *executionContext) unmarshalNCreateSingleFamilyPropertyInput2githubᚗc
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateSingleFamilyUnitInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyUnitInput(ctx context.Context, v interface{}) (*property.CreateSingleFamilyUnitInput, error) {
-	res, err := ec.unmarshalInputCreateSingleFamilyUnitInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+func (ec *executionContext) unmarshalNCreateSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.CreateSingleFamilyPropertyUnitInput, error) {
+	res, err := ec.unmarshalInputCreateSingleFamilyPropertyUnitInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -4786,7 +4797,11 @@ func (ec *executionContext) marshalNMultiFamilyProperty2ᚖgithubᚗcomᚋhausop
 	return ec._MultiFamilyProperty(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitᚄ(ctx context.Context, sel ast.SelectionSet, v []*property.MultiFamilyPropertyUnit) graphql.Marshaler {
+func (ec *executionContext) marshalNMultiFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, v property.MultiFamilyPropertyUnit) graphql.Marshaler {
+	return ec._MultiFamilyPropertyUnit(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitᚄ(ctx context.Context, sel ast.SelectionSet, v []property.MultiFamilyPropertyUnit) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4810,7 +4825,7 @@ func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕᚖgithubᚗcom�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMultiFamilyPropertyUnit2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnit(ctx, sel, v[i])
+			ret[i] = ec.marshalNMultiFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnit(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4830,19 +4845,9 @@ func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕᚖgithubᚗcom�
 	return ret
 }
 
-func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, v *property.MultiFamilyPropertyUnit) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._MultiFamilyPropertyUnit(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNNewAddressInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx context.Context, v interface{}) (*property.NewAddressInput, error) {
+func (ec *executionContext) unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx context.Context, v interface{}) (property.NewAddressInput, error) {
 	res, err := ec.unmarshalInputNewAddressInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNProperty2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐProperty(ctx context.Context, sel ast.SelectionSet, v property.Property) graphql.Marshaler {
@@ -4913,14 +4918,8 @@ func (ec *executionContext) marshalNSingleFamilyProperty2ᚖgithubᚗcomᚋhauso
 	return ec._SingleFamilyProperty(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSingleFamilyUnit2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyUnit(ctx context.Context, sel ast.SelectionSet, v *property.SingleFamilyUnit) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._SingleFamilyUnit(ctx, sel, v)
+func (ec *executionContext) marshalNSingleFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, v property.SingleFamilyPropertyUnit) graphql.Marshaler {
+	return ec._SingleFamilyPropertyUnit(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

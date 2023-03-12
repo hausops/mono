@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/hausops/mono/apps/dashboard-api/graph"
+	"github.com/hausops/mono/apps/dashboard-api/internal/local"
 )
 
 const defaultPort = "8080"
@@ -18,7 +19,10 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	propertyRepo := local.NewPropertyRepository()
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
+		Resolvers: graph.NewResolver(propertyRepo),
+	}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
