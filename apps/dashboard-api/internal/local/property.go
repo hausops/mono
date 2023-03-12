@@ -22,7 +22,7 @@ func (r *PropertyRepository) CreateSingleFamilyProperty(input property.CreateSin
 }
 
 func (r *PropertyRepository) CreateMultiFamilyProperty(input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
-	var units []property.MultiFamilyPropertyUnit
+	units := make([]property.MultiFamilyPropertyUnit, 0, len(input.Units))
 	for _, iu := range input.Units {
 		u := iu.ToUnit()
 		u.ID = uuid.New().String()
@@ -36,7 +36,7 @@ func (r *PropertyRepository) CreateMultiFamilyProperty(input property.CreateMult
 }
 
 func (r *PropertyRepository) FindAll() ([]property.Property, error) {
-	var ps []property.Property
+	ps := make([]property.Property, 0, len(r.byId))
 	for _, p := range r.byId {
 		ps = append(ps, p)
 	}
