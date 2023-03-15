@@ -4,8 +4,8 @@ type Property interface {
 	IsProperty()
 }
 
-type PropertyModel interface {
-	IsPropertyModel()
+type PropertyInfo interface {
+	IsPropertyInfo()
 	GetID() string
 	GetCoverImageURL() *string
 	GetAddress() Address
@@ -28,8 +28,8 @@ type SingleFamilyProperty struct {
 	Unit          SingleFamilyPropertyUnit `json:"unit,omitempty"`
 }
 
-func (SingleFamilyProperty) IsProperty()      {}
-func (SingleFamilyProperty) IsPropertyModel() {}
+func (SingleFamilyProperty) IsProperty()     {}
+func (SingleFamilyProperty) IsPropertyInfo() {}
 
 func (sp SingleFamilyProperty) GetID() string             { return sp.ID }
 func (sp SingleFamilyProperty) GetCoverImageURL() *string { return sp.CoverImageURL }
@@ -53,8 +53,8 @@ type MultiFamilyProperty struct {
 	Units         []MultiFamilyPropertyUnit `json:"units"`
 }
 
-func (MultiFamilyProperty) IsProperty()      {}
-func (MultiFamilyProperty) IsPropertyModel() {}
+func (MultiFamilyProperty) IsProperty()     {}
+func (MultiFamilyProperty) IsPropertyInfo() {}
 
 func (mp MultiFamilyProperty) GetID() string             { return mp.ID }
 func (mp MultiFamilyProperty) GetCoverImageURL() *string { return mp.CoverImageURL }

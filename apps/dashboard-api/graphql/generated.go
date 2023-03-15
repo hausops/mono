@@ -3959,7 +3959,7 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 	}
 }
 
-func (ec *executionContext) _PropertyModel(ctx context.Context, sel ast.SelectionSet, obj property.PropertyModel) graphql.Marshaler {
+func (ec *executionContext) _PropertyInfo(ctx context.Context, sel ast.SelectionSet, obj property.PropertyInfo) graphql.Marshaler {
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
@@ -4067,7 +4067,7 @@ func (ec *executionContext) _EmptyModel(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
-var multiFamilyPropertyImplementors = []string{"MultiFamilyProperty", "Property", "PropertyModel"}
+var multiFamilyPropertyImplementors = []string{"MultiFamilyProperty", "Property", "PropertyInfo"}
 
 func (ec *executionContext) _MultiFamilyProperty(ctx context.Context, sel ast.SelectionSet, obj *property.MultiFamilyProperty) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, multiFamilyPropertyImplementors)
@@ -4296,7 +4296,7 @@ func (ec *executionContext) _RentalListing(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var singleFamilyPropertyImplementors = []string{"SingleFamilyProperty", "Property", "PropertyModel"}
+var singleFamilyPropertyImplementors = []string{"SingleFamilyProperty", "Property", "PropertyInfo"}
 
 func (ec *executionContext) _SingleFamilyProperty(ctx context.Context, sel ast.SelectionSet, obj *property.SingleFamilyProperty) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, singleFamilyPropertyImplementors)

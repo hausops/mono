@@ -3,14 +3,14 @@ Query
 """
 union Property = SingleFamilyProperty | MultiFamilyProperty
 
-interface PropertyModel {
+interface PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
   buildYear: Int
 }
 
-type SingleFamilyProperty implements PropertyModel {
+type SingleFamilyProperty implements PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
@@ -28,7 +28,7 @@ type SingleFamilyPropertyUnit {
   activeListing: RentalListing
 }
 
-type MultiFamilyProperty implements PropertyModel {
+type MultiFamilyProperty implements PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
