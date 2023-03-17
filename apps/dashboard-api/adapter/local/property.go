@@ -66,4 +66,13 @@ func (r *PropertyService) FindAll() ([]property.Property, error) {
 	return ps, nil
 }
 
+func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
+	p, ok := r.byId[id]
+	if !ok {
+		return nil, property.NotFoundError{ID: id}
+	}
+	delete(r.byId, id)
+	return p, nil
+}
+
 var _ property.Service = (*PropertyService)(nil)

@@ -20,6 +20,11 @@ func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input 
 	return r.Property.CreateMultiFamilyProperty(input)
 }
 
+// DeleteProperty is the resolver for the deleteProperty field.
+func (r *mutationResolver) DeleteProperty(ctx context.Context, id string) (property.Property, error) {
+	return r.Property.DeleteByID(id)
+}
+
 // Properties is the resolver for the properties field.
 func (r *queryResolver) Properties(ctx context.Context) ([]property.Property, error) {
 	return r.Property.FindAll()

@@ -10,6 +10,8 @@ type Mutation {
   createMultiFamilyProperty(
     input: CreateMultiFamilyPropertyInput!
   ): MultiFamilyProperty!
+
+  deleteProperty(id: ID!): Property!
 }
 
 # gqlgen errors with "failed to load schema: graph/schema.graphqls: ..."

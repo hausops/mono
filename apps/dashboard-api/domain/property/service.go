@@ -10,6 +10,8 @@ type Service interface {
 	) (*MultiFamilyProperty, error)
 
 	FindAll() ([]Property, error)
+
+	DeleteByID(id string) (Property, error)
 }
 
 type CreateSingleFamilyPropertyInput struct {
