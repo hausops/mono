@@ -13,7 +13,7 @@ func NewPropertyService() *PropertyService {
 	return &PropertyService{byId: make(map[string]property.Property)}
 }
 
-func (r *PropertyService) CreateSingleFamilyProperty(in property.SingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+func (r *PropertyService) CreateSingleFamilyProperty(in property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
 	unit := property.SingleFamilyPropertyUnit{
 		ID:         uuid.New().String(),
 		Bedrooms:   in.Unit.Bedrooms,
@@ -33,7 +33,7 @@ func (r *PropertyService) CreateSingleFamilyProperty(in property.SingleFamilyPro
 	return &p, nil
 }
 
-func (r *PropertyService) CreateMultiFamilyProperty(in property.MultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
 	units := make([]property.MultiFamilyPropertyUnit, 0, len(in.Units))
 	for _, iu := range in.Units {
 		u := property.MultiFamilyPropertyUnit{

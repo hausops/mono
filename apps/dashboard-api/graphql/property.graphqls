@@ -59,37 +59,31 @@ type RentalListing {
   id: ID!
 }
 
-# union PropertyResult = Property | PropertyNotFound
-
-# type PropertyNotFound {
-#   id: ID!
-# }
-
 """
 Mutation
 """
-input SingleFamilyPropertyInput {
+input CreateSingleFamilyPropertyInput {
   coverImageUrl: String
   address: NewAddressInput!
   buildYear: Int
-  unit: SingleFamilyPropertyUnitInput!
+  unit: CreateSingleFamilyPropertyUnitInput!
 }
 
-input SingleFamilyPropertyUnitInput {
+input CreateSingleFamilyPropertyUnitInput {
   bedrooms: Float
   bathrooms: Float
   size: Float
   rentAmount: Float
 }
 
-input MultiFamilyPropertyInput {
+input CreateMultiFamilyPropertyInput {
   coverImageUrl: String
   address: NewAddressInput!
   buildYear: Int
-  units: [MultiFamilyPropertyUnitInput!]!
+  units: [CreateMultiFamilyPropertyUnitInput!]!
 }
 
-input MultiFamilyPropertyUnitInput {
+input CreateMultiFamilyPropertyUnitInput {
   # unit number; should be a string
   number: String!
   bedrooms: Float

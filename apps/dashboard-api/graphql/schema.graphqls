@@ -5,11 +5,11 @@ type Query {
 
 type Mutation {
   createSingleFamilyProperty(
-    input: SingleFamilyPropertyInput!
+    input: CreateSingleFamilyPropertyInput!
   ): SingleFamilyProperty!
 
   createMultiFamilyProperty(
-    input: MultiFamilyPropertyInput!
+    input: CreateMultiFamilyPropertyInput!
   ): MultiFamilyProperty!
 
   deleteProperty(id: ID!): Property!
