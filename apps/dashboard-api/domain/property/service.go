@@ -18,7 +18,7 @@ type Service interface {
 
 type CreateSingleFamilyPropertyInput struct {
 	CoverImageURL *string                             `json:"coverImageUrl"`
-	Address       NewAddressInput                     `json:"address"`
+	Address       CreateAddressInput                  `json:"address"`
 	BuildYear     *int                                `json:"buildYear"`
 	Unit          CreateSingleFamilyPropertyUnitInput `json:"unit"`
 }
@@ -32,7 +32,7 @@ type CreateSingleFamilyPropertyUnitInput struct {
 
 type CreateMultiFamilyPropertyInput struct {
 	CoverImageURL *string                              `json:"coverImageUrl"`
-	Address       NewAddressInput                      `json:"address"`
+	Address       CreateAddressInput                   `json:"address"`
 	BuildYear     *int                                 `json:"buildYear"`
 	Units         []CreateMultiFamilyPropertyUnitInput `json:"units"`
 }
@@ -45,7 +45,7 @@ type CreateMultiFamilyPropertyUnitInput struct {
 	RentAmount *float64 `json:"rentAmount"`
 }
 
-type NewAddressInput struct {
+type CreateAddressInput struct {
 	Line1 string  `json:"line1"`
 	Line2 *string `json:"line2"`
 	City  string  `json:"city"`

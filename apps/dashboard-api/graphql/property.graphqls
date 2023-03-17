@@ -64,7 +64,7 @@ Mutation
 """
 input CreateSingleFamilyPropertyInput {
   coverImageUrl: String
-  address: NewAddressInput!
+  address: CreateAddressInput!
   buildYear: Int
   unit: CreateSingleFamilyPropertyUnitInput!
 }
@@ -78,7 +78,7 @@ input CreateSingleFamilyPropertyUnitInput {
 
 input CreateMultiFamilyPropertyInput {
   coverImageUrl: String
-  address: NewAddressInput!
+  address: CreateAddressInput!
   buildYear: Int
   units: [CreateMultiFamilyPropertyUnitInput!]!
 }
@@ -92,7 +92,7 @@ input CreateMultiFamilyPropertyUnitInput {
   rentAmount: Float
 }
 
-input NewAddressInput {
+input CreateAddressInput {
   line1: String!
   line2: String
   city: String!

@@ -78,11 +78,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateAddressInput,
 		ec.unmarshalInputCreateMultiFamilyPropertyInput,
 		ec.unmarshalInputCreateMultiFamilyPropertyUnitInput,
 		ec.unmarshalInputCreateSingleFamilyPropertyInput,
 		ec.unmarshalInputCreateSingleFamilyPropertyUnitInput,
-		ec.unmarshalInputNewAddressInput,
 	)
 	first := true
 
@@ -3796,6 +3796,66 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateAddressInput(ctx context.Context, obj interface{}) (property.CreateAddressInput, error) {
+	var it property.CreateAddressInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"line1", "line2", "city", "state", "zip"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "line1":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("line1"))
+			it.Line1, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "line2":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("line2"))
+			it.Line2, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "city":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("city"))
+			it.City, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "state":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("state"))
+			it.State, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "zip":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("zip"))
+			it.Zip, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx context.Context, obj interface{}) (property.CreateMultiFamilyPropertyInput, error) {
 	var it property.CreateMultiFamilyPropertyInput
 	asMap := map[string]interface{}{}
@@ -3822,7 +3882,7 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
+			it.Address, err = ec.unmarshalNCreateAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateAddressInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3934,7 +3994,7 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
+			it.Address, err = ec.unmarshalNCreateAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateAddressInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4003,66 +4063,6 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyUnitInput(ct
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rentAmount"))
 			it.RentAmount, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputNewAddressInput(ctx context.Context, obj interface{}) (property.NewAddressInput, error) {
-	var it property.NewAddressInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"line1", "line2", "city", "state", "zip"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "line1":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("line1"))
-			it.Line1, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "line2":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("line2"))
-			it.Line2, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "city":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("city"))
-			it.City, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "state":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("state"))
-			it.State, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "zip":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("zip"))
-			it.Zip, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4897,6 +4897,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateAddressInput(ctx context.Context, v interface{}) (property.CreateAddressInput, error) {
+	res, err := ec.unmarshalInputCreateAddressInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyInput(ctx context.Context, v interface{}) (property.CreateMultiFamilyPropertyInput, error) {
 	res, err := ec.unmarshalInputCreateMultiFamilyPropertyInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5009,11 +5014,6 @@ func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕgithubᚗcomᚋha
 	}
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx context.Context, v interface{}) (property.NewAddressInput, error) {
-	res, err := ec.unmarshalInputNewAddressInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNProperty2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐProperty(ctx context.Context, sel ast.SelectionSet, v property.Property) graphql.Marshaler {
