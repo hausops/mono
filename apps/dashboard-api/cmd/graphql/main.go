@@ -30,7 +30,7 @@ func newGraphqlServer() *handler.Server {
 	propertySvc := local.NewPropertyService()
 	c := graphql.Config{
 		Resolvers: &graphql.Resolver{
-			Property: propertySvc,
+			PropertySvc: propertySvc,
 		},
 	}
 	return handler.NewDefaultServer(graphql.NewExecutableSchema(c))

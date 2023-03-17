@@ -58,6 +58,14 @@ func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamil
 	return &p, nil
 }
 
+func (r *PropertyService) FindByID(id string) (property.Property, error) {
+	p, ok := r.byId[id]
+	if !ok {
+		return nil, property.NotFoundError{ID: id}
+	}
+	return p, nil
+}
+
 func (r *PropertyService) FindAll() ([]property.Property, error) {
 	ps := make([]property.Property, 0, len(r.byId))
 	for _, p := range r.byId {

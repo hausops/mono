@@ -15,7 +15,6 @@ type SingleFamilyProperty implements PropertyInfo {
   coverImageUrl: String
   address: Address!
   buildYear: Int
-
   unit: SingleFamilyPropertyUnit!
 }
 
@@ -33,7 +32,6 @@ type MultiFamilyProperty implements PropertyInfo {
   coverImageUrl: String
   address: Address!
   buildYear: Int
-
   units: [MultiFamilyPropertyUnit!]!
 }
 
@@ -68,7 +66,6 @@ input CreateSingleFamilyPropertyInput {
   coverImageUrl: String
   address: NewAddressInput!
   buildYear: Int
-
   unit: CreateSingleFamilyPropertyUnitInput!
 }
 
@@ -83,7 +80,6 @@ input CreateMultiFamilyPropertyInput {
   coverImageUrl: String
   address: NewAddressInput!
   buildYear: Int
-
   units: [CreateMultiFamilyPropertyUnitInput!]!
 }
 

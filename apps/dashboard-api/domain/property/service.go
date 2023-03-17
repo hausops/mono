@@ -9,6 +9,8 @@ type Service interface {
 		CreateMultiFamilyPropertyInput,
 	) (*MultiFamilyProperty, error)
 
+	FindByID(id string) (Property, error)
+
 	FindAll() ([]Property, error)
 
 	DeleteByID(id string) (Property, error)

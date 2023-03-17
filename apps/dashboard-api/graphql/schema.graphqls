@@ -1,4 +1,5 @@
 type Query {
+  property(id: ID!): Property!
   properties: [Property!]!
 }
 

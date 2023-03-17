@@ -6,28 +6,34 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hausops/mono/apps/dashboard-api/domain/property"
 )
 
 // CreateSingleFamilyProperty is the resolver for the createSingleFamilyProperty field.
 func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
-	return r.Property.CreateSingleFamilyProperty(input)
+	return r.PropertySvc.CreateSingleFamilyProperty(input)
 }
 
 // CreateMultiFamilyProperty is the resolver for the createMultiFamilyProperty field.
 func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
-	return r.Property.CreateMultiFamilyProperty(input)
+	return r.PropertySvc.CreateMultiFamilyProperty(input)
 }
 
 // DeleteProperty is the resolver for the deleteProperty field.
 func (r *mutationResolver) DeleteProperty(ctx context.Context, id string) (property.Property, error) {
-	return r.Property.DeleteByID(id)
+	return r.PropertySvc.DeleteByID(id)
+}
+
+// Property is the resolver for the property field.
+func (r *queryResolver) Property(ctx context.Context, id string) (property.Property, error) {
+	panic(fmt.Errorf("not implemented: Property - property"))
 }
 
 // Properties is the resolver for the properties field.
 func (r *queryResolver) Properties(ctx context.Context) ([]property.Property, error) {
-	return r.Property.FindAll()
+	return r.PropertySvc.FindAll()
 }
 
 // Mutation returns MutationResolver implementation.
