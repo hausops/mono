@@ -2,11 +2,11 @@ package property
 
 type Service interface {
 	CreateSingleFamilyProperty(
-		CreateSingleFamilyPropertyInput,
+		SingleFamilyPropertyInput,
 	) (*SingleFamilyProperty, error)
 
 	CreateMultiFamilyProperty(
-		CreateMultiFamilyPropertyInput,
+		MultiFamilyPropertyInput,
 	) (*MultiFamilyProperty, error)
 
 	FindByID(id string) (Property, error)
@@ -16,28 +16,28 @@ type Service interface {
 	DeleteByID(id string) (Property, error)
 }
 
-type CreateSingleFamilyPropertyInput struct {
-	CoverImageURL *string                             `json:"coverImageUrl"`
-	Address       NewAddressInput                     `json:"address"`
-	BuildYear     *int                                `json:"buildYear"`
-	Unit          CreateSingleFamilyPropertyUnitInput `json:"unit"`
+type SingleFamilyPropertyInput struct {
+	CoverImageURL *string                       `json:"coverImageUrl"`
+	Address       NewAddressInput               `json:"address"`
+	BuildYear     *int                          `json:"buildYear"`
+	Unit          SingleFamilyPropertyUnitInput `json:"unit"`
 }
 
-type CreateSingleFamilyPropertyUnitInput struct {
+type SingleFamilyPropertyUnitInput struct {
 	Bedrooms   *float64 `json:"bedrooms"`
 	Bathrooms  *float64 `json:"bathrooms"`
 	Size       *float64 `json:"size"`
 	RentAmount *float64 `json:"rentAmount"`
 }
 
-type CreateMultiFamilyPropertyInput struct {
-	CoverImageURL *string                              `json:"coverImageUrl"`
-	Address       NewAddressInput                      `json:"address"`
-	BuildYear     *int                                 `json:"buildYear"`
-	Units         []CreateMultiFamilyPropertyUnitInput `json:"units"`
+type MultiFamilyPropertyInput struct {
+	CoverImageURL *string                        `json:"coverImageUrl"`
+	Address       NewAddressInput                `json:"address"`
+	BuildYear     *int                           `json:"buildYear"`
+	Units         []MultiFamilyPropertyUnitInput `json:"units"`
 }
 
-type CreateMultiFamilyPropertyUnitInput struct {
+type MultiFamilyPropertyUnitInput struct {
 	Number     string   `json:"number"`
 	Bedrooms   *float64 `json:"bedrooms"`
 	Bathrooms  *float64 `json:"bathrooms"`

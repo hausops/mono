@@ -48,8 +48,8 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error)
-	CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error)
+	CreateSingleFamilyProperty(ctx context.Context, input property.SingleFamilyPropertyInput) (*property.SingleFamilyProperty, error)
+	CreateMultiFamilyProperty(ctx context.Context, input property.MultiFamilyPropertyInput) (*property.MultiFamilyProperty, error)
 	DeleteProperty(ctx context.Context, id string) (property.Property, error)
 }
 type QueryResolver interface {
@@ -78,11 +78,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreateMultiFamilyPropertyInput,
-		ec.unmarshalInputCreateMultiFamilyPropertyUnitInput,
-		ec.unmarshalInputCreateSingleFamilyPropertyInput,
-		ec.unmarshalInputCreateSingleFamilyPropertyUnitInput,
+		ec.unmarshalInputMultiFamilyPropertyInput,
+		ec.unmarshalInputMultiFamilyPropertyUnitInput,
 		ec.unmarshalInputNewAddressInput,
+		ec.unmarshalInputSingleFamilyPropertyInput,
+		ec.unmarshalInputSingleFamilyPropertyUnitInput,
 	)
 	first := true
 
@@ -166,10 +166,10 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createMultiFamilyProperty_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 property.CreateMultiFamilyPropertyInput
+	var arg0 property.MultiFamilyPropertyInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyInput(ctx, tmp)
+		arg0, err = ec.unmarshalNMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -181,10 +181,10 @@ func (ec *executionContext) field_Mutation_createMultiFamilyProperty_args(ctx co
 func (ec *executionContext) field_Mutation_createSingleFamilyProperty_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 property.CreateSingleFamilyPropertyInput
+	var arg0 property.SingleFamilyPropertyInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyInput(ctx, tmp)
+		arg0, err = ec.unmarshalNSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1090,7 +1090,7 @@ func (ec *executionContext) _Mutation_createSingleFamilyProperty(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSingleFamilyProperty(rctx, fc.Args["input"].(property.CreateSingleFamilyPropertyInput))
+		return ec.resolvers.Mutation().CreateSingleFamilyProperty(rctx, fc.Args["input"].(property.SingleFamilyPropertyInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1156,7 +1156,7 @@ func (ec *executionContext) _Mutation_createMultiFamilyProperty(ctx context.Cont
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateMultiFamilyProperty(rctx, fc.Args["input"].(property.CreateMultiFamilyPropertyInput))
+		return ec.resolvers.Mutation().CreateMultiFamilyProperty(rctx, fc.Args["input"].(property.MultiFamilyPropertyInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3796,8 +3796,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx context.Context, obj interface{}) (property.CreateMultiFamilyPropertyInput, error) {
-	var it property.CreateMultiFamilyPropertyInput
+func (ec *executionContext) unmarshalInputMultiFamilyPropertyInput(ctx context.Context, obj interface{}) (property.MultiFamilyPropertyInput, error) {
+	var it property.MultiFamilyPropertyInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3838,7 +3838,7 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("units"))
-			it.Units, err = ec.unmarshalNCreateMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInputᚄ(ctx, v)
+			it.Units, err = ec.unmarshalNMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3848,8 +3848,8 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyUnitInput(ctx context.Context, obj interface{}) (property.CreateMultiFamilyPropertyUnitInput, error) {
-	var it property.CreateMultiFamilyPropertyUnitInput
+func (ec *executionContext) unmarshalInputMultiFamilyPropertyUnitInput(ctx context.Context, obj interface{}) (property.MultiFamilyPropertyUnitInput, error) {
+	var it property.MultiFamilyPropertyUnitInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3870,110 +3870,6 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyUnitInput(ctx
 			if err != nil {
 				return it, err
 			}
-		case "bedrooms":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bedrooms"))
-			it.Bedrooms, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "bathrooms":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bathrooms"))
-			it.Bathrooms, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "size":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
-			it.Size, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rentAmount":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rentAmount"))
-			it.RentAmount, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx context.Context, obj interface{}) (property.CreateSingleFamilyPropertyInput, error) {
-	var it property.CreateSingleFamilyPropertyInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear", "unit"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "coverImageUrl":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coverImageUrl"))
-			it.CoverImageURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "address":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "buildYear":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
-			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "unit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("unit"))
-			it.Unit, err = ec.unmarshalNCreateSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyUnitInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyUnitInput(ctx context.Context, obj interface{}) (property.CreateSingleFamilyPropertyUnitInput, error) {
-	var it property.CreateSingleFamilyPropertyUnitInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"bedrooms", "bathrooms", "size", "rentAmount"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
 		case "bedrooms":
 			var err error
 
@@ -4063,6 +3959,110 @@ func (ec *executionContext) unmarshalInputNewAddressInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("zip"))
 			it.Zip, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSingleFamilyPropertyInput(ctx context.Context, obj interface{}) (property.SingleFamilyPropertyInput, error) {
+	var it property.SingleFamilyPropertyInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear", "unit"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "coverImageUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coverImageUrl"))
+			it.CoverImageURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "buildYear":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
+			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "unit":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("unit"))
+			it.Unit, err = ec.unmarshalNSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyUnitInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSingleFamilyPropertyUnitInput(ctx context.Context, obj interface{}) (property.SingleFamilyPropertyUnitInput, error) {
+	var it property.SingleFamilyPropertyUnitInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"bedrooms", "bathrooms", "size", "rentAmount"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "bedrooms":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bedrooms"))
+			it.Bedrooms, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "bathrooms":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bathrooms"))
+			it.Bathrooms, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "size":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
+			it.Size, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rentAmount":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rentAmount"))
+			it.RentAmount, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4897,43 +4897,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyInput(ctx context.Context, v interface{}) (property.CreateMultiFamilyPropertyInput, error) {
-	res, err := ec.unmarshalInputCreateMultiFamilyPropertyInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.CreateMultiFamilyPropertyUnitInput, error) {
-	res, err := ec.unmarshalInputCreateMultiFamilyPropertyUnitInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInputᚄ(ctx context.Context, v interface{}) ([]property.CreateMultiFamilyPropertyUnitInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]property.CreateMultiFamilyPropertyUnitInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNCreateMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateMultiFamilyPropertyUnitInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNCreateSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyInput(ctx context.Context, v interface{}) (property.CreateSingleFamilyPropertyInput, error) {
-	res, err := ec.unmarshalInputCreateSingleFamilyPropertyInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐCreateSingleFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.CreateSingleFamilyPropertyUnitInput, error) {
-	res, err := ec.unmarshalInputCreateSingleFamilyPropertyUnitInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4961,6 +4924,11 @@ func (ec *executionContext) marshalNMultiFamilyProperty2ᚖgithubᚗcomᚋhausop
 		return graphql.Null
 	}
 	return ec._MultiFamilyProperty(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyInput(ctx context.Context, v interface{}) (property.MultiFamilyPropertyInput, error) {
+	res, err := ec.unmarshalInputMultiFamilyPropertyInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNMultiFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, v property.MultiFamilyPropertyUnit) graphql.Marshaler {
@@ -5009,6 +4977,28 @@ func (ec *executionContext) marshalNMultiFamilyPropertyUnit2ᚕgithubᚗcomᚋha
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.MultiFamilyPropertyUnitInput, error) {
+	res, err := ec.unmarshalInputMultiFamilyPropertyUnitInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNMultiFamilyPropertyUnitInput2ᚕgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitInputᚄ(ctx context.Context, v interface{}) ([]property.MultiFamilyPropertyUnitInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]property.MultiFamilyPropertyUnitInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNMultiFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyPropertyUnitInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalNNewAddressInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐNewAddressInput(ctx context.Context, v interface{}) (property.NewAddressInput, error) {
@@ -5084,8 +5074,18 @@ func (ec *executionContext) marshalNSingleFamilyProperty2ᚖgithubᚗcomᚋhauso
 	return ec._SingleFamilyProperty(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyInput(ctx context.Context, v interface{}) (property.SingleFamilyPropertyInput, error) {
+	res, err := ec.unmarshalInputSingleFamilyPropertyInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNSingleFamilyPropertyUnit2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyUnit(ctx context.Context, sel ast.SelectionSet, v property.SingleFamilyPropertyUnit) graphql.Marshaler {
 	return ec._SingleFamilyPropertyUnit(ctx, sel, &v)
+}
+
+func (ec *executionContext) unmarshalNSingleFamilyPropertyUnitInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐSingleFamilyPropertyUnitInput(ctx context.Context, v interface{}) (property.SingleFamilyPropertyUnitInput, error) {
+	res, err := ec.unmarshalInputSingleFamilyPropertyUnitInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

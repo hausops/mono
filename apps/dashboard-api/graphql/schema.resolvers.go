@@ -12,12 +12,12 @@ import (
 )
 
 // CreateSingleFamilyProperty is the resolver for the createSingleFamilyProperty field.
-func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.SingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
 	return r.PropertySvc.CreateSingleFamilyProperty(input)
 }
 
 // CreateMultiFamilyProperty is the resolver for the createMultiFamilyProperty field.
-func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.MultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
 	return r.PropertySvc.CreateMultiFamilyProperty(input)
 }
 
