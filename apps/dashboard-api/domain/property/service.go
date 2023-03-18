@@ -29,7 +29,7 @@ type Service interface {
 type CreateSingleFamilyPropertyInput struct {
 	CoverImageURL *string                             `json:"coverImageUrl,omitempty"`
 	Address       CreateAddressInput                  `json:"address"`
-	BuildYear     *int                                `json:"buildYear,omitempty"`
+	YearBuilt     *int                                `json:"yearBuilt,omitempty"`
 	Unit          CreateSingleFamilyPropertyUnitInput `json:"unit"`
 }
 
@@ -43,7 +43,7 @@ type CreateSingleFamilyPropertyUnitInput struct {
 type CreateMultiFamilyPropertyInput struct {
 	CoverImageURL *string                              `json:"coverImageUrl,omitempty"`
 	Address       CreateAddressInput                   `json:"address"`
-	BuildYear     *int                                 `json:"buildYear,omitempty"`
+	YearBuilt     *int                                 `json:"yearBuilt,omitempty"`
 	Units         []CreateMultiFamilyPropertyUnitInput `json:"units"`
 }
 
@@ -66,7 +66,7 @@ type CreateAddressInput struct {
 type UpdateSingleFamilyPropertyInput struct {
 	CoverImageURL *string                              `json:"coverImageUrl,omitempty"`
 	Address       *UpdateAdderssInput                  `json:"address,omitempty"`
-	BuildYear     *int                                 `json:"buildYear,omitempty"`
+	YearBuilt     *int                                 `json:"yearBuilt,omitempty"`
 	Unit          *UpdateSingleFamilyPropertyUnitInput `json:"unit,omitempty"`
 }
 
@@ -80,7 +80,7 @@ type UpdateSingleFamilyPropertyUnitInput struct {
 type UpdateMultiFamilyPropertyInput struct {
 	CoverImageURL *string             `json:"coverImageUrl"`
 	Address       *UpdateAdderssInput `json:"address"`
-	BuildYear     *int                `json:"buildYear"`
+	YearBuilt     *int                `json:"yearBuilt"`
 }
 
 type UpdateAdderssInput struct {
