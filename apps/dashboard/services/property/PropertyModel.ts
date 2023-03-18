@@ -13,7 +13,7 @@ export namespace SingleFamily {
     type: 'single-family';
     coverImageUrl?: string;
     address: AddressModel;
-    builtYear?: number;
+    yearBuilt?: number;
     unit: Unit;
   };
 
@@ -32,7 +32,7 @@ export namespace SingleFamily {
     type: 'single-family';
     coverImageUrl?: string;
     address: AddressModel;
-    builtYear?: number;
+    yearBuilt?: number;
     unit: {
       bedrooms?: number;
       bathrooms?: number;
@@ -48,7 +48,7 @@ export namespace MultiFamily {
     type: 'multi-family';
     coverImageUrl?: string;
     address: AddressModel;
-    builtYear?: number;
+    yearBuilt?: number;
     units: Unit[];
   };
 
@@ -68,7 +68,7 @@ export namespace MultiFamily {
     type: 'multi-family';
     coverImageUrl?: string;
     address: AddressModel;
-    builtYear?: number;
+    yearBuilt?: number;
     units: Array<{
       number: string;
       bedrooms?: number;
