@@ -1,25 +1,13 @@
 {
-  // "clang-format.style": "google",
-
-  // Important Settings
-  // "go.lintTool": "golint",
   "go.goroot": "/usr/local/go",
-  // "go.gopath": "/Users/bill/code/go",
-
   "go.useLanguageServer": true,
   "[go]": {
-    // "editor.snippetSuggestions": "none",
     "editor.formatOnSave": true
-    // "editor.codeActionsOnSave": {
-    //     "source.organizeImports": true
-    // }
   },
   "gopls": {
-    "usePlaceholders": true, // add parameter placeholders when completing a function
-    "completeUnimported": true, // autocomplete unimported packages
-    "deepCompletion": true // enable deep completion
+    "usePlaceholders": true,
+    "completeUnimported": true,
+    "deepCompletion": true
   },
-  "go.languageServerFlags": [
-    "-rpc.trace" // for more detailed debug logging
-  ]
+  "go.languageServerFlags": ["-rpc.trace"]
 }
