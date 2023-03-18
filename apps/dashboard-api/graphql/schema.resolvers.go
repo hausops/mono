@@ -21,6 +21,11 @@ func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input 
 	return r.PropertySvc.CreateMultiFamilyProperty(input)
 }
 
+// UpdateSingleFamilyProperty is the resolver for the updateSingleFamilyProperty field.
+func (r *mutationResolver) UpdateSingleFamilyProperty(ctx context.Context, id string, input property.UpdateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+	return r.PropertySvc.UpdateSingleFamilyPropertyByID(id, input)
+}
+
 // DeleteProperty is the resolver for the deleteProperty field.
 func (r *mutationResolver) DeleteProperty(ctx context.Context, id string) (property.Property, error) {
 	return r.PropertySvc.DeleteByID(id)

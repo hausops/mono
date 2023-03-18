@@ -1,8 +1,11 @@
 package local
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/hausops/mono/apps/dashboard-api/domain/property"
+	"github.com/mitchellh/mapstructure"
 )
 
 type PropertyService struct {
@@ -72,6 +75,25 @@ func (r *PropertyService) FindAll() ([]property.Property, error) {
 		ps = append(ps, p)
 	}
 	return ps, nil
+}
+
+func (r *PropertyService) UpdateSingleFamilyPropertyByID(
+	id string,
+	in property.UpdateSingleFamilyPropertyInput,
+) (*property.SingleFamilyProperty, error) {
+	p, ok := r.byId[id]
+	if !ok {
+		return nil, property.NotFoundError{ID: id}
+	}
+	sp, ok := p.(property.SingleFamilyProperty)
+	if !ok {
+		return nil, errors.New("update property (single-family): property type mismatch")
+	}
+	if err := mapstructure.Decode(in, &sp); err != nil {
+		return nil, err
+	}
+	r.byId[id] = sp
+	return &sp, nil
 }
 
 func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
