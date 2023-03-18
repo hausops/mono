@@ -1,0 +1,32 @@
+type Query {
+  property(id: ID!): Property!
+  properties: [Property!]!
+}
+
+type Mutation {
+  createSingleFamilyProperty(
+    input: CreateSingleFamilyPropertyInput!
+  ): SingleFamilyProperty!
+
+  createMultiFamilyProperty(
+    input: CreateMultiFamilyPropertyInput!
+  ): MultiFamilyProperty!
+
+  updateSingleFamilyProperty(
+    id: ID!
+    input: UpdateSingleFamilyPropertyInput!
+  ): SingleFamilyProperty!
+
+  updateMultiFamilyProperty(
+    id: ID!
+    input: UpdateMultiFamilyPropertyInput!
+  ): MultiFamilyProperty!
+
+  deleteProperty(id: ID!): Property!
+}
+
+# gqlgen errors with "failed to load schema: graph/schema.graphqls: ..."
+# when no models are be generated i.e. all manually defined.
+type EmptyModel {
+  id: ID!
+}

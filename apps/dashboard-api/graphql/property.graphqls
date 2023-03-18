@@ -1,0 +1,131 @@
+"""
+Query
+"""
+union Property = SingleFamilyProperty | MultiFamilyProperty
+
+interface PropertyInfo {
+  id: ID!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+}
+
+type SingleFamilyProperty implements PropertyInfo {
+  id: ID!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+  unit: SingleFamilyPropertyUnit!
+}
+
+type SingleFamilyPropertyUnit {
+  id: ID!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+  activeListing: RentalListing
+}
+
+type MultiFamilyProperty implements PropertyInfo {
+  id: ID!
+  coverImageUrl: String
+  address: Address!
+  buildYear: Int
+  units: [MultiFamilyPropertyUnit!]!
+}
+
+type MultiFamilyPropertyUnit {
+  id: ID!
+  # unit number; should be a string
+  number: String!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+  activeListing: RentalListing
+}
+
+type Address {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  zip: String!
+}
+
+# rental listing for a unit
+type RentalListing {
+  id: ID!
+}
+
+"""
+Mutation
+"""
+input CreateSingleFamilyPropertyInput {
+  coverImageUrl: String
+  address: CreateAddressInput!
+  buildYear: Int
+  unit: CreateSingleFamilyPropertyUnitInput!
+}
+
+input CreateSingleFamilyPropertyUnitInput {
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+}
+
+input CreateMultiFamilyPropertyInput {
+  coverImageUrl: String
+  address: CreateAddressInput!
+  buildYear: Int
+  units: [CreateMultiFamilyPropertyUnitInput!]!
+}
+
+input CreateMultiFamilyPropertyUnitInput {
+  # unit number; should be a string
+  number: String!
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+}
+
+input CreateAddressInput {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  zip: String!
+}
+
+input UpdateSingleFamilyPropertyInput {
+  coverImageUrl: String
+  address: UpdateAdderssInput
+  buildYear: Int
+  unit: UpdateSingleFamilyPropertyUnitInput
+}
+
+input UpdateSingleFamilyPropertyUnitInput {
+  bedrooms: Float
+  bathrooms: Float
+  size: Float
+  rentAmount: Float
+}
+
+input UpdateMultiFamilyPropertyInput {
+  coverImageUrl: String
+  address: UpdateAdderssInput
+  buildYear: Int
+
+  # TODO updating unit by id via a separate mutation
+}
+
+input UpdateAdderssInput {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  zip: String
+}
