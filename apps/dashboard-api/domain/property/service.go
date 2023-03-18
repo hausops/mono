@@ -18,6 +18,11 @@ type Service interface {
 		input UpdateSingleFamilyPropertyInput,
 	) (*SingleFamilyProperty, error)
 
+	UpdateMultiFamilyPropertyByID(
+		id string,
+		input UpdateMultiFamilyPropertyInput,
+	) (*MultiFamilyProperty, error)
+
 	DeleteByID(id string) (Property, error)
 }
 
@@ -70,6 +75,12 @@ type UpdateSingleFamilyPropertyUnitInput struct {
 	Bathrooms  *float64 `json:"bathrooms,omitempty"`
 	Size       *float64 `json:"size,omitempty"`
 	RentAmount *float64 `json:"rentAmount,omitempty"`
+}
+
+type UpdateMultiFamilyPropertyInput struct {
+	CoverImageURL *string             `json:"coverImageUrl"`
+	Address       *UpdateAdderssInput `json:"address"`
+	BuildYear     *int                `json:"buildYear"`
 }
 
 type UpdateAdderssInput struct {

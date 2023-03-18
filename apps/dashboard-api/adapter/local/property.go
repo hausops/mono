@@ -96,6 +96,25 @@ func (r *PropertyService) UpdateSingleFamilyPropertyByID(
 	return &sp, nil
 }
 
+func (r *PropertyService) UpdateMultiFamilyPropertyByID(
+	id string,
+	in property.UpdateMultiFamilyPropertyInput,
+) (*property.MultiFamilyProperty, error) {
+	p, ok := r.byId[id]
+	if !ok {
+		return nil, property.NotFoundError{ID: id}
+	}
+	mp, ok := p.(property.MultiFamilyProperty)
+	if !ok {
+		return nil, errors.New("update property (multi-family): property type mismatch")
+	}
+	if err := mapstructure.Decode(in, &mp); err != nil {
+		return nil, err
+	}
+	r.byId[id] = mp
+	return &mp, nil
+}
+
 func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
 	p, ok := r.byId[id]
 	if !ok {

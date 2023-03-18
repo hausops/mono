@@ -17,6 +17,11 @@ type Mutation {
     input: UpdateSingleFamilyPropertyInput!
   ): SingleFamilyProperty!
 
+  updateMultiFamilyProperty(
+    id: ID!
+    input: UpdateMultiFamilyPropertyInput!
+  ): MultiFamilyProperty!
+
   deleteProperty(id: ID!): Property!
 }
 

@@ -51,6 +51,7 @@ type MutationResolver interface {
 	CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error)
 	CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error)
 	UpdateSingleFamilyProperty(ctx context.Context, id string, input property.UpdateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error)
+	UpdateMultiFamilyProperty(ctx context.Context, id string, input property.UpdateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error)
 	DeleteProperty(ctx context.Context, id string) (property.Property, error)
 }
 type QueryResolver interface {
@@ -85,6 +86,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateSingleFamilyPropertyInput,
 		ec.unmarshalInputCreateSingleFamilyPropertyUnitInput,
 		ec.unmarshalInputUpdateAdderssInput,
+		ec.unmarshalInputUpdateMultiFamilyPropertyInput,
 		ec.unmarshalInputUpdateSingleFamilyPropertyInput,
 		ec.unmarshalInputUpdateSingleFamilyPropertyUnitInput,
 	)
@@ -209,6 +211,30 @@ func (ec *executionContext) field_Mutation_deleteProperty_args(ctx context.Conte
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateMultiFamilyProperty_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 property.UpdateMultiFamilyPropertyInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateMultiFamilyPropertyInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -1296,6 +1322,72 @@ func (ec *executionContext) fieldContext_Mutation_updateSingleFamilyProperty(ctx
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateSingleFamilyProperty_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateMultiFamilyProperty(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateMultiFamilyProperty(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateMultiFamilyProperty(rctx, fc.Args["id"].(string), fc.Args["input"].(property.UpdateMultiFamilyPropertyInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*property.MultiFamilyProperty)
+	fc.Result = res
+	return ec.marshalNMultiFamilyProperty2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐMultiFamilyProperty(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateMultiFamilyProperty(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_MultiFamilyProperty_id(ctx, field)
+			case "coverImageUrl":
+				return ec.fieldContext_MultiFamilyProperty_coverImageUrl(ctx, field)
+			case "address":
+				return ec.fieldContext_MultiFamilyProperty_address(ctx, field)
+			case "buildYear":
+				return ec.fieldContext_MultiFamilyProperty_buildYear(ctx, field)
+			case "units":
+				return ec.fieldContext_MultiFamilyProperty_units(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MultiFamilyProperty", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateMultiFamilyProperty_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -4226,6 +4318,50 @@ func (ec *executionContext) unmarshalInputUpdateAdderssInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateMultiFamilyPropertyInput(ctx context.Context, obj interface{}) (property.UpdateMultiFamilyPropertyInput, error) {
+	var it property.UpdateMultiFamilyPropertyInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "coverImageUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coverImageUrl"))
+			it.CoverImageURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalOUpdateAdderssInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateAdderssInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "buildYear":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
+			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateSingleFamilyPropertyInput(ctx context.Context, obj interface{}) (property.UpdateSingleFamilyPropertyInput, error) {
 	var it property.UpdateSingleFamilyPropertyInput
 	asMap := map[string]interface{}{}
@@ -4604,6 +4740,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateSingleFamilyProperty(ctx, field)
+			})
+
+		case "updateMultiFamilyProperty":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateMultiFamilyProperty(ctx, field)
 			})
 
 		case "deleteProperty":
@@ -5365,6 +5507,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateMultiFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateMultiFamilyPropertyInput(ctx context.Context, v interface{}) (property.UpdateMultiFamilyPropertyInput, error) {
+	res, err := ec.unmarshalInputUpdateMultiFamilyPropertyInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateSingleFamilyPropertyInput2githubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateSingleFamilyPropertyInput(ctx context.Context, v interface{}) (property.UpdateSingleFamilyPropertyInput, error) {
