@@ -6,6 +6,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/gin-gonic/contrib/secure"
 	"github.com/gin-gonic/gin"
 	"github.com/hausops/mono/apps/dashboard-api/adapter/local"
 	"github.com/hausops/mono/apps/dashboard-api/graphql"
@@ -22,6 +23,13 @@ func main() {
 
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"127.0.0.1"})
+
+	r.Use(secure.Secure(secure.Options{
+		STSSeconds:           315360000,
+		STSIncludeSubdomains: true,
+		FrameDeny:            true,
+		ContentTypeNosniff:   true,
+	}))
 
 	r.GET("/", playgroundHandler())
 	r.POST(graphqlRoot, graphqlHandler())
