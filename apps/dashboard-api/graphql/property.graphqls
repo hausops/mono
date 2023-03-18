@@ -7,14 +7,14 @@ interface PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
-  buildYear: Int
+  yearBuilt: Int
 }
 
 type SingleFamilyProperty implements PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
-  buildYear: Int
+  yearBuilt: Int
   unit: SingleFamilyPropertyUnit!
 }
 
@@ -31,7 +31,7 @@ type MultiFamilyProperty implements PropertyInfo {
   id: ID!
   coverImageUrl: String
   address: Address!
-  buildYear: Int
+  yearBuilt: Int
   units: [MultiFamilyPropertyUnit!]!
 }
 
@@ -65,7 +65,7 @@ Mutation
 input CreateSingleFamilyPropertyInput {
   coverImageUrl: String
   address: CreateAddressInput!
-  buildYear: Int
+  yearBuilt: Int
   unit: CreateSingleFamilyPropertyUnitInput!
 }
 
@@ -79,7 +79,7 @@ input CreateSingleFamilyPropertyUnitInput {
 input CreateMultiFamilyPropertyInput {
   coverImageUrl: String
   address: CreateAddressInput!
-  buildYear: Int
+  yearBuilt: Int
   units: [CreateMultiFamilyPropertyUnitInput!]!
 }
 
@@ -103,7 +103,7 @@ input CreateAddressInput {
 input UpdateSingleFamilyPropertyInput {
   coverImageUrl: String
   address: UpdateAdderssInput
-  buildYear: Int
+  yearBuilt: Int
   unit: UpdateSingleFamilyPropertyUnitInput
 }
 
@@ -117,7 +117,7 @@ input UpdateSingleFamilyPropertyUnitInput {
 input UpdateMultiFamilyPropertyInput {
   coverImageUrl: String
   address: UpdateAdderssInput
-  buildYear: Int
+  yearBuilt: Int
 
   # TODO updating unit by id via a separate mutation
 }

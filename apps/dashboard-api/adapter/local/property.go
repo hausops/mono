@@ -29,7 +29,7 @@ func (r *PropertyService) CreateSingleFamilyProperty(in property.CreateSingleFam
 		ID:            uuid.New().String(),
 		CoverImageURL: in.CoverImageURL,
 		Address:       property.Address(in.Address),
-		BuildYear:     in.BuildYear,
+		YearBuilt:     in.YearBuilt,
 		Unit:          unit,
 	}
 	r.byId[p.ID] = p
@@ -54,7 +54,7 @@ func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamil
 		ID:            uuid.New().String(),
 		CoverImageURL: in.CoverImageURL,
 		Address:       property.Address(in.Address),
-		BuildYear:     in.BuildYear,
+		YearBuilt:     in.YearBuilt,
 		Units:         units,
 	}
 	r.byId[p.ID] = p

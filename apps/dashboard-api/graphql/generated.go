@@ -732,8 +732,8 @@ func (ec *executionContext) fieldContext_MultiFamilyProperty_address(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _MultiFamilyProperty_buildYear(ctx context.Context, field graphql.CollectedField, obj *property.MultiFamilyProperty) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MultiFamilyProperty_buildYear(ctx, field)
+func (ec *executionContext) _MultiFamilyProperty_yearBuilt(ctx context.Context, field graphql.CollectedField, obj *property.MultiFamilyProperty) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MultiFamilyProperty_yearBuilt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -746,7 +746,7 @@ func (ec *executionContext) _MultiFamilyProperty_buildYear(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BuildYear, nil
+		return obj.YearBuilt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -760,7 +760,7 @@ func (ec *executionContext) _MultiFamilyProperty_buildYear(ctx context.Context, 
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_MultiFamilyProperty_buildYear(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MultiFamilyProperty_yearBuilt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MultiFamilyProperty",
 		Field:      field,
@@ -1174,8 +1174,8 @@ func (ec *executionContext) fieldContext_Mutation_createSingleFamilyProperty(ctx
 				return ec.fieldContext_SingleFamilyProperty_coverImageUrl(ctx, field)
 			case "address":
 				return ec.fieldContext_SingleFamilyProperty_address(ctx, field)
-			case "buildYear":
-				return ec.fieldContext_SingleFamilyProperty_buildYear(ctx, field)
+			case "yearBuilt":
+				return ec.fieldContext_SingleFamilyProperty_yearBuilt(ctx, field)
 			case "unit":
 				return ec.fieldContext_SingleFamilyProperty_unit(ctx, field)
 			}
@@ -1240,8 +1240,8 @@ func (ec *executionContext) fieldContext_Mutation_createMultiFamilyProperty(ctx 
 				return ec.fieldContext_MultiFamilyProperty_coverImageUrl(ctx, field)
 			case "address":
 				return ec.fieldContext_MultiFamilyProperty_address(ctx, field)
-			case "buildYear":
-				return ec.fieldContext_MultiFamilyProperty_buildYear(ctx, field)
+			case "yearBuilt":
+				return ec.fieldContext_MultiFamilyProperty_yearBuilt(ctx, field)
 			case "units":
 				return ec.fieldContext_MultiFamilyProperty_units(ctx, field)
 			}
@@ -1306,8 +1306,8 @@ func (ec *executionContext) fieldContext_Mutation_updateSingleFamilyProperty(ctx
 				return ec.fieldContext_SingleFamilyProperty_coverImageUrl(ctx, field)
 			case "address":
 				return ec.fieldContext_SingleFamilyProperty_address(ctx, field)
-			case "buildYear":
-				return ec.fieldContext_SingleFamilyProperty_buildYear(ctx, field)
+			case "yearBuilt":
+				return ec.fieldContext_SingleFamilyProperty_yearBuilt(ctx, field)
 			case "unit":
 				return ec.fieldContext_SingleFamilyProperty_unit(ctx, field)
 			}
@@ -1372,8 +1372,8 @@ func (ec *executionContext) fieldContext_Mutation_updateMultiFamilyProperty(ctx 
 				return ec.fieldContext_MultiFamilyProperty_coverImageUrl(ctx, field)
 			case "address":
 				return ec.fieldContext_MultiFamilyProperty_address(ctx, field)
-			case "buildYear":
-				return ec.fieldContext_MultiFamilyProperty_buildYear(ctx, field)
+			case "yearBuilt":
+				return ec.fieldContext_MultiFamilyProperty_yearBuilt(ctx, field)
 			case "units":
 				return ec.fieldContext_MultiFamilyProperty_units(ctx, field)
 			}
@@ -1857,8 +1857,8 @@ func (ec *executionContext) fieldContext_SingleFamilyProperty_address(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _SingleFamilyProperty_buildYear(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyProperty) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SingleFamilyProperty_buildYear(ctx, field)
+func (ec *executionContext) _SingleFamilyProperty_yearBuilt(ctx context.Context, field graphql.CollectedField, obj *property.SingleFamilyProperty) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SingleFamilyProperty_yearBuilt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1871,7 +1871,7 @@ func (ec *executionContext) _SingleFamilyProperty_buildYear(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BuildYear, nil
+		return obj.YearBuilt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1885,7 +1885,7 @@ func (ec *executionContext) _SingleFamilyProperty_buildYear(ctx context.Context,
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SingleFamilyProperty_buildYear(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SingleFamilyProperty_yearBuilt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SingleFamilyProperty",
 		Field:      field,
@@ -4049,7 +4049,7 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear", "units"}
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "yearBuilt", "units"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4072,11 +4072,11 @@ func (ec *executionContext) unmarshalInputCreateMultiFamilyPropertyInput(ctx con
 			if err != nil {
 				return it, err
 			}
-		case "buildYear":
+		case "yearBuilt":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
-			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearBuilt"))
+			it.YearBuilt, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4161,7 +4161,7 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear", "unit"}
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "yearBuilt", "unit"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4184,11 +4184,11 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyInput(ctx co
 			if err != nil {
 				return it, err
 			}
-		case "buildYear":
+		case "yearBuilt":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
-			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearBuilt"))
+			it.YearBuilt, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4325,7 +4325,7 @@ func (ec *executionContext) unmarshalInputUpdateMultiFamilyPropertyInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear"}
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "yearBuilt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4348,11 +4348,11 @@ func (ec *executionContext) unmarshalInputUpdateMultiFamilyPropertyInput(ctx con
 			if err != nil {
 				return it, err
 			}
-		case "buildYear":
+		case "yearBuilt":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
-			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearBuilt"))
+			it.YearBuilt, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4369,7 +4369,7 @@ func (ec *executionContext) unmarshalInputUpdateSingleFamilyPropertyInput(ctx co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"coverImageUrl", "address", "buildYear", "unit"}
+	fieldsInOrder := [...]string{"coverImageUrl", "address", "yearBuilt", "unit"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4392,11 +4392,11 @@ func (ec *executionContext) unmarshalInputUpdateSingleFamilyPropertyInput(ctx co
 			if err != nil {
 				return it, err
 			}
-		case "buildYear":
+		case "yearBuilt":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("buildYear"))
-			it.BuildYear, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearBuilt"))
+			it.YearBuilt, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4629,9 +4629,9 @@ func (ec *executionContext) _MultiFamilyProperty(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "buildYear":
+		case "yearBuilt":
 
-			out.Values[i] = ec._MultiFamilyProperty_buildYear(ctx, field, obj)
+			out.Values[i] = ec._MultiFamilyProperty_yearBuilt(ctx, field, obj)
 
 		case "units":
 
@@ -4896,9 +4896,9 @@ func (ec *executionContext) _SingleFamilyProperty(ctx context.Context, sel ast.S
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "buildYear":
+		case "yearBuilt":
 
-			out.Values[i] = ec._SingleFamilyProperty_buildYear(ctx, field, obj)
+			out.Values[i] = ec._SingleFamilyProperty_yearBuilt(ctx, field, obj)
 
 		case "unit":
 
