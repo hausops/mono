@@ -12,6 +12,8 @@ type PropertyService struct {
 	byId map[string]property.Property
 }
 
+var _ property.Service = (*PropertyService)(nil)
+
 func NewPropertyService() *PropertyService {
 	return &PropertyService{byId: make(map[string]property.Property)}
 }
@@ -123,5 +125,3 @@ func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
 	delete(r.byId, id)
 	return p, nil
 }
-
-var _ property.Service = (*PropertyService)(nil)
