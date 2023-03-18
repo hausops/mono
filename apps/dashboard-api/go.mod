@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/vearne/gin-timeout v0.1.5
 	github.com/vektah/gqlparser/v2 v2.5.1
 )
 

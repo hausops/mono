@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -10,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hausops/mono/apps/dashboard-api/adapter/local"
 	"github.com/hausops/mono/apps/dashboard-api/graphql"
+	timeout "github.com/vearne/gin-timeout"
 )
 
 const defaultPort = "8080"
@@ -24,6 +27,10 @@ func main() {
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"127.0.0.1"})
 
+	r.Use(timeout.Timeout(
+		timeout.WithTimeout(5*time.Second),
+		timeout.WithErrorHttpCode(http.StatusRequestTimeout),
+	))
 	r.Use(secure.Secure(secure.Options{
 		STSSeconds:           315360000,
 		STSIncludeSubdomains: true,
