@@ -1,0 +1,15 @@
+name: apps/dashboard
+
+on:
+  pull_request:
+    paths-ignore:
+      - apps/dashboard/**
+
+jobs:
+  ci:
+    name: Skip due to unrelated change
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+    steps:
+      - run: 'echo "Skip due to unrelated change"'
