@@ -7,7 +7,6 @@ on:
 
 jobs:
   ci:
-    name: Run type checks, lint, prettier
     runs-on: ubuntu-latest
     permissions:
       contents: read

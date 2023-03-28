@@ -7,7 +7,6 @@ on:
 
 jobs:
   ci:
-    name: Skip due to unrelated change
     runs-on: ubuntu-latest
     permissions:
       contents: none
