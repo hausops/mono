@@ -1,0 +1,13 @@
+{
+  "go.goroot": "/usr/local/go",
+  "go.useLanguageServer": true,
+  "[go]": {
+    "editor.formatOnSave": true
+  },
+  "gopls": {
+    "usePlaceholders": true,
+    "completeUnimported": true,
+    "deepCompletion": true
+  },
+  "go.languageServerFlags": ["-rpc.trace"]
+}
