@@ -5,6 +5,7 @@ import (
 
 	"go-zero-demo/mall/order/api/internal/svc"
 	"go-zero-demo/mall/order/api/internal/types"
+	"go-zero-demo/mall/user/rpc/types/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,8 +24,14 @@ func NewGetOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOrder
 	}
 }
 
-func (l *GetOrderLogic) GetOrder(req *types.OrderReq) (resp *types.OrderReply, err error) {
-	// todo: add your logic here and delete this line
+func (l *GetOrderLogic) GetOrder(req *types.OrderReq) (*types.OrderReply, error) {
+	user, err := l.svcCtx.UserRpc.GetUser(l.ctx, &user.IdRequest{Id: "1"})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.OrderReply{
+		Id:   user.Id,
+		Name: user.Name,
+	}, nil
 }
