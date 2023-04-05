@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PropertyClient interface {
 	FindByID(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
-	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (Property_ListClient, error)
+	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PropertyListResponse, error)
 	CreateSingleFamilyProperty(ctx context.Context, in *SingleFamilyPropertyRequest, opts ...grpc.CallOption) (*SingleFamilyProperty, error)
 	CreateMultiFamilyProperty(ctx context.Context, in *MultiFamilyPropertyRequest, opts ...grpc.CallOption) (*MultiFamilyProperty, error)
 }
@@ -52,36 +52,13 @@ func (c *propertyClient) FindByID(ctx context.Context, in *PropertyIDRequest, op
 	return out, nil
 }
 
-func (c *propertyClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (Property_ListClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Property_ServiceDesc.Streams[0], Property_List_FullMethodName, opts...)
+func (c *propertyClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PropertyListResponse, error) {
+	out := new(PropertyListResponse)
+	err := c.cc.Invoke(ctx, Property_List_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &propertyListClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Property_ListClient interface {
-	Recv() (*PropertyResponse, error)
-	grpc.ClientStream
-}
-
-type propertyListClient struct {
-	grpc.ClientStream
-}
-
-func (x *propertyListClient) Recv() (*PropertyResponse, error) {
-	m := new(PropertyResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 func (c *propertyClient) CreateSingleFamilyProperty(ctx context.Context, in *SingleFamilyPropertyRequest, opts ...grpc.CallOption) (*SingleFamilyProperty, error) {
@@ -107,7 +84,7 @@ func (c *propertyClient) CreateMultiFamilyProperty(ctx context.Context, in *Mult
 // for forward compatibility
 type PropertyServer interface {
 	FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
-	List(*Empty, Property_ListServer) error
+	List(context.Context, *Empty) (*PropertyListResponse, error)
 	CreateSingleFamilyProperty(context.Context, *SingleFamilyPropertyRequest) (*SingleFamilyProperty, error)
 	CreateMultiFamilyProperty(context.Context, *MultiFamilyPropertyRequest) (*MultiFamilyProperty, error)
 	mustEmbedUnimplementedPropertyServer()
@@ -120,8 +97,8 @@ type UnimplementedPropertyServer struct {
 func (UnimplementedPropertyServer) FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindByID not implemented")
 }
-func (UnimplementedPropertyServer) List(*Empty, Property_ListServer) error {
-	return status.Errorf(codes.Unimplemented, "method List not implemented")
+func (UnimplementedPropertyServer) List(context.Context, *Empty) (*PropertyListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedPropertyServer) CreateSingleFamilyProperty(context.Context, *SingleFamilyPropertyRequest) (*SingleFamilyProperty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSingleFamilyProperty not implemented")
@@ -160,25 +137,22 @@ func _Property_FindByID_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_List_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Empty)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _Property_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(PropertyServer).List(m, &propertyListServer{stream})
-}
-
-type Property_ListServer interface {
-	Send(*PropertyResponse) error
-	grpc.ServerStream
-}
-
-type propertyListServer struct {
-	grpc.ServerStream
-}
-
-func (x *propertyListServer) Send(m *PropertyResponse) error {
-	return x.ServerStream.SendMsg(m)
+	if interceptor == nil {
+		return srv.(PropertyServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).List(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Property_CreateSingleFamilyProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -229,6 +203,10 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Property_FindByID_Handler,
 		},
 		{
+			MethodName: "List",
+			Handler:    _Property_List_Handler,
+		},
+		{
 			MethodName: "CreateSingleFamilyProperty",
 			Handler:    _Property_CreateSingleFamilyProperty_Handler,
 		},
@@ -237,12 +215,6 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Property_CreateMultiFamilyProperty_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "List",
-			Handler:       _Property_List_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "pb/property.proto",
 }

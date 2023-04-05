@@ -6,7 +6,7 @@ package hausops.mono.services.property;
 
 service Property {
   rpc FindByID(PropertyIDRequest) returns (PropertyResponse);
-  rpc List(Empty) returns (stream PropertyResponse);
+  rpc List(Empty) returns (PropertyListResponse);
 
   rpc CreateSingleFamilyProperty(SingleFamilyPropertyRequest)
       returns (SingleFamilyProperty);
@@ -56,6 +56,10 @@ message MultiFamilyPropertyRequest {
   optional Address address = 3;
   optional string cover_image_url = 10;
   optional int32 year_built = 12;
+}
+
+message PropertyListResponse {
+  repeated PropertyResponse properties = 1;
 }
 
 message Empty {

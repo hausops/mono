@@ -16,3 +16,7 @@ func NewService(repo Repository) *Service {
 func (s *Service) FindByID(ctx context.Context, id string) (Property, error) {
 	return s.repo.FindByID(ctx, id)
 }
+
+func (s *Service) List(ctx context.Context) ([]Property, error) {
+	return s.repo.List(ctx)
+}

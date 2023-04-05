@@ -150,4 +150,12 @@ func (r *propertyRepository) FindByID(_ context.Context, id string) (property.Pr
 	return p, nil
 }
 
+func (r *propertyRepository) List(_ context.Context) ([]property.Property, error) {
+	ps := make([]property.Property, 0, len(r.byId))
+	for _, p := range r.byId {
+		ps = append(ps, p)
+	}
+	return ps, nil
+}
+
 // func (r *propertyRepository) Upsert(p property.Property) (property.Property, error) {}

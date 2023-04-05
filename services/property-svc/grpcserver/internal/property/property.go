@@ -30,22 +30,20 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 		}
 	}
 
-	switch p := p.(type) {
-	case property.SingleFamilyProperty:
-		return &pb.PropertyResponse{
-			Property: encodeSingleFamiltyProperty(p),
-		}, nil
-	case property.MultiFamilyProperty:
-		return &pb.PropertyResponse{
-			Property: encodeMultiFamiltyProperty(p),
-		}, nil
-	default:
-		panic(fmt.Sprintf("find property by id %s: unhandled type %T", id, p))
-	}
+	return encodePropertyResponse(p), nil
 }
 
-func (s *server) List(_ *pb.Empty, _ pb.Property_ListServer) error {
-	panic("not implemented") // TODO: Implement
+func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListResponse, error) {
+	properties, err := s.svc.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ps := make([]*pb.PropertyResponse, len(properties))
+	for i, p := range properties {
+		ps[i] = encodePropertyResponse(p)
+	}
+	return &pb.PropertyListResponse{Properties: ps}, nil
 }
 
 func (s *server) CreateSingleFamilyProperty(ctx context.Context, in *pb.SingleFamilyPropertyRequest) (*pb.SingleFamilyProperty, error) {
@@ -55,5 +53,3 @@ func (s *server) CreateSingleFamilyProperty(ctx context.Context, in *pb.SingleFa
 func (s *server) CreateMultiFamilyProperty(ctx context.Context, in *pb.MultiFamilyPropertyRequest) (*pb.MultiFamilyProperty, error) {
 	panic("not implemented") // TODO: Implement
 }
-
-// var _ pb.PropertyServer = (*propertyService)(nil)
