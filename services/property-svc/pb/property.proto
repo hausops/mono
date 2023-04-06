@@ -58,9 +58,7 @@ message MultiFamilyPropertyRequest {
   optional int32 year_built = 12;
 }
 
-message PropertyListResponse {
-  repeated PropertyResponse properties = 1;
-}
+message PropertyListResponse { repeated PropertyResponse properties = 1; }
 
 message Empty {
   // empty message
