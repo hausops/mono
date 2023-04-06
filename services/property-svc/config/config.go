@@ -19,7 +19,7 @@ func Load(filename string, c *Config) error {
 		return err
 	}
 
-	if err := yaml.Unmarshal(d, c); err != nil {
+	if err := yaml.UnmarshalStrict(d, c); err != nil {
 		return fmt.Errorf("cannot unmarshal config %s: %w", filename, err)
 	}
 	return nil
