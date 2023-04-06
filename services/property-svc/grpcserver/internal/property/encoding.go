@@ -8,18 +8,20 @@ import (
 )
 
 func encodePropertyResponse(p property.Property) *pb.PropertyResponse {
-	switch p := p.(type) {
+	switch t := p.(type) {
 	case property.SingleFamilyProperty:
 		return &pb.PropertyResponse{
-			Property: encodeSingleFamiltyProperty(p),
+			Property: encodeSingleFamiltyProperty(t),
 		}
 	case property.MultiFamilyProperty:
 		return &pb.PropertyResponse{
-			Property: encodeMultiFamiltyProperty(p),
+			Property: encodeMultiFamiltyProperty(t),
 		}
+	// TODO: move this check to domain layer
 	default:
 		// This should never happen (programming error) so we panic.
-		panic(fmt.Sprintf("encode PropertyResponse: unhandled type %T", p))
+		err := &property.UnhandledPropertyTypeError{Property: t}
+		panic(fmt.Errorf("encode PropertyResponse: %w", err))
 	}
 }
 

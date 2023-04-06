@@ -158,4 +158,16 @@ func (r *propertyRepository) List(_ context.Context) ([]property.Property, error
 	return ps, nil
 }
 
-// func (r *propertyRepository) Upsert(p property.Property) (property.Property, error) {}
+func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
+	var id string
+	switch t := p.(type) {
+	case property.SingleFamilyProperty:
+		id = t.ID
+	case property.MultiFamilyProperty:
+		id = t.ID
+	default:
+		return nil, &property.UnhandledPropertyTypeError{Property: t}
+	}
+	r.byId[id] = p
+	return p, nil
+}
