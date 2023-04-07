@@ -19,20 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Property_FindByID_FullMethodName                   = "/hausops.mono.services.property.Property/FindByID"
-	Property_List_FullMethodName                       = "/hausops.mono.services.property.Property/List"
-	Property_CreateSingleFamilyProperty_FullMethodName = "/hausops.mono.services.property.Property/CreateSingleFamilyProperty"
-	Property_CreateMultiFamilyProperty_FullMethodName  = "/hausops.mono.services.property.Property/CreateMultiFamilyProperty"
+	Property_Create_FullMethodName   = "/hausops.mono.services.property.Property/Create"
+	Property_FindByID_FullMethodName = "/hausops.mono.services.property.Property/FindByID"
+	Property_List_FullMethodName     = "/hausops.mono.services.property.Property/List"
 )
 
 // PropertyClient is the client API for Property service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PropertyClient interface {
+	Create(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	FindByID(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PropertyListResponse, error)
-	CreateSingleFamilyProperty(ctx context.Context, in *SingleFamilyPropertyRequest, opts ...grpc.CallOption) (*SingleFamilyProperty, error)
-	CreateMultiFamilyProperty(ctx context.Context, in *MultiFamilyPropertyRequest, opts ...grpc.CallOption) (*MultiFamilyProperty, error)
 }
 
 type propertyClient struct {
@@ -41,6 +39,15 @@ type propertyClient struct {
 
 func NewPropertyClient(cc grpc.ClientConnInterface) PropertyClient {
 	return &propertyClient{cc}
+}
+
+func (c *propertyClient) Create(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
+	out := new(PropertyResponse)
+	err := c.cc.Invoke(ctx, Property_Create_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *propertyClient) FindByID(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
@@ -61,32 +68,13 @@ func (c *propertyClient) List(ctx context.Context, in *Empty, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *propertyClient) CreateSingleFamilyProperty(ctx context.Context, in *SingleFamilyPropertyRequest, opts ...grpc.CallOption) (*SingleFamilyProperty, error) {
-	out := new(SingleFamilyProperty)
-	err := c.cc.Invoke(ctx, Property_CreateSingleFamilyProperty_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *propertyClient) CreateMultiFamilyProperty(ctx context.Context, in *MultiFamilyPropertyRequest, opts ...grpc.CallOption) (*MultiFamilyProperty, error) {
-	out := new(MultiFamilyProperty)
-	err := c.cc.Invoke(ctx, Property_CreateMultiFamilyProperty_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PropertyServer is the server API for Property service.
 // All implementations must embed UnimplementedPropertyServer
 // for forward compatibility
 type PropertyServer interface {
+	Create(context.Context, *PropertyRequest) (*PropertyResponse, error)
 	FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
 	List(context.Context, *Empty) (*PropertyListResponse, error)
-	CreateSingleFamilyProperty(context.Context, *SingleFamilyPropertyRequest) (*SingleFamilyProperty, error)
-	CreateMultiFamilyProperty(context.Context, *MultiFamilyPropertyRequest) (*MultiFamilyProperty, error)
 	mustEmbedUnimplementedPropertyServer()
 }
 
@@ -94,17 +82,14 @@ type PropertyServer interface {
 type UnimplementedPropertyServer struct {
 }
 
+func (UnimplementedPropertyServer) Create(context.Context, *PropertyRequest) (*PropertyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
 func (UnimplementedPropertyServer) FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindByID not implemented")
 }
 func (UnimplementedPropertyServer) List(context.Context, *Empty) (*PropertyListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
-}
-func (UnimplementedPropertyServer) CreateSingleFamilyProperty(context.Context, *SingleFamilyPropertyRequest) (*SingleFamilyProperty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateSingleFamilyProperty not implemented")
-}
-func (UnimplementedPropertyServer) CreateMultiFamilyProperty(context.Context, *MultiFamilyPropertyRequest) (*MultiFamilyProperty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMultiFamilyProperty not implemented")
 }
 func (UnimplementedPropertyServer) mustEmbedUnimplementedPropertyServer() {}
 
@@ -117,6 +102,24 @@ type UnsafePropertyServer interface {
 
 func RegisterPropertyServer(s grpc.ServiceRegistrar, srv PropertyServer) {
 	s.RegisterService(&Property_ServiceDesc, srv)
+}
+
+func _Property_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PropertyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).Create(ctx, req.(*PropertyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Property_FindByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -155,42 +158,6 @@ func _Property_List_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_CreateSingleFamilyProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SingleFamilyPropertyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PropertyServer).CreateSingleFamilyProperty(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Property_CreateSingleFamilyProperty_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).CreateSingleFamilyProperty(ctx, req.(*SingleFamilyPropertyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Property_CreateMultiFamilyProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MultiFamilyPropertyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PropertyServer).CreateMultiFamilyProperty(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Property_CreateMultiFamilyProperty_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).CreateMultiFamilyProperty(ctx, req.(*MultiFamilyPropertyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Property_ServiceDesc is the grpc.ServiceDesc for Property service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -199,20 +166,16 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PropertyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Create",
+			Handler:    _Property_Create_Handler,
+		},
+		{
 			MethodName: "FindByID",
 			Handler:    _Property_FindByID_Handler,
 		},
 		{
 			MethodName: "List",
 			Handler:    _Property_List_Handler,
-		},
-		{
-			MethodName: "CreateSingleFamilyProperty",
-			Handler:    _Property_CreateSingleFamilyProperty_Handler,
-		},
-		{
-			MethodName: "CreateMultiFamilyProperty",
-			Handler:    _Property_CreateMultiFamilyProperty_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

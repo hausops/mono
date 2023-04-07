@@ -18,6 +18,16 @@ func NewServer(repo property.Repository) *server {
 	return &server{svc: property.NewService(repo)}
 }
 
+func (s *server) Create(ctx context.Context, in *pb.PropertyRequest) (*pb.PropertyResponse, error) {
+	r := propertyRequest{protoMessage: in}
+	p := r.decode()
+	created, err := s.svc.Create(ctx, p)
+	if err != nil {
+		return nil, err
+	}
+	return new(propertyResponse).encode(created), nil
+}
+
 func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
 	id := in.GetId()
 	p, err := s.svc.FindByID(ctx, id)
@@ -44,12 +54,4 @@ func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListRespons
 		ps[i] = new(propertyResponse).encode(p)
 	}
 	return &pb.PropertyListResponse{Properties: ps}, nil
-}
-
-func (s *server) CreateSingleFamilyProperty(ctx context.Context, in *pb.SingleFamilyPropertyRequest) (*pb.SingleFamilyProperty, error) {
-	panic("not implemented") // TODO: Implement
-}
-
-func (s *server) CreateMultiFamilyProperty(ctx context.Context, in *pb.MultiFamilyPropertyRequest) (*pb.MultiFamilyProperty, error) {
-	panic("not implemented") // TODO: Implement
 }
