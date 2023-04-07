@@ -39,7 +39,6 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 			return nil, fmt.Errorf("cannot find property: %v", err)
 		}
 	}
-
 	return new(propertyResponse).encode(p), nil
 }
 
@@ -54,4 +53,18 @@ func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListRespons
 		ps[i] = new(propertyResponse).encode(p)
 	}
 	return &pb.PropertyListResponse{Properties: ps}, nil
+}
+
+func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
+	id := in.GetId()
+	p, err := s.svc.Delete(ctx, id)
+	if err != nil {
+		switch err {
+		case property.ErrNotFound:
+			return nil, fmt.Errorf("no property with id %s", id)
+		default:
+			return nil, fmt.Errorf("cannot delete property: %v", err)
+		}
+	}
+	return new(propertyResponse).encode(p), nil
 }

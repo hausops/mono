@@ -8,6 +8,7 @@ service Property {
   rpc Create(PropertyRequest) returns (PropertyResponse);
   rpc FindByID(PropertyIDRequest) returns (PropertyResponse);
   rpc List(Empty) returns (PropertyListResponse);
+  rpc Delete(PropertyIDRequest) returns (PropertyResponse);
 }
 
 message PropertyListResponse { repeated PropertyResponse properties = 1; }

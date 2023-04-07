@@ -142,6 +142,15 @@ func NewPropertyRepository() *propertyRepository {
 
 var _ property.Repository = (*propertyRepository)(nil)
 
+func (r *propertyRepository) Delete(_ context.Context, id string) (property.Property, error) {
+	p, ok := r.byId[id]
+	if !ok {
+		return nil, property.ErrNotFound
+	}
+	delete(r.byId, id)
+	return p, nil
+}
+
 func (r *propertyRepository) FindByID(_ context.Context, id string) (property.Property, error) {
 	p, ok := r.byId[id]
 	if !ok {

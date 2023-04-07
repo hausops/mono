@@ -35,3 +35,7 @@ func (s *Service) FindByID(ctx context.Context, id string) (Property, error) {
 func (s *Service) List(ctx context.Context) ([]Property, error) {
 	return s.repo.List(ctx)
 }
+
+func (s *Service) Delete(ctx context.Context, id string) (Property, error) {
+	return s.repo.Delete(ctx, id)
+}

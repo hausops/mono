@@ -22,6 +22,7 @@ const (
 	Property_Create_FullMethodName   = "/hausops.mono.services.property.Property/Create"
 	Property_FindByID_FullMethodName = "/hausops.mono.services.property.Property/FindByID"
 	Property_List_FullMethodName     = "/hausops.mono.services.property.Property/List"
+	Property_Delete_FullMethodName   = "/hausops.mono.services.property.Property/Delete"
 )
 
 // PropertyClient is the client API for Property service.
@@ -31,6 +32,7 @@ type PropertyClient interface {
 	Create(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	FindByID(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PropertyListResponse, error)
+	Delete(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 }
 
 type propertyClient struct {
@@ -68,6 +70,15 @@ func (c *propertyClient) List(ctx context.Context, in *Empty, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *propertyClient) Delete(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
+	out := new(PropertyResponse)
+	err := c.cc.Invoke(ctx, Property_Delete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PropertyServer is the server API for Property service.
 // All implementations must embed UnimplementedPropertyServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type PropertyServer interface {
 	Create(context.Context, *PropertyRequest) (*PropertyResponse, error)
 	FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
 	List(context.Context, *Empty) (*PropertyListResponse, error)
+	Delete(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
 	mustEmbedUnimplementedPropertyServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedPropertyServer) FindByID(context.Context, *PropertyIDRequest)
 }
 func (UnimplementedPropertyServer) List(context.Context, *Empty) (*PropertyListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedPropertyServer) Delete(context.Context, *PropertyIDRequest) (*PropertyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedPropertyServer) mustEmbedUnimplementedPropertyServer() {}
 
@@ -158,6 +173,24 @@ func _Property_List_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Property_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PropertyIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).Delete(ctx, req.(*PropertyIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Property_ServiceDesc is the grpc.ServiceDesc for Property service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _Property_List_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Property_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
