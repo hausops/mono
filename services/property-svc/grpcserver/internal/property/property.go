@@ -30,7 +30,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 		}
 	}
 
-	return encodePropertyResponse(p), nil
+	return new(propertyResponse).encode(p), nil
 }
 
 func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListResponse, error) {
@@ -41,7 +41,7 @@ func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListRespons
 
 	ps := make([]*pb.PropertyResponse, len(properties))
 	for i, p := range properties {
-		ps[i] = encodePropertyResponse(p)
+		ps[i] = new(propertyResponse).encode(p)
 	}
 	return &pb.PropertyListResponse{Properties: ps}, nil
 }
