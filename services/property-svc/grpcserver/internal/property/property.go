@@ -19,7 +19,7 @@ func NewServer(repo property.Repository) *server {
 }
 
 func (s *server) Create(ctx context.Context, in *pb.PropertyRequest) (*pb.PropertyResponse, error) {
-	r := propertyRequest{protoMessage: in}
+	r := propertyRequest{in}
 	p := r.decode()
 	created, err := s.svc.Create(ctx, p)
 	if err != nil {

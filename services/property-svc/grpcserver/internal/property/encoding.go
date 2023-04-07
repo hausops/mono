@@ -11,11 +11,11 @@ import (
 // "decode" transforms _from_ pb to domain types.
 
 type propertyRequest struct {
-	protoMessage *pb.PropertyRequest
+	*pb.PropertyRequest
 }
 
 func (r propertyRequest) decode() property.Property {
-	switch t := r.protoMessage.GetProperty().(type) {
+	switch t := r.GetProperty().(type) {
 	case *pb.PropertyRequest_SingleFamilyProperty:
 		sr := singleFamilyPropertyRequest{t}
 		return sr.decode()
@@ -34,10 +34,7 @@ type singleFamilyPropertyRequest struct {
 
 func (r singleFamilyPropertyRequest) decode() property.SingleFamilyProperty {
 	in := r.SingleFamilyProperty
-	addr := address{
-		protoMessage: in.GetAddress(),
-	}
-
+	addr := address{in.GetAddress()}
 	return property.SingleFamilyProperty{
 		Address:       addr.decode(),
 		CoverImageUrl: in.GetCoverImageUrl(),
@@ -51,10 +48,7 @@ type multiFamilyPropertyRequest struct {
 
 func (r multiFamilyPropertyRequest) decode() property.MultiFamilyProperty {
 	in := r.MultiFamilyProperty
-	addr := address{
-		protoMessage: in.GetAddress(),
-	}
-
+	addr := address{in.GetAddress()}
 	return property.MultiFamilyProperty{
 		Address:       addr.decode(),
 		CoverImageUrl: in.GetCoverImageUrl(),
@@ -107,7 +101,7 @@ func (r *multiFamilyPropertyResponse) encode(p property.MultiFamilyProperty) *pb
 }
 
 type address struct {
-	protoMessage *pb.Address
+	*pb.Address
 }
 
 func (a *address) encode(in property.Address) *pb.Address {
@@ -118,16 +112,15 @@ func (a *address) encode(in property.Address) *pb.Address {
 		State: in.State,
 		Zip:   in.Zip,
 	}}
-	return a.protoMessage
+	return a.Address
 }
 
 func (a address) decode() property.Address {
-	in := a.protoMessage
 	return property.Address{
-		Line1: in.GetLine1(),
-		Line2: in.GetLine2(),
-		City:  in.GetCity(),
-		State: in.GetState(),
-		Zip:   in.GetZip(),
+		Line1: a.GetLine1(),
+		Line2: a.GetLine2(),
+		City:  a.GetCity(),
+		State: a.GetState(),
+		Zip:   a.GetZip(),
 	}
 }
