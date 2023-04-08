@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("not found")
+	ErrNotFound = errors.New("property not found")
 )
 
 // UnhandledPropertyTypeError is meant for using in type switch on Property
