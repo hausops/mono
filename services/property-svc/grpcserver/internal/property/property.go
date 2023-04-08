@@ -26,7 +26,7 @@ func (s *server) Create(ctx context.Context, in *pb.PropertyRequest) (*pb.Proper
 	p := r.decode()
 	created, err := s.svc.Create(ctx, p)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create property (input=%v): %w", p, err)
 	}
 	return new(propertyResponse).encode(created), nil
 }
@@ -39,7 +39,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 		case property.ErrNotFound:
 			return nil, status.Error(codes.NotFound, "Property not found")
 		default:
-			return nil, fmt.Errorf("cannot find property: %v", err)
+			return nil, fmt.Errorf("find property (id=%s): %w", id, err)
 		}
 	}
 	return new(propertyResponse).encode(p), nil
@@ -48,7 +48,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListResponse, error) {
 	properties, err := s.svc.List(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("list property: %w", err)
 	}
 
 	ps := make([]*pb.PropertyResponse, len(properties))
@@ -66,7 +66,7 @@ func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Prop
 		case property.ErrNotFound:
 			return nil, status.Error(codes.NotFound, "Property not found")
 		default:
-			return nil, fmt.Errorf("cannot delete property: %v", err)
+			return nil, fmt.Errorf("delete property (id=%s): %w", id, err)
 		}
 	}
 	return new(propertyResponse).encode(p), nil
