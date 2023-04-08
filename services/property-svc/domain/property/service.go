@@ -29,7 +29,11 @@ func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 }
 
 func (s *Service) FindByID(ctx context.Context, id string) (Property, error) {
-	return s.repo.FindByID(ctx, id)
+	pid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, ErrNotFound
+	}
+	return s.repo.FindByID(ctx, pid)
 }
 
 func (s *Service) List(ctx context.Context) ([]Property, error) {
@@ -37,5 +41,9 @@ func (s *Service) List(ctx context.Context) ([]Property, error) {
 }
 
 func (s *Service) Delete(ctx context.Context, id string) (Property, error) {
-	return s.repo.Delete(ctx, id)
+	pid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, ErrNotFound
+	}
+	return s.repo.Delete(ctx, pid)
 }

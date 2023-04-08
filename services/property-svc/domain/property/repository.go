@@ -1,15 +1,19 @@
 package property
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
 	// Delete removes property with id. Returns the deleted property or error
 	// if not found.
-	Delete(ctx context.Context, id string) (Property, error)
+	Delete(ctx context.Context, id uuid.UUID) (Property, error)
 
 	// FindByID returns Property with id. If no Property found for the id,
 	// an error is returned.
-	FindByID(ctx context.Context, id string) (Property, error)
+	FindByID(ctx context.Context, id uuid.UUID) (Property, error)
 
 	// List returns all Property stored in Repository.
 	List(ctx context.Context) ([]Property, error)

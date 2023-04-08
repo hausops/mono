@@ -8,7 +8,7 @@ import (
 )
 
 type propertyRepository struct {
-	byID map[string]property.Property
+	byID map[uuid.UUID]property.Property
 }
 
 func NewPropertyRepository() *propertyRepository {
@@ -144,13 +144,13 @@ func NewPropertyRepository() *propertyRepository {
 		},
 	}
 
-	byID := make(map[string]property.Property, len(exampleProperties))
+	byID := make(map[uuid.UUID]property.Property, len(exampleProperties))
 	for _, p := range exampleProperties {
 		switch t := p.(type) {
 		case property.SingleFamilyProperty:
-			byID[t.ID.String()] = t
+			byID[t.ID] = t
 		case property.MultiFamilyProperty:
-			byID[t.ID.String()] = t
+			byID[t.ID] = t
 		}
 	}
 
@@ -159,7 +159,7 @@ func NewPropertyRepository() *propertyRepository {
 
 var _ property.Repository = (*propertyRepository)(nil)
 
-func (r *propertyRepository) Delete(_ context.Context, id string) (property.Property, error) {
+func (r *propertyRepository) Delete(_ context.Context, id uuid.UUID) (property.Property, error) {
 	p, ok := r.byID[id]
 	if !ok {
 		return nil, property.ErrNotFound
@@ -168,7 +168,7 @@ func (r *propertyRepository) Delete(_ context.Context, id string) (property.Prop
 	return p, nil
 }
 
-func (r *propertyRepository) FindByID(_ context.Context, id string) (property.Property, error) {
+func (r *propertyRepository) FindByID(_ context.Context, id uuid.UUID) (property.Property, error) {
 	p, ok := r.byID[id]
 	if !ok {
 		return nil, property.ErrNotFound
@@ -185,12 +185,12 @@ func (r *propertyRepository) List(_ context.Context) ([]property.Property, error
 }
 
 func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
-	var id string
+	var id uuid.UUID
 	switch t := p.(type) {
 	case property.SingleFamilyProperty:
-		id = t.ID.String()
+		id = t.ID
 	case property.MultiFamilyProperty:
-		id = t.ID.String()
+		id = t.ID
 	default:
 		return nil, &property.UnhandledPropertyTypeError{Property: t}
 	}
