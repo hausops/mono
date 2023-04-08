@@ -8,7 +8,7 @@ type Property interface {
 type SingleFamilyProperty struct {
 	ID            string
 	Address       Address
-	CoverImageUrl string
+	CoverImageURL string
 	YearBuilt     int32
 	Unit          RentalUnit
 }
@@ -18,7 +18,7 @@ func (p SingleFamilyProperty) isProperty() {}
 type MultiFamilyProperty struct {
 	ID            string
 	Address       Address
-	CoverImageUrl string
+	CoverImageURL string
 	YearBuilt     int32
 	Units         []RentalUnit
 }

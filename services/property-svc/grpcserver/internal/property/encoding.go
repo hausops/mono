@@ -37,7 +37,7 @@ func (r singleFamilyPropertyRequest) decode() property.SingleFamilyProperty {
 	addr := address{in.GetAddress()}
 	return property.SingleFamilyProperty{
 		Address:       addr.decode(),
-		CoverImageUrl: in.GetCoverImageUrl(),
+		CoverImageURL: in.GetCoverImageUrl(),
 		YearBuilt:     in.GetYearBuilt(),
 	}
 }
@@ -51,7 +51,7 @@ func (r multiFamilyPropertyRequest) decode() property.MultiFamilyProperty {
 	addr := address{in.GetAddress()}
 	return property.MultiFamilyProperty{
 		Address:       addr.decode(),
-		CoverImageUrl: in.GetCoverImageUrl(),
+		CoverImageURL: in.GetCoverImageUrl(),
 		YearBuilt:     in.GetYearBuilt(),
 	}
 }
@@ -79,7 +79,7 @@ func (r *singleFamilyPropertyResponse) encode(p property.SingleFamilyProperty) *
 		SingleFamilyProperty: &pb.SingleFamilyProperty{
 			Id:            p.ID,
 			Address:       new(address).encode(p.Address),
-			CoverImageUrl: p.CoverImageUrl,
+			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
 		},
 	}
@@ -93,7 +93,7 @@ func (r *multiFamilyPropertyResponse) encode(p property.MultiFamilyProperty) *pb
 		MultiFamilyProperty: &pb.MultiFamilyProperty{
 			Id:            p.ID,
 			Address:       new(address).encode(p.Address),
-			CoverImageUrl: p.CoverImageUrl,
+			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
 		},
 	}
