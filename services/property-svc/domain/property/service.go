@@ -18,10 +18,10 @@ func NewService(repo Repository) *Service {
 func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 	switch t := p.(type) {
 	case SingleFamilyProperty:
-		t.ID = uuid.New().String()
+		t.ID = uuid.New()
 		return s.repo.Upsert(ctx, t)
 	case MultiFamilyProperty:
-		t.ID = uuid.New().String()
+		t.ID = uuid.New()
 		return s.repo.Upsert(ctx, t)
 	default:
 		return nil, &UnhandledPropertyTypeError{Property: t}

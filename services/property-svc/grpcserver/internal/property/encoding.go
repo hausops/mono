@@ -77,7 +77,7 @@ type singleFamilyPropertyResponse pb.PropertyResponse_SingleFamilyProperty
 func (r *singleFamilyPropertyResponse) encode(p property.SingleFamilyProperty) *pb.PropertyResponse_SingleFamilyProperty {
 	r = &singleFamilyPropertyResponse{
 		SingleFamilyProperty: &pb.SingleFamilyProperty{
-			Id:            p.ID,
+			Id:            p.ID.String(),
 			Address:       new(address).encode(p.Address),
 			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
@@ -91,7 +91,7 @@ type multiFamilyPropertyResponse pb.PropertyResponse_MultiFamilyProperty
 func (r *multiFamilyPropertyResponse) encode(p property.MultiFamilyProperty) *pb.PropertyResponse_MultiFamilyProperty {
 	r = &multiFamilyPropertyResponse{
 		MultiFamilyProperty: &pb.MultiFamilyProperty{
-			Id:            p.ID,
+			Id:            p.ID.String(),
 			Address:       new(address).encode(p.Address),
 			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
