@@ -5,6 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/hausops/mono/services/property-svc/domain/property"
 	"github.com/hausops/mono/services/property-svc/pb"
 )
@@ -34,7 +37,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 	if err != nil {
 		switch err {
 		case property.ErrNotFound:
-			return nil, fmt.Errorf("no property with id %s", id)
+			return nil, status.Error(codes.NotFound, "Property not found")
 		default:
 			return nil, fmt.Errorf("cannot find property: %v", err)
 		}
@@ -61,7 +64,7 @@ func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Prop
 	if err != nil {
 		switch err {
 		case property.ErrNotFound:
-			return nil, fmt.Errorf("no property with id %s", id)
+			return nil, status.Error(codes.NotFound, "Property not found")
 		default:
 			return nil, fmt.Errorf("cannot delete property: %v", err)
 		}
