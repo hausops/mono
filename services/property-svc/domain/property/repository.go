@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// Repository interface declares the behavior this package needs to perists and
+// retrieve data.
 type Repository interface {
 	// Delete removes property with id. Returns the deleted property or error
 	// if not found.

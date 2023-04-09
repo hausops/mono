@@ -2,6 +2,7 @@ package property
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/hausops/mono/services/property-svc/domain/property"
 	"github.com/hausops/mono/services/property-svc/pb"
@@ -36,6 +37,7 @@ func (r *singleFamilyPropertyResponse) encode(p property.SingleFamilyProperty) *
 			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
 			Unit:          new(rentalUnit).encode(p.Unit),
+			DateCreated:   p.DateCreated.Format(time.RFC3339),
 		},
 	}
 	return (*pb.PropertyResponse_SingleFamilyProperty)(r)
@@ -56,6 +58,7 @@ func (r *multiFamilyPropertyResponse) encode(p property.MultiFamilyProperty) *pb
 			CoverImageUrl: p.CoverImageURL,
 			YearBuilt:     p.YearBuilt,
 			Units:         units,
+			DateCreated:   p.DateCreated.Format(time.RFC3339),
 		},
 	}
 	return (*pb.PropertyResponse_MultiFamilyProperty)(r)
@@ -65,12 +68,13 @@ type rentalUnit pb.RentalUnit
 
 func (u *rentalUnit) encode(in property.RentalUnit) *pb.RentalUnit {
 	u = &rentalUnit{
-		Id:         in.ID.String(),
-		Number:     in.Number,
-		Bedrooms:   in.Bedrooms,
-		Bathrooms:  in.Bathrooms,
-		Size:       in.Size,
-		RentAmount: in.RentAmount,
+		Id:          in.ID.String(),
+		Number:      in.Number,
+		Bedrooms:    in.Bedrooms,
+		Bathrooms:   in.Bathrooms,
+		Size:        in.Size,
+		RentAmount:  in.RentAmount,
+		DateCreated: in.DateCreated.Format(time.RFC3339),
 	}
 	return (*pb.RentalUnit)(u)
 }

@@ -1,6 +1,10 @@
 package property
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Property interface {
 	// isProperty is an empty receiver function to tag the concrete Property types.
@@ -13,6 +17,8 @@ type SingleFamilyProperty struct {
 	CoverImageURL string
 	YearBuilt     int32
 	Unit          RentalUnit
+	DateCreated   time.Time
+	DateUpdated   time.Time
 }
 
 func (p SingleFamilyProperty) isProperty() {}
@@ -23,6 +29,8 @@ type MultiFamilyProperty struct {
 	CoverImageURL string
 	YearBuilt     int32
 	Units         []RentalUnit
+	DateCreated   time.Time
+	DateUpdated   time.Time
 }
 
 func (p MultiFamilyProperty) isProperty() {}
@@ -36,11 +44,13 @@ type Address struct {
 }
 
 type RentalUnit struct {
-	ID         uuid.UUID
-	Number     string
-	Bedrooms   float32
-	Bathrooms  float32
-	Size       float32
-	RentAmount float32
+	ID          uuid.UUID
+	Number      string
+	Bedrooms    float32
+	Bathrooms   float32
+	Size        float32
+	RentAmount  float32
+	DateCreated time.Time
+	DateUpdated time.Time
 	// ActiveListing
 }

@@ -4,10 +4,12 @@ option go_package = "./pb";
 
 package hausops.mono.services.property;
 
+import "google/protobuf/empty.proto";
+
 service Property {
   rpc Create(PropertyRequest) returns (PropertyResponse);
   rpc FindByID(PropertyIDRequest) returns (PropertyResponse);
-  rpc List(Empty) returns (PropertyListResponse);
+  rpc List(google.protobuf.Empty) returns (PropertyListResponse);
   rpc Delete(PropertyIDRequest) returns (PropertyResponse);
 }
 
@@ -23,17 +25,21 @@ message PropertyResponse {
 message SingleFamilyProperty {
   string id = 1;
   Address address = 3;
-  string cover_image_url = 10;
-  int32 year_built = 12;
-  RentalUnit unit = 15;
+  string cover_image_url = 5;
+  int32 year_built = 8;
+  RentalUnit unit = 12;
+  string date_created = 13;
+  string date_updated = 14;
 }
 
 message MultiFamilyProperty {
   string id = 1;
   Address address = 3;
-  string cover_image_url = 10;
-  int32 year_built = 12;
-  repeated RentalUnit units = 15;
+  string cover_image_url = 5;
+  int32 year_built = 8;
+  repeated RentalUnit units = 12;
+  string date_created = 13;
+  string date_updated = 14;
 }
 
 message RentalUnit {
@@ -41,8 +47,10 @@ message RentalUnit {
   string number = 3;
   float bedrooms = 8;
   float bathrooms = 9;
-  float size = 12;
-  float rent_amount = 15;
+  float size = 11;
+  float rent_amount = 12;
+  string date_created = 13;
+  string date_updated = 14;
 }
 
 message Address {
@@ -64,16 +72,16 @@ message PropertyRequest {
 
 message SingleFamilyPropertyRequest {
   optional Address address = 3;
-  optional string cover_image_url = 10;
-  optional int32 year_built = 12;
-  optional RentalUnitRequest unit = 15;
+  optional string cover_image_url = 5;
+  optional int32 year_built = 8;
+  optional RentalUnitRequest unit = 12;
 }
 
 message MultiFamilyPropertyRequest {
   optional Address address = 3;
-  optional string cover_image_url = 10;
-  optional int32 year_built = 12;
-  repeated RentalUnitRequest units = 15;
+  optional string cover_image_url = 5;
+  optional int32 year_built = 8;
+  repeated RentalUnitRequest units = 12;
 }
 
 message RentalUnitRequest {
@@ -82,8 +90,4 @@ message RentalUnitRequest {
   optional float bathrooms = 9;
   optional float size = 12;
   optional float rent_amount = 15;
-}
-
-message Empty {
-  // empty message
 }

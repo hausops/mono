@@ -7,6 +7,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hausops/mono/services/property-svc/domain/property"
 	"github.com/hausops/mono/services/property-svc/pb"
@@ -45,7 +46,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 	return new(propertyResponse).encode(p), nil
 }
 
-func (s *server) List(ctx context.Context, _ *pb.Empty) (*pb.PropertyListResponse, error) {
+func (s *server) List(ctx context.Context, _ *emptypb.Empty) (*pb.PropertyListResponse, error) {
 	properties, err := s.svc.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("list property: %w", err)
