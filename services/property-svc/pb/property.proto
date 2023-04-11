@@ -112,23 +112,23 @@ message UpdatePropertyRequest {
     optional Address address = 3;
     optional string cover_image_url = 5;
     optional int32 year_built = 8;
-    // optional RentalUnit unit = 12;
+    optional RentalUnit unit = 12;
   }
 
   message UpdateMultiFamilyProperty {
     optional Address address = 3;
     optional string cover_image_url = 5;
     optional int32 year_built = 8;
-    // repeated RentalUnit units = 12;
+    // No units update until we understand the use case.
   }
 
-  // message RentalUnit {
-  //   optional string number = 3;
-  //   optional float bedrooms = 8;
-  //   optional float bathrooms = 9;
-  //   optional float size = 12;
-  //   optional float rent_amount = 15;
-  // }
+  message RentalUnit {
+    optional string number = 3;
+    optional float bedrooms = 8;
+    optional float bathrooms = 9;
+    optional float size = 12;
+    optional float rent_amount = 15;
+  }
 
   message Address {
     optional string line1 = 1;

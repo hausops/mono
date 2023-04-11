@@ -2,6 +2,7 @@ package property
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -74,52 +75,29 @@ func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Pro
 		return nil, ErrNotFound
 	}
 
-	now := time.Now().UTC()
 	switch t := saved.(type) {
 	case SingleFamilyProperty:
+		if _, ok := up.(UpdateSingleFamilyProperty); !ok {
+			return nil, UpdateWrongPropertyTypeError{Property: saved, UpdateProperty: up}
+		}
 		if err := mapstructure.Decode(up, &t); err != nil {
 			return nil, err
 		}
-		t.DateUpdated = now
+		t.DateUpdated = time.Now().UTC()
 		return s.repo.Upsert(ctx, t)
 	case MultiFamilyProperty:
+		if _, ok := up.(UpdateMultiFamilyProperty); !ok {
+			return nil, UpdateWrongPropertyTypeError{Property: saved, UpdateProperty: up}
+		}
 		if err := mapstructure.Decode(up, &t); err != nil {
 			return nil, err
 		}
-		t.DateUpdated = now
+		t.DateUpdated = time.Now().UTC()
 		return s.repo.Upsert(ctx, t)
 	default:
-		return nil, UnhandledPropertyTypeError{Property: t}
+		err := UnhandledPropertyTypeError{Property: t}
+		return nil, fmt.Errorf("unhandled saved property type: %w", err)
 	}
-
-	// switch t := in.(type) {
-	// case SingleFamilyProperty:
-	// 	sp, ok := saved.(SingleFamilyProperty)
-	// 	if !ok {
-	// 		return nil, fmt.Errorf("property type mismatch: saved[%T], request[%T]", sp, t)
-	// 	}
-	// 	if err := mapstructure.Decode(t, &sp); err != nil {
-	// 		return nil, err
-	// 	}
-	// 	sp.DateUpdated = now
-	// 	sp.Unit.DateUpdated = now
-	// 	return s.repo.Upsert(ctx, sp)
-	// case MultiFamilyProperty:
-	// 	mp, ok := saved.(MultiFamilyProperty)
-	// 	if !ok {
-	// 		return nil, fmt.Errorf("property type mismatch: saved[%T], request[%T]", mp, t)
-	// 	}
-	// 	if err := mapstructure.Decode(t, &mp); err != nil {
-	// 		return nil, err
-	// 	}
-	// 	mp.DateUpdated = now
-	// 	for i := range mp.Units {
-	// 		mp.Units[i].DateUpdated = now
-	// 	}
-	// 	return s.repo.Upsert(ctx, mp)
-	// default:
-	// 	return nil, &UnhandledPropertyTypeError{Property: t}
-	// }
 }
 
 // Delete removes the Property identified by id from the Repository.

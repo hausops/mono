@@ -55,11 +55,27 @@ type RentalUnit struct {
 	// ActiveListing
 }
 
-type UpdateProperty struct {
+type UpdateProperty interface {
+	// isUpdateProperty is an empty receiver function to tag the concrete Property types.
+	isUpdateProperty()
+}
+
+type UpdateSingleFamilyProperty struct {
+	Address       *UpdateAddress
+	CoverImageURL *string
+	YearBuilt     *int32
+	Unit          *UpdateRentalUnit
+}
+
+func (up UpdateSingleFamilyProperty) isUpdateProperty() {}
+
+type UpdateMultiFamilyProperty struct {
 	Address       *UpdateAddress
 	CoverImageURL *string
 	YearBuilt     *int32
 }
+
+func (up UpdateMultiFamilyProperty) isUpdateProperty() {}
 
 type UpdateAddress struct {
 	Line1 *string
@@ -67,4 +83,12 @@ type UpdateAddress struct {
 	City  *string
 	State *string
 	Zip   *string
+}
+
+type UpdateRentalUnit struct {
+	Number     *string
+	Bedrooms   *float32
+	Bathrooms  *float32
+	Size       *float32
+	RentAmount *float32
 }

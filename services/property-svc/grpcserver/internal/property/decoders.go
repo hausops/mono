@@ -79,26 +79,30 @@ func (r updatePropertyRequest) decode() property.UpdateProperty {
 		}
 	}
 
-	// decodeUnit := func(r *pb.UpdatePropertyRequest_RentalUnit) property.RentalUnit {
-	// 	return property.RentalUnit{
-	// 		Number:     r.GetNumber(),
-	// 		Bedrooms:   r.GetBedrooms(),
-	// 		Bathrooms:  r.GetBathrooms(),
-	// 		Size:       r.GetSize(),
-	// 		RentAmount: r.GetRentAmount(),
-	// 	}
-	// }
+	decodeUnit := func(r *pb.UpdatePropertyRequest_RentalUnit) *property.UpdateRentalUnit {
+		if r == nil {
+			return nil
+		}
+		return &property.UpdateRentalUnit{
+			Number:     r.Number,
+			Bedrooms:   r.Bedrooms,
+			Bathrooms:  r.Bathrooms,
+			Size:       r.Size,
+			RentAmount: r.RentAmount,
+		}
+	}
 
 	if p := r.GetSingleFamilyProperty(); p != nil {
-		return property.UpdateProperty{
+		return property.UpdateSingleFamilyProperty{
 			Address:       decodeAddress(p.Address),
 			CoverImageURL: p.CoverImageUrl,
 			YearBuilt:     p.YearBuilt,
+			Unit:          decodeUnit(p.Unit),
 		}
 	}
 
 	if p := r.GetMultiFamilyProperty(); p != nil {
-		return property.UpdateProperty{
+		return property.UpdateMultiFamilyProperty{
 			Address:       decodeAddress(p.Address),
 			CoverImageURL: p.CoverImageUrl,
 			YearBuilt:     p.YearBuilt,
