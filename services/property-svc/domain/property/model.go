@@ -35,6 +35,20 @@ type MultiFamilyProperty struct {
 
 func (p MultiFamilyProperty) isProperty() {}
 
+type UpdateProperty struct {
+	Address       *UpdateAddress
+	CoverImageURL *string
+	YearBuilt     *int32
+}
+
+type UpdateAddress struct {
+	Line1 *string
+	Line2 *string
+	City  *string
+	State *string
+	Zip   *string
+}
+
 type Address struct {
 	Line1 string
 	Line2 string

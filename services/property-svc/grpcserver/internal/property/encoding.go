@@ -103,7 +103,7 @@ type singleFamilyPropertyRequest struct {
 
 func (r singleFamilyPropertyRequest) decode() property.SingleFamilyProperty {
 	in := r.SingleFamilyProperty
-	addr := address{in.GetAddress()}
+	addr := addressRequest{in.GetAddress()}
 	unit := rentalUnitRequest{in.GetUnit()}
 	return property.SingleFamilyProperty{
 		Address:       addr.decode(),
@@ -119,7 +119,7 @@ type multiFamilyPropertyRequest struct {
 
 func (r multiFamilyPropertyRequest) decode() property.MultiFamilyProperty {
 	in := r.MultiFamilyProperty
-	addr := address{in.GetAddress()}
+	addr := addressRequest{in.GetAddress()}
 
 	units := make([]property.RentalUnit, len(in.GetUnits()))
 	for i, r := range in.GetUnits() {
@@ -164,7 +164,11 @@ func (a *address) encode(in property.Address) *pb.Address {
 	return a.Address
 }
 
-func (a address) decode() property.Address {
+type addressRequest struct {
+	*pb.AddressRequest
+}
+
+func (a addressRequest) decode() property.Address {
 	return property.Address{
 		Line1: a.GetLine1(),
 		Line2: a.GetLine2(),

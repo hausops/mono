@@ -10,6 +10,7 @@ service Property {
   rpc Create(PropertyRequest) returns (PropertyResponse);
   rpc FindByID(PropertyIDRequest) returns (PropertyResponse);
   rpc List(google.protobuf.Empty) returns (PropertyListResponse);
+  rpc Update(PropertyRequest) returns (PropertyResponse);
   rpc Delete(PropertyIDRequest) returns (PropertyResponse);
 }
 
@@ -64,21 +65,22 @@ message Address {
 message PropertyIDRequest { string id = 1; }
 
 message PropertyRequest {
+  string id = 1;
   oneof property {
-    SingleFamilyPropertyRequest single_family_property = 1;
-    MultiFamilyPropertyRequest multi_family_property = 2;
+    SingleFamilyPropertyRequest single_family_property = 3;
+    MultiFamilyPropertyRequest multi_family_property = 4;
   }
 }
 
 message SingleFamilyPropertyRequest {
-  optional Address address = 3;
+  optional AddressRequest address = 3;
   optional string cover_image_url = 5;
   optional int32 year_built = 8;
   optional RentalUnitRequest unit = 12;
 }
 
 message MultiFamilyPropertyRequest {
-  optional Address address = 3;
+  optional AddressRequest address = 3;
   optional string cover_image_url = 5;
   optional int32 year_built = 8;
   repeated RentalUnitRequest units = 12;
@@ -90,4 +92,12 @@ message RentalUnitRequest {
   optional float bathrooms = 9;
   optional float size = 12;
   optional float rent_amount = 15;
+}
+
+message AddressRequest {
+  optional string line1 = 1;
+  optional string line2 = 2;
+  optional string city = 3;
+  optional string state = 4;
+  optional string zip = 5;
 }
