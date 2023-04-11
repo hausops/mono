@@ -22,14 +22,13 @@ func NewServer(repo property.Repository) *server {
 	return &server{svc: property.NewService(repo)}
 }
 
-func (s *server) Create(ctx context.Context, in *pb.PropertyRequest) (*pb.PropertyResponse, error) {
-	r := propertyRequest{in}
-	p := r.decode()
+func (s *server) Create(ctx context.Context, in *pb.CreatePropertyRequest) (*pb.PropertyResponse, error) {
+	p := createPropertyRequest{in}.decode()
 	created, err := s.svc.Create(ctx, p)
 	if err != nil {
 		return nil, fmt.Errorf("create property (input=%v): %w", p, err)
 	}
-	return new(propertyResponse).encode(created), nil
+	return newPropertyResponse(created).encode(), nil
 }
 
 func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
@@ -45,7 +44,7 @@ func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Pr
 			return nil, fmt.Errorf("find property (id=%s): %w", id, err)
 		}
 	}
-	return new(propertyResponse).encode(p), nil
+	return newPropertyResponse(p).encode(), nil
 }
 
 func (s *server) List(ctx context.Context, _ *emptypb.Empty) (*pb.PropertyListResponse, error) {
@@ -53,51 +52,16 @@ func (s *server) List(ctx context.Context, _ *emptypb.Empty) (*pb.PropertyListRe
 	if err != nil {
 		return nil, fmt.Errorf("list property: %w", err)
 	}
-
 	ps := make([]*pb.PropertyResponse, len(properties))
 	for i, p := range properties {
-		ps[i] = new(propertyResponse).encode(p)
+		ps[i] = newPropertyResponse(p).encode()
 	}
 	return &pb.PropertyListResponse{Properties: ps}, nil
 }
 
-func (s *server) Update(ctx context.Context, in *pb.PropertyRequest) (*pb.PropertyResponse, error) {
+func (s *server) Update(ctx context.Context, in *pb.UpdatePropertyRequest) (*pb.PropertyResponse, error) {
 	id := in.GetId()
-
-	var up property.UpdateProperty
-	switch t := in.GetProperty().(type) {
-	case *pb.PropertyRequest_SingleFamilyProperty:
-		p := t.SingleFamilyProperty
-		up = property.UpdateProperty{
-			CoverImageURL: p.CoverImageUrl,
-			YearBuilt:     p.YearBuilt,
-		}
-		if a := p.Address; a != nil {
-			up.Address = &property.UpdateAddress{
-				Line1: a.Line1,
-				Line2: a.Line2,
-				City:  a.City,
-				State: a.State,
-				Zip:   a.Zip,
-			}
-		}
-	case *pb.PropertyRequest_MultiFamilyProperty:
-		p := t.MultiFamilyProperty
-		up = property.UpdateProperty{
-			CoverImageURL: p.CoverImageUrl,
-			YearBuilt:     p.YearBuilt,
-		}
-		if a := p.Address; a != nil {
-			up.Address = &property.UpdateAddress{
-				Line1: a.Line1,
-				Line2: a.Line2,
-				City:  a.City,
-				State: a.State,
-				Zip:   a.Zip,
-			}
-		}
-	}
-
+	up := updatePropertyRequest{in}.decode()
 	updated, err := s.svc.Update(ctx, id, up)
 	if err != nil {
 		switch err {
@@ -109,7 +73,7 @@ func (s *server) Update(ctx context.Context, in *pb.PropertyRequest) (*pb.Proper
 			return nil, fmt.Errorf("update property (input=%v): %w", in, err)
 		}
 	}
-	return new(propertyResponse).encode(updated), nil
+	return newPropertyResponse(updated).encode(), nil
 }
 
 func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
@@ -123,5 +87,5 @@ func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.Prop
 			return nil, fmt.Errorf("delete property (id=%s): %w", id, err)
 		}
 	}
-	return new(propertyResponse).encode(p), nil
+	return newPropertyResponse(p).encode(), nil
 }

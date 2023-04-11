@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	ErrNotFound  = errors.New("property not found")
 	ErrInvalidID = errors.New("invalid property id")
+	ErrNotFound  = errors.New("property not found")
 )
 
 // UnhandledPropertyTypeError is intended for use in a type switch on Property
@@ -18,5 +18,5 @@ type UnhandledPropertyTypeError struct {
 
 // Error implements the error interface for UnhandledPropertyTypeError.
 func (e UnhandledPropertyTypeError) Error() string {
-	return fmt.Sprintf("unhandled Property type: %T", e.Property)
+	return fmt.Sprintf("unhandled Property type[%T]", e.Property)
 }

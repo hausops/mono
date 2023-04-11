@@ -13,7 +13,7 @@ type Service struct {
 	repo Repository
 }
 
-// NewService creates a property.Service with dependencies.
+// NewService creates a property.Service with its dependencies.
 func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
@@ -26,15 +26,19 @@ func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 	case SingleFamilyProperty:
 		t.ID = uuid.New()
 		t.DateCreated = now
+		t.DateUpdated = now
 		t.Unit.ID = uuid.New()
 		t.Unit.DateCreated = now
+		t.Unit.DateUpdated = now
 		return s.repo.Upsert(ctx, t)
 	case MultiFamilyProperty:
 		t.ID = uuid.New()
 		t.DateCreated = now
+		t.DateUpdated = now
 		for i := range t.Units {
 			t.Units[i].ID = uuid.New()
 			t.Units[i].DateCreated = now
+			t.Units[i].DateUpdated = now
 		}
 		return s.repo.Upsert(ctx, t)
 	default:
@@ -42,7 +46,7 @@ func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 	}
 }
 
-// FindByID returns the Property identified by a given ID from the Repository.
+// FindByID returns the Property identified by id from the Repository.
 func (s *Service) FindByID(ctx context.Context, id string) (Property, error) {
 	pid, err := uuid.Parse(id)
 	if err != nil {
@@ -56,8 +60,9 @@ func (s *Service) List(ctx context.Context) ([]Property, error) {
 	return s.repo.List(ctx)
 }
 
-// Update merges in to the saved property matching id and saves it back
-// to the Repository.
+// Update merges in to the saved Property identified by id and saves it back
+// to the Repository. It returns the updated Property with fields like
+// DateUpdated updated.
 func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Property, error) {
 	pid, err := uuid.Parse(id)
 	if err != nil {
@@ -117,7 +122,7 @@ func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Pro
 	// }
 }
 
-// Delete removes the Property identified by a given ID from the Repository.
+// Delete removes the Property identified by id from the Repository.
 func (s *Service) Delete(ctx context.Context, id string) (Property, error) {
 	pid, err := uuid.Parse(id)
 	if err != nil {

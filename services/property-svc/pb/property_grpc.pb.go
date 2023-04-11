@@ -31,10 +31,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PropertyClient interface {
-	Create(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
+	Create(ctx context.Context, in *CreatePropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	FindByID(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PropertyListResponse, error)
-	Update(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
+	Update(ctx context.Context, in *UpdatePropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 	Delete(ctx context.Context, in *PropertyIDRequest, opts ...grpc.CallOption) (*PropertyResponse, error)
 }
 
@@ -46,7 +46,7 @@ func NewPropertyClient(cc grpc.ClientConnInterface) PropertyClient {
 	return &propertyClient{cc}
 }
 
-func (c *propertyClient) Create(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
+func (c *propertyClient) Create(ctx context.Context, in *CreatePropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
 	out := new(PropertyResponse)
 	err := c.cc.Invoke(ctx, Property_Create_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -73,7 +73,7 @@ func (c *propertyClient) List(ctx context.Context, in *emptypb.Empty, opts ...gr
 	return out, nil
 }
 
-func (c *propertyClient) Update(ctx context.Context, in *PropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
+func (c *propertyClient) Update(ctx context.Context, in *UpdatePropertyRequest, opts ...grpc.CallOption) (*PropertyResponse, error) {
 	out := new(PropertyResponse)
 	err := c.cc.Invoke(ctx, Property_Update_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -95,10 +95,10 @@ func (c *propertyClient) Delete(ctx context.Context, in *PropertyIDRequest, opts
 // All implementations must embed UnimplementedPropertyServer
 // for forward compatibility
 type PropertyServer interface {
-	Create(context.Context, *PropertyRequest) (*PropertyResponse, error)
+	Create(context.Context, *CreatePropertyRequest) (*PropertyResponse, error)
 	FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
 	List(context.Context, *emptypb.Empty) (*PropertyListResponse, error)
-	Update(context.Context, *PropertyRequest) (*PropertyResponse, error)
+	Update(context.Context, *UpdatePropertyRequest) (*PropertyResponse, error)
 	Delete(context.Context, *PropertyIDRequest) (*PropertyResponse, error)
 	mustEmbedUnimplementedPropertyServer()
 }
@@ -107,7 +107,7 @@ type PropertyServer interface {
 type UnimplementedPropertyServer struct {
 }
 
-func (UnimplementedPropertyServer) Create(context.Context, *PropertyRequest) (*PropertyResponse, error) {
+func (UnimplementedPropertyServer) Create(context.Context, *CreatePropertyRequest) (*PropertyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedPropertyServer) FindByID(context.Context, *PropertyIDRequest) (*PropertyResponse, error) {
@@ -116,7 +116,7 @@ func (UnimplementedPropertyServer) FindByID(context.Context, *PropertyIDRequest)
 func (UnimplementedPropertyServer) List(context.Context, *emptypb.Empty) (*PropertyListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedPropertyServer) Update(context.Context, *PropertyRequest) (*PropertyResponse, error) {
+func (UnimplementedPropertyServer) Update(context.Context, *UpdatePropertyRequest) (*PropertyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedPropertyServer) Delete(context.Context, *PropertyIDRequest) (*PropertyResponse, error) {
@@ -136,7 +136,7 @@ func RegisterPropertyServer(s grpc.ServiceRegistrar, srv PropertyServer) {
 }
 
 func _Property_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PropertyRequest)
+	in := new(CreatePropertyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func _Property_Create_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: Property_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).Create(ctx, req.(*PropertyRequest))
+		return srv.(PropertyServer).Create(ctx, req.(*CreatePropertyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,7 +190,7 @@ func _Property_List_Handler(srv interface{}, ctx context.Context, dec func(inter
 }
 
 func _Property_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PropertyRequest)
+	in := new(UpdatePropertyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func _Property_Update_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: Property_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).Update(ctx, req.(*PropertyRequest))
+		return srv.(PropertyServer).Update(ctx, req.(*UpdatePropertyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
