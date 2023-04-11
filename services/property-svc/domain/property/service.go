@@ -38,7 +38,7 @@ func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 		}
 		return s.repo.Upsert(ctx, t)
 	default:
-		return nil, &UnhandledPropertyTypeError{Property: t}
+		return nil, UnhandledPropertyTypeError{Property: t}
 	}
 }
 
@@ -84,7 +84,7 @@ func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Pro
 		t.DateUpdated = now
 		return s.repo.Upsert(ctx, t)
 	default:
-		return nil, &UnhandledPropertyTypeError{Property: t}
+		return nil, UnhandledPropertyTypeError{Property: t}
 	}
 
 	// switch t := in.(type) {

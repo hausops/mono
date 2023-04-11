@@ -17,6 +17,6 @@ type UnhandledPropertyTypeError struct {
 }
 
 // Error implements the error interface for UnhandledPropertyTypeError.
-func (e *UnhandledPropertyTypeError) Error() string {
+func (e UnhandledPropertyTypeError) Error() string {
 	return fmt.Sprintf("unhandled Property type: %T", e.Property)
 }

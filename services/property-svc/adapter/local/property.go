@@ -192,7 +192,7 @@ func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (pro
 	case property.MultiFamilyProperty:
 		id = t.ID
 	default:
-		return nil, &property.UnhandledPropertyTypeError{Property: t}
+		return nil, property.UnhandledPropertyTypeError{Property: t}
 	}
 	r.byID[id] = p
 	return p, nil
