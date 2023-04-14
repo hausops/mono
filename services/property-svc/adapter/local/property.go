@@ -11,8 +11,86 @@ type propertyRepository struct {
 	byID map[uuid.UUID]property.Property
 }
 
+// NewPropertyRepository creates a new instance of the property repository with
+// an initial empty state.
+//
+// The returned property repository can be used to store and retrieve properties.
 func NewPropertyRepository() *propertyRepository {
-	exampleProperties := []property.Property{
+	return &propertyRepository{
+		byID: make(map[uuid.UUID]property.Property),
+	}
+}
+
+// Ensure propertyRepository implements the property.Repository interface.
+var _ property.Repository = (*propertyRepository)(nil)
+
+func (r *propertyRepository) Delete(_ context.Context, id uuid.UUID) (property.Property, error) {
+	p, ok := r.byID[id]
+	if !ok {
+		return nil, property.ErrNotFound
+	}
+	delete(r.byID, id)
+	return p, nil
+}
+
+func (r *propertyRepository) FindByID(_ context.Context, id uuid.UUID) (property.Property, error) {
+	p, ok := r.byID[id]
+	if !ok {
+		return nil, property.ErrNotFound
+	}
+	return p, nil
+}
+
+func (r *propertyRepository) List(_ context.Context) ([]property.Property, error) {
+	ps := make([]property.Property, 0, len(r.byID))
+	for _, p := range r.byID {
+		ps = append(ps, p)
+	}
+	return ps, nil
+}
+
+func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
+	var id uuid.UUID
+	switch t := p.(type) {
+	case property.SingleFamilyProperty:
+		id = t.ID
+	case property.MultiFamilyProperty:
+		id = t.ID
+	default:
+		return nil, property.UnhandledPropertyTypeError{Property: t}
+	}
+	r.byID[id] = p
+	return p, nil
+}
+
+/**
+ * Utility methods specific this implementation.
+ */
+
+// ReplaceProperties replaces all properties in the repository with
+// the properties in ps.
+//
+// This method is intended to be used for populating the repository
+// with initial entries.
+func (r *propertyRepository) ReplaceProperties(ps []property.Property) {
+	byID := make(map[uuid.UUID]property.Property, len(ps))
+	for _, p := range ps {
+		switch t := p.(type) {
+		case property.SingleFamilyProperty:
+			byID[t.ID] = t
+		case property.MultiFamilyProperty:
+			byID[t.ID] = t
+		}
+	}
+
+	r.byID = byID
+}
+
+// ExampleProperties returns an example slice of property.Property.
+//
+// This function is intended to be used for testing and demonstration purposes.
+func ExampleProperties() []property.Property {
+	return []property.Property{
 		property.SingleFamilyProperty{
 			ID: uuid.MustParse("7f9dbb2e-fde0-4ea8-b21a-1236960bda59"),
 			Address: property.Address{
@@ -143,57 +221,4 @@ func NewPropertyRepository() *propertyRepository {
 			},
 		},
 	}
-
-	byID := make(map[uuid.UUID]property.Property, len(exampleProperties))
-	for _, p := range exampleProperties {
-		switch t := p.(type) {
-		case property.SingleFamilyProperty:
-			byID[t.ID] = t
-		case property.MultiFamilyProperty:
-			byID[t.ID] = t
-		}
-	}
-
-	return &propertyRepository{byID: byID}
-}
-
-var _ property.Repository = (*propertyRepository)(nil)
-
-func (r *propertyRepository) Delete(_ context.Context, id uuid.UUID) (property.Property, error) {
-	p, ok := r.byID[id]
-	if !ok {
-		return nil, property.ErrNotFound
-	}
-	delete(r.byID, id)
-	return p, nil
-}
-
-func (r *propertyRepository) FindByID(_ context.Context, id uuid.UUID) (property.Property, error) {
-	p, ok := r.byID[id]
-	if !ok {
-		return nil, property.ErrNotFound
-	}
-	return p, nil
-}
-
-func (r *propertyRepository) List(_ context.Context) ([]property.Property, error) {
-	ps := make([]property.Property, 0, len(r.byID))
-	for _, p := range r.byID {
-		ps = append(ps, p)
-	}
-	return ps, nil
-}
-
-func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
-	var id uuid.UUID
-	switch t := p.(type) {
-	case property.SingleFamilyProperty:
-		id = t.ID
-	case property.MultiFamilyProperty:
-		id = t.ID
-	default:
-		return nil, property.UnhandledPropertyTypeError{Property: t}
-	}
-	r.byID[id] = p
-	return p, nil
 }
