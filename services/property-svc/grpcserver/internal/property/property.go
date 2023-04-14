@@ -23,10 +23,17 @@ func NewServer(repo property.Repository) *server {
 }
 
 func (s *server) Create(ctx context.Context, in *pb.CreatePropertyRequest) (*pb.PropertyResponse, error) {
-	p := createPropertyRequest{in}.decode()
+	p, err := decodeCreatePropertyRequest(in)
+	if err != nil {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			fmt.Sprintf("decode CreatePropertyRequest: %v", err),
+		)
+	}
+
 	created, err := s.svc.Create(ctx, p)
 	if err != nil {
-		return nil, fmt.Errorf("create property (input=%v): %w", p, err)
+		return nil, fmt.Errorf("property.Service.Create(%v): %w", p, err)
 	}
 	return newPropertyResponse(created).encode(), nil
 }
@@ -61,7 +68,14 @@ func (s *server) List(ctx context.Context, _ *emptypb.Empty) (*pb.PropertyListRe
 
 func (s *server) Update(ctx context.Context, in *pb.UpdatePropertyRequest) (*pb.PropertyResponse, error) {
 	id := in.GetId()
-	up := updatePropertyRequest{in}.decode()
+	up, err := decodeUpdatePropertyRequest(in)
+	if err != nil {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			fmt.Sprintf("decode UpdatePropertyRequest: %v", err),
+		)
+	}
+
 	updated, err := s.svc.Update(ctx, id, up)
 	if err != nil {
 		switch err {
@@ -70,7 +84,7 @@ func (s *server) Update(ctx context.Context, in *pb.UpdatePropertyRequest) (*pb.
 		case property.ErrNotFound:
 			return nil, status.Error(codes.NotFound, "Property not found")
 		default:
-			return nil, fmt.Errorf("update property (input=%v): %w", in, err)
+			return nil, fmt.Errorf("property.Service.Update(%v): %w", in, err)
 		}
 	}
 	return newPropertyResponse(updated).encode(), nil

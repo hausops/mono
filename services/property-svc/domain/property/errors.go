@@ -10,11 +10,17 @@ var (
 	ErrNotFound  = errors.New("property not found")
 )
 
+// UpdateWrongPropertyTypeError is returned when attempting to update
+// a property with an incompatible input type.
 type UpdateWrongPropertyTypeError struct {
+	// Property is the property that was being updated.
 	Property
+
+	// UpdateProperty is the input used to update the property.
 	UpdateProperty
 }
 
+// Error implements the error interface for UpdateWrongPropertyTypeError.
 func (e UpdateWrongPropertyTypeError) Error() string {
 	return fmt.Sprintf("wrong property type: updating %T with %T", e.Property, e.UpdateProperty)
 }
