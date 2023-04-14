@@ -48,12 +48,8 @@ func (s *Service) Create(ctx context.Context, p Property) (Property, error) {
 }
 
 // FindByID returns the Property identified by id from the Repository.
-func (s *Service) FindByID(ctx context.Context, id string) (Property, error) {
-	pid, err := uuid.Parse(id)
-	if err != nil {
-		return nil, ErrInvalidID
-	}
-	return s.repo.FindByID(ctx, pid)
+func (s *Service) FindByID(ctx context.Context, id uuid.UUID) (Property, error) {
+	return s.repo.FindByID(ctx, id)
 }
 
 // List returns all Properties from the Repository.
@@ -64,13 +60,8 @@ func (s *Service) List(ctx context.Context) ([]Property, error) {
 // Update merges in to the saved Property identified by id and saves it back
 // to the Repository. It returns the updated Property with fields like
 // DateUpdated updated.
-func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Property, error) {
-	pid, err := uuid.Parse(id)
-	if err != nil {
-		return nil, ErrInvalidID
-	}
-
-	saved, err := s.repo.FindByID(ctx, pid)
+func (s *Service) Update(ctx context.Context, id uuid.UUID, up UpdateProperty) (Property, error) {
+	saved, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -101,10 +92,6 @@ func (s *Service) Update(ctx context.Context, id string, up UpdateProperty) (Pro
 }
 
 // Delete removes the Property identified by id from the Repository.
-func (s *Service) Delete(ctx context.Context, id string) (Property, error) {
-	pid, err := uuid.Parse(id)
-	if err != nil {
-		return nil, ErrNotFound
-	}
-	return s.repo.Delete(ctx, pid)
+func (s *Service) Delete(ctx context.Context, id uuid.UUID) (Property, error) {
+	return s.repo.Delete(ctx, id)
 }

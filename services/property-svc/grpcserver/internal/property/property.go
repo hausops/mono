@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/google/uuid"
 	"github.com/hausops/mono/services/property-svc/domain/property"
 	"github.com/hausops/mono/services/property-svc/pb"
 )
@@ -39,7 +40,11 @@ func (s *server) Create(ctx context.Context, in *pb.CreatePropertyRequest) (*pb.
 }
 
 func (s *server) FindByID(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
-	id := in.GetId()
+	id, err := uuid.Parse(in.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid property id")
+	}
+
 	p, err := s.svc.FindByID(ctx, id)
 	if err != nil {
 		switch err {
@@ -67,7 +72,11 @@ func (s *server) List(ctx context.Context, _ *emptypb.Empty) (*pb.PropertyListRe
 }
 
 func (s *server) Update(ctx context.Context, in *pb.UpdatePropertyRequest) (*pb.PropertyResponse, error) {
-	id := in.GetId()
+	id, err := uuid.Parse(in.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid property id")
+	}
+
 	up, err := decodeUpdatePropertyRequest(in)
 	if err != nil {
 		return nil, status.Error(
@@ -91,7 +100,11 @@ func (s *server) Update(ctx context.Context, in *pb.UpdatePropertyRequest) (*pb.
 }
 
 func (s *server) Delete(ctx context.Context, in *pb.PropertyIDRequest) (*pb.PropertyResponse, error) {
-	id := in.GetId()
+	id, err := uuid.Parse(in.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid property id")
+	}
+
 	p, err := s.svc.Delete(ctx, id)
 	if err != nil {
 		switch err {
