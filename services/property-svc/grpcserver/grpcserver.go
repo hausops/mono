@@ -23,7 +23,10 @@ func New(c config.Config, logger *zap.Logger) *grpc.Server {
 			grpc_zap.UnaryServerInterceptor(logger),
 		)),
 	)
-	pb.RegisterPropertyServer(s, property.NewServer(local.NewPropertyRepository()))
+
+	propertyRepo := local.NewPropertyRepository()
+	propertyRepo.ReplaceProperties(local.ExampleProperties())
+	pb.RegisterPropertyServer(s, property.NewServer(propertyRepo))
 
 	if c.Mode == config.ModeDev {
 		reflection.Register(s)
