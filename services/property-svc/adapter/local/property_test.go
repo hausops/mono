@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/hausops/mono/services/property-svc/adapter/local"
 	"github.com/hausops/mono/services/property-svc/domain/property"
@@ -49,8 +48,8 @@ func TestPropertyRepository(t *testing.T) {
 					t.Fatalf("want error %q but got %q", tc.err, err)
 				}
 
-				if diff := cmp.Diff(got, tc.want); diff != "" {
-					t.Fatalf("mismatch (-want +got):\n%s", diff)
+				if got != tc.want {
+					t.Fatalf("want %v but got %v", tc.want, got)
 				}
 			})
 		}
