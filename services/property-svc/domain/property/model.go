@@ -9,6 +9,9 @@ import (
 type Property interface {
 	// isProperty is an empty receiver function to tag the concrete Property types.
 	isProperty()
+
+	// GetID returns the Property ID.
+	GetID() uuid.UUID
 }
 
 type SingleFamilyProperty struct {
@@ -23,6 +26,8 @@ type SingleFamilyProperty struct {
 
 func (p SingleFamilyProperty) isProperty() {}
 
+func (p SingleFamilyProperty) GetID() uuid.UUID { return p.ID }
+
 type MultiFamilyProperty struct {
 	ID            uuid.UUID
 	Address       Address
@@ -34,6 +39,8 @@ type MultiFamilyProperty struct {
 }
 
 func (p MultiFamilyProperty) isProperty() {}
+
+func (p MultiFamilyProperty) GetID() uuid.UUID { return p.ID }
 
 type Address struct {
 	Line1 string
