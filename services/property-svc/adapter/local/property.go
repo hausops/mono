@@ -50,16 +50,7 @@ func (r *propertyRepository) List(_ context.Context) ([]property.Property, error
 }
 
 func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
-	var id uuid.UUID
-	switch t := p.(type) {
-	case property.SingleFamilyProperty:
-		id = t.ID
-	case property.MultiFamilyProperty:
-		id = t.ID
-	default:
-		return nil, property.UnhandledPropertyTypeError{Property: t}
-	}
-	r.byID[id] = p
+	r.byID[p.GetID()] = p
 	return p, nil
 }
 
@@ -72,18 +63,12 @@ func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (pro
 //
 // This method is intended to be used for populating the repository
 // with initial entries.
-func (r *propertyRepository) ReplaceProperties(ps []property.Property) {
-	byID := make(map[uuid.UUID]property.Property, len(ps))
+func (r *propertyRepository) ReplaceProperties(ps []property.Property) *propertyRepository {
+	r.byID = make(map[uuid.UUID]property.Property, len(ps))
 	for _, p := range ps {
-		switch t := p.(type) {
-		case property.SingleFamilyProperty:
-			byID[t.ID] = t
-		case property.MultiFamilyProperty:
-			byID[t.ID] = t
-		}
+		r.byID[p.GetID()] = p
 	}
-
-	r.byID = byID
+	return r
 }
 
 // ExampleProperties returns an example slice of property.Property.
