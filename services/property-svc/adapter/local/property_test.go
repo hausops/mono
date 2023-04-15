@@ -93,6 +93,26 @@ func TestPropertyRepository(t *testing.T) {
 			t.Errorf("List(): (-want +got)\n%s", diff)
 		}
 	})
+
+	t.Run("Upsert", func(t *testing.T) {
+		ps := []property.SingleFamilyProperty{
+			newFakeSingleFamilyProperty(t),
+			newFakeSingleFamilyProperty(t),
+		}
+
+		repo := local.NewPropertyRepository()
+
+		for i, p := range ps {
+			t.Log("On upsert success, returns the upserted property.")
+			got, err := repo.Upsert(context.TODO(), p)
+			if err != nil {
+				t.Errorf("[%d] Upsert(%v) = %q; want no error", i, p, err)
+			}
+			if got != p {
+				t.Errorf("[%d] Upsert(%v) = %v; want %v", i, p, got, p)
+			}
+		}
+	})
 }
 
 func newFakeSingleFamilyProperty(t *testing.T) property.SingleFamilyProperty {
