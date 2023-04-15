@@ -33,19 +33,20 @@ func TestPropertyRepository(t *testing.T) {
 		})
 
 		t.Run("found", func(t *testing.T) {
-			t.Log("On delete success, returns the deleted property.")
 			got, err := repo.Delete(context.TODO(), p.ID)
 			if err != nil {
+				t.Log("On delete success, does not return an error.")
 				t.Errorf("Delete(%s) = %q; want no error", p.ID, err)
 			}
 			if got != p {
+				t.Log("On delete success, returns the deleted property.")
 				t.Errorf("Delete(%s) = %v; want %v", p.ID, got, p)
 			}
 
-			t.Log("The deleted property should not longer be found in the repo.")
 			_, err = repo.FindByID(context.TODO(), p.ID)
 			if !errors.Is(err, property.ErrNotFound) {
-				t.Errorf("...(%s) = %q; want %q", p.ID, err, property.ErrNotFound)
+				t.Log("The deleted property should not longer be found.")
+				t.Errorf("FindByID(%s) = %q; want %q", p.ID, err, property.ErrNotFound)
 			}
 		})
 	})
@@ -95,23 +96,58 @@ func TestPropertyRepository(t *testing.T) {
 	})
 
 	t.Run("Upsert", func(t *testing.T) {
-		ps := []property.SingleFamilyProperty{
-			newFakeSingleFamilyProperty(t),
-			newFakeSingleFamilyProperty(t),
-		}
+		t.Run("insert new properties", func(t *testing.T) {
+			repo := local.NewPropertyRepository()
 
-		repo := local.NewPropertyRepository()
+			for i, p := range []property.SingleFamilyProperty{
+				newFakeSingleFamilyProperty(t),
+				newFakeSingleFamilyProperty(t),
+			} {
+				got, err := repo.Upsert(context.TODO(), p)
+				if err != nil {
+					t.Logf("[%d] On upsert success, does not return an error.", i)
+					t.Errorf("Upsert(%v) = %q; want no error", p, err)
+				}
+				if got != p {
+					t.Logf("[%d] On upsert success, returns the upserted property.", i)
+					t.Errorf("Upsert(%v) = %v; want %v", p, got, p)
+				}
 
-		for i, p := range ps {
-			t.Log("On upsert success, returns the upserted property.")
-			got, err := repo.Upsert(context.TODO(), p)
+				got, _ = repo.FindByID(context.TODO(), p.ID)
+				if got != p {
+					t.Logf("[%d] The upserted property should be found.", i)
+					t.Errorf("FindByID(%s) = %v; want %v", p.ID, got, p)
+				}
+			}
+		})
+
+		t.Run("replace existing properties", func(t *testing.T) {
+			p1 := newFakeSingleFamilyProperty(t)
+			p2 := newFakeSingleFamilyProperty(t)
+
+			repo := local.
+				NewPropertyRepository().
+				ReplaceProperties([]property.Property{p1, p2})
+
+			updateProperty := newFakeSingleFamilyProperty(t)
+			updateProperty.ID = p1.ID
+
+			got, err := repo.Upsert(context.TODO(), updateProperty)
 			if err != nil {
-				t.Errorf("[%d] Upsert(%v) = %q; want no error", i, p, err)
+				t.Log("On upsert success, does not return an error.")
+				t.Errorf("Upsert(%v) = %q; want no error", updateProperty, err)
 			}
-			if got != p {
-				t.Errorf("[%d] Upsert(%v) = %v; want %v", i, p, got, p)
+			if got != updateProperty {
+				t.Log("On upsert success, returns the upserted property.")
+				t.Errorf("Upsert(%v) = %v; want %v", updateProperty, got, updateProperty)
 			}
-		}
+
+			got, _ = repo.FindByID(context.TODO(), updateProperty.ID)
+			if got != updateProperty {
+				t.Log("The upserted property should be found.")
+				t.Errorf("FindByID(%s) = %v; want %v", updateProperty.ID, got, updateProperty)
+			}
+		})
 	})
 }
 
