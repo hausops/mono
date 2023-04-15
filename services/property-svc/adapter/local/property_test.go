@@ -3,9 +3,11 @@ package local_test
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/hausops/mono/services/property-svc/adapter/local"
 	"github.com/hausops/mono/services/property-svc/domain/property"
@@ -71,6 +73,26 @@ func TestPropertyRepository(t *testing.T) {
 			}
 		})
 	})
+
+	t.Run("List", func(t *testing.T) {
+		ps := []property.Property{
+			newFakeSingleFamilyProperty(t),
+			newFakeSingleFamilyProperty(t),
+			newFakeSingleFamilyProperty(t),
+		}
+
+		repo := local.
+			NewPropertyRepository().
+			ReplaceProperties(ps)
+
+		got, err := repo.List(context.TODO())
+		if err != nil {
+			t.Errorf("List() = %q; want no error", err)
+		}
+		if diff := cmp.Diff(ps, got); diff != "" {
+			t.Errorf("List(): (-want +got)\n%s", diff)
+		}
+	})
 }
 
 func newFakeSingleFamilyProperty(t *testing.T) property.SingleFamilyProperty {
@@ -87,11 +109,14 @@ func newFakeSingleFamilyProperty(t *testing.T) property.SingleFamilyProperty {
 		// it is okay if the values don't make much sense in real life
 		// we only need the correct data types for testing
 		Unit: property.RentalUnit{
-			ID:         uuid.New(),
-			Bedrooms:   gofakeit.Float32(),
-			Bathrooms:  gofakeit.Float32(),
-			Size:       gofakeit.Float32(),
-			RentAmount: gofakeit.Float32(),
+			ID:        uuid.New(),
+			Bedrooms:  truncate(gofakeit.Float32Range(0, 3)),
+			Bathrooms: truncate(gofakeit.Float32Range(0, 3)),
+			Size:      truncate(gofakeit.Float32Range(320, 840)),
 		},
 	}
+}
+
+func truncate(v float32) float32 {
+	return float32(math.Floor(float64(v)))
 }
