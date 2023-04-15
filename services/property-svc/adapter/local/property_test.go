@@ -11,6 +11,9 @@ import (
 	"github.com/hausops/mono/services/property-svc/domain/property"
 )
 
+// TODO: move this to a suite of contract tests exported by domain (property.Repository)
+// so concrete implementations can run the suite to ensure the implementation
+// conforms to the expected behavior.
 func TestPropertyRepository(t *testing.T) {
 	t.Parallel()
 
