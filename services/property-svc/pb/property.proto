@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package hausops.mono.services.property;
+
+import "google/protobuf/empty.proto";
+
+service Property {
+  rpc Create(CreatePropertyRequest) returns (PropertyResponse);
+  rpc FindByID(PropertyIDRequest) returns (PropertyResponse);
+  rpc List(google.protobuf.Empty) returns (PropertyListResponse);
+  rpc Update(UpdatePropertyRequest) returns (PropertyResponse);
+  rpc Delete(PropertyIDRequest) returns (PropertyResponse);
+}
+
+message PropertyListResponse { repeated PropertyResponse properties = 1; }
+
+message PropertyResponse {
+  oneof property {
+    SingleFamilyProperty single_family_property = 1;
+    MultiFamilyProperty multi_family_property = 2;
+  }
+}
+
+message SingleFamilyProperty {
+  string id = 1;
+  Address address = 3;
+  string cover_image_url = 5;
+  int32 year_built = 8;
+  RentalUnit unit = 12;
+  string date_created = 13;
+  string date_updated = 14;
+}
+
+message MultiFamilyProperty {
+  string id = 1;
+  Address address = 3;
+  string cover_image_url = 5;
+  int32 year_built = 8;
+  repeated RentalUnit units = 12;
+  string date_created = 13;
+  string date_updated = 14;
+}
+
+message RentalUnit {
+  string id = 1;
+  string number = 3;
+  float bedrooms = 8;
+  float bathrooms = 9;
+  float size = 11;
+  float rent_amount = 12;
+  string date_created = 13;
+  string date_updated = 14;
+}
+
+message Address {
+  string line1 = 1;
+  string line2 = 2;
+  string city = 3;
+  string state = 4;
+  string zip = 5;
+}
+
+message PropertyIDRequest { string id = 1; }
+
+message CreatePropertyRequest {
+  oneof property {
+    SingleFamilyProperty single_family_property = 3;
+    MultiFamilyProperty multi_family_property = 4;
+  }
+
+  message SingleFamilyProperty {
+    Address address = 3;
+    string cover_image_url = 5;
+    int32 year_built = 8;
+    RentalUnit unit = 12;
+  }
+
+  message MultiFamilyProperty {
+    Address address = 3;
+    string cover_image_url = 5;
+    int32 year_built = 8;
+    repeated RentalUnit units = 12;
+  }
+
+  message Address {
+    string line1 = 1;
+    string line2 = 2;
+    string city = 3;
+    string state = 4;
+    string zip = 5;
+  }
+
+  message RentalUnit {
+    string number = 3;
+    float bedrooms = 8;
+    float bathrooms = 9;
+    float size = 11;
+    float rent_amount = 12;
+  }
+}
+
+message UpdatePropertyRequest {
+  string id = 1;
+  oneof property {
+    UpdateSingleFamilyProperty single_family_property = 3;
+    UpdateMultiFamilyProperty multi_family_property = 4;
+  }
+
+  message UpdateSingleFamilyProperty {
+    optional Address address = 3;
+    optional string cover_image_url = 5;
+    optional int32 year_built = 8;
+    optional RentalUnit unit = 12;
+  }
+
+  message UpdateMultiFamilyProperty {
+    optional Address address = 3;
+    optional string cover_image_url = 5;
+    optional int32 year_built = 8;
+    // No units update until we understand the use case.
+  }
+
+  message RentalUnit {
+    optional string number = 3;
+    optional float bedrooms = 8;
+    optional float bathrooms = 9;
+    optional float size = 12;
+    optional float rent_amount = 15;
+  }
+
+  message Address {
+    optional string line1 = 1;
+    optional string line2 = 2;
+    optional string city = 3;
+    optional string state = 4;
+    optional string zip = 5;
+  }
+}
