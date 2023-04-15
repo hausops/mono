@@ -2,56 +2,62 @@ package local_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/uuid"
 	"github.com/hausops/mono/services/property-svc/adapter/local"
 	"github.com/hausops/mono/services/property-svc/domain/property"
 )
 
 func TestPropertyRepository(t *testing.T) {
-	ctx := context.Background()
-
-	sample := local.ExampleProperties()
-
-	repo := local.NewPropertyRepository()
-	repo.ReplaceProperties(sample)
+	t.Parallel()
 
 	t.Run("FindByID", func(t *testing.T) {
-		testCases := []struct {
-			id   uuid.UUID
-			want property.Property
-			err  error
-		}{
-			{
-				id:   sample[0].GetID(),
-				want: sample[0],
-				err:  nil,
-			},
-			{
-				id:   sample[4].GetID(),
-				want: sample[4],
-				err:  nil,
-			},
-			{
-				id:   uuid.New(),
-				want: nil,
-				err:  property.ErrNotFound,
-			},
-		}
+		p := newFakeSingleFamilyProperty(t)
+		repo := local.
+			NewPropertyRepository().
+			ReplaceProperties([]property.Property{p})
 
-		for _, tc := range testCases {
-			t.Run(tc.id.String(), func(t *testing.T) {
-				got, err := repo.FindByID(ctx, tc.id)
+		t.Run("not found", func(t *testing.T) {
+			_, err := repo.FindByID(context.TODO(), uuid.New())
+			if !errors.Is(err, property.ErrNotFound) {
+				t.Errorf("FindByID(%s) = %q; want %q", p.ID, err, property.ErrNotFound)
+			}
+		})
 
-				if err != tc.err {
-					t.Fatalf("want error %q but got %q", tc.err, err)
-				}
-
-				if got != tc.want {
-					t.Fatalf("want %v but got %v", tc.want, got)
-				}
-			})
-		}
+		t.Run("found", func(t *testing.T) {
+			got, err := repo.FindByID(context.TODO(), p.ID)
+			if err != nil {
+				t.Errorf("FindByID(%s) = %q; want no error", p.ID, err)
+			}
+			if got != p {
+				t.Errorf("FindByID(%s) = %v; want %v", p.ID, got, p)
+			}
+		})
 	})
+}
+
+func newFakeSingleFamilyProperty(t *testing.T) property.SingleFamilyProperty {
+	t.Helper()
+	return property.SingleFamilyProperty{
+		ID: uuid.New(),
+		Address: property.Address{
+			Line1: gofakeit.Street(),
+			City:  gofakeit.City(),
+			State: gofakeit.StateAbr(),
+			Zip:   gofakeit.Zip(),
+		},
+		CoverImageURL: "https://hausops.com/images/example-sfp.jpg",
+		// it is okay if the values don't make much sense in real life
+		// we only need the correct data types for testing
+		Unit: property.RentalUnit{
+			ID:         uuid.New(),
+			Bedrooms:   gofakeit.Float32(),
+			Bathrooms:  gofakeit.Float32(),
+			Size:       gofakeit.Float32(),
+			RentAmount: gofakeit.Float32(),
+		},
+	}
 }
