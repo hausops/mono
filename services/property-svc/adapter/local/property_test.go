@@ -14,6 +14,37 @@ import (
 func TestPropertyRepository(t *testing.T) {
 	t.Parallel()
 
+	t.Run("Delete", func(t *testing.T) {
+		p := newFakeSingleFamilyProperty(t)
+		repo := local.
+			NewPropertyRepository().
+			ReplaceProperties([]property.Property{p})
+
+		t.Run("not found", func(t *testing.T) {
+			_, err := repo.Delete(context.TODO(), uuid.New())
+			if !errors.Is(err, property.ErrNotFound) {
+				t.Errorf("Delete(%s) = %q; want %q", p.ID, err, property.ErrNotFound)
+			}
+		})
+
+		t.Run("found", func(t *testing.T) {
+			t.Log("On delete success, returns the deleted property.")
+			got, err := repo.Delete(context.TODO(), p.ID)
+			if err != nil {
+				t.Errorf("Delete(%s) = %q; want no error", p.ID, err)
+			}
+			if got != p {
+				t.Errorf("Delete(%s) = %v; want %v", p.ID, got, p)
+			}
+
+			t.Log("The deleted property should not longer be found in the repo.")
+			_, err = repo.FindByID(context.TODO(), p.ID)
+			if !errors.Is(err, property.ErrNotFound) {
+				t.Errorf("...(%s) = %q; want %q", p.ID, err, property.ErrNotFound)
+			}
+		})
+	})
+
 	t.Run("FindByID", func(t *testing.T) {
 		p := newFakeSingleFamilyProperty(t)
 		repo := local.
