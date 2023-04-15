@@ -43,9 +43,9 @@ func (r *propertyRepository) FindByID(_ context.Context, id uuid.UUID) (property
 
 func (r *propertyRepository) List(_ context.Context) ([]property.Property, error) {
 	ps := make([]property.Property, 0, len(r.byID))
-	for _, p := range r.byID {
-		ps = append(ps, p)
-	}
+	// for _, p := range r.byID {
+	// 	ps = append(ps, p)
+	// }
 	return ps, nil
 }
 
