@@ -1,16 +1,16 @@
 {
+  "[go]": {
+    "editor.formatOnSave": true
+  },
   "[proto3]": {
     "editor.defaultFormatter": "zxh404.vscode-proto3"
   },
   "go.goroot": "/usr/local/go",
+  "go.languageServerFlags": ["-rpc.trace"],
   "go.useLanguageServer": true,
-  "[go]": {
-    "editor.formatOnSave": true
-  },
   "gopls": {
     "usePlaceholders": true,
     "completeUnimported": true,
     "deepCompletion": true
-  },
-  "go.languageServerFlags": ["-rpc.trace"]
+  }
 }
