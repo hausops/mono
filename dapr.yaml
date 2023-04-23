@@ -1,0 +1,9 @@
+version: 1
+common:
+  env:
+    DEBUG: true
+apps:
+  - appDirPath: services/property-svc
+    appPort: 51001
+    appProtocol: grpc
+    command: ["make", "dev"]

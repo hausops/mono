@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/grpcserver"
@@ -26,7 +28,9 @@ func main() {
 	logger := newLogger(c)
 	s := grpcserver.New(c, logger)
 
-	conn, err := net.Listen("tcp", ":9090")
+	port := os.Getenv("APP_PORT")	
+	// if port is "" a random free port will be chosen.
+	conn, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%s", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
