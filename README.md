@@ -51,6 +51,10 @@ podman machine stop
 podman machine rm
 ```
 
+### Tracing
+
+Tracing is available out of the box with Dapr. Go to http://localhost:9411 to see traces via Zipkin.
+
 ### Architecture
 
 The local dev environment for HausOps uses Dapr to manage service-to-service communication. Each service communicates with its own local Dapr sidecar, which handles service discovery, network resilience, observability, access lists, and other service-mesh functionality.
