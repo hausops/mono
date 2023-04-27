@@ -10,19 +10,27 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/contrib/secure"
 	"github.com/gin-gonic/gin"
-	"github.com/hausops/mono/apps/dashboard-api/adapter/local"
+	"github.com/hausops/mono/apps/dashboard-api/adapter/dapr"
 	"github.com/hausops/mono/apps/dashboard-api/graphql"
 	timeout "github.com/vearne/gin-timeout"
+	"google.golang.org/grpc"
 )
 
-const defaultPort = "8080"
+const defaultPort = "9098"
 const graphqlRoot = "/graphql"
 
 func main() {
-	port := os.Getenv("PORT")
+	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = defaultPort
 	}
+
+	// Create dapr connection to connect to other services.
+	daprConn, err := dapr.Conn()
+	if err != nil {
+		log.Fatalf("cannot connect to dapr sidecar: %v", err)
+	}
+	defer daprConn.Close()
 
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"127.0.0.1"})
@@ -39,10 +47,13 @@ func main() {
 	}))
 
 	r.GET("/", playgroundHandler())
-	r.POST(graphqlRoot, graphqlHandler())
+	r.POST(graphqlRoot, graphqlHandler(daprConn))
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(r.Run(":" + port))
+	addr := "localhost:" + port
+	log.Printf("server listening on %s", addr)
+	if err := r.Run(addr); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func playgroundHandler() gin.HandlerFunc {
@@ -52,8 +63,8 @@ func playgroundHandler() gin.HandlerFunc {
 	}
 }
 
-func graphqlHandler() gin.HandlerFunc {
-	propertySvc := local.NewPropertyService()
+func graphqlHandler(conn *grpc.ClientConn) gin.HandlerFunc {
+	propertySvc := dapr.NewPropertyService(conn)
 	cfg := graphql.Config{
 		Resolvers: &graphql.Resolver{
 			PropertySvc: propertySvc,
