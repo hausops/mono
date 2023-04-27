@@ -3,6 +3,10 @@ common:
   env:
     DEBUG: true
 apps:
+  - appDirPath: apps/dashboard-api
+    appPort: 9098
+    appProtocol: grpc
+    command: ["make", "run"]
   - appDirPath: services/property-svc
     appPort: 51001
     appProtocol: grpc
