@@ -3,11 +3,11 @@ module github.com/hausops/mono/apps/dashboard-api
 go 1.20
 
 require (
-	github.com/99designs/gqlgen v0.17.24
+	github.com/99designs/gqlgen v0.17.30
 	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
-	github.com/hausops/mono/services/property-svc v0.0.0-20230423053614-a2674e7a07ee
+	github.com/hausops/mono/services/property-svc v0.0.0-20230429053653-082ba7611023
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/vearne/gin-timeout v0.1.5
 	github.com/vektah/gqlparser/v2 v2.5.1
@@ -27,7 +27,7 @@ require (
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
