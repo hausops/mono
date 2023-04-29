@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/grpcserver"
@@ -35,10 +38,23 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	log.Printf("server listening on %v", conn.Addr())
-	if err := s.Serve(conn); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	go func() {
+		log.Printf("server listening on %v", conn.Addr())
+		if err := s.Serve(conn); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
+	// Wait for a signal to gracefully shut down the server
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	// Call the cancel function to release resources in case of early return
+	defer cancel()
+
+	<-ctx.Done()
+	log.Println("Stopping server gracefully...")
+	// TODO: Implement a timeout for shutting down if it takes too long
+	s.GracefulStop()
+	log.Println("Server shut down successfully")
 }
 
 func newLogger(c config.Config) (logger *zap.Logger) {
