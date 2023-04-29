@@ -13,27 +13,27 @@ import (
 
 // CreateSingleFamilyProperty is the resolver for the createSingleFamilyProperty field.
 func (r *mutationResolver) CreateSingleFamilyProperty(ctx context.Context, input property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
-	return r.PropertySvc.CreateSingleFamilyProperty(input)
+	return r.PropertySvc.CreateSingleFamilyProperty(ctx, input)
 }
 
 // CreateMultiFamilyProperty is the resolver for the createMultiFamilyProperty field.
 func (r *mutationResolver) CreateMultiFamilyProperty(ctx context.Context, input property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
-	return r.PropertySvc.CreateMultiFamilyProperty(input)
+	return r.PropertySvc.CreateMultiFamilyProperty(ctx, input)
 }
 
 // UpdateSingleFamilyProperty is the resolver for the updateSingleFamilyProperty field.
 func (r *mutationResolver) UpdateSingleFamilyProperty(ctx context.Context, id string, input property.UpdateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
-	return r.PropertySvc.UpdateSingleFamilyPropertyByID(id, input)
+	return r.PropertySvc.UpdateSingleFamilyPropertyByID(ctx, id, input)
 }
 
 // UpdateMultiFamilyProperty is the resolver for the updateMultiFamilyProperty field.
 func (r *mutationResolver) UpdateMultiFamilyProperty(ctx context.Context, id string, input property.UpdateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
-	return r.PropertySvc.UpdateMultiFamilyPropertyByID(id, input)
+	return r.PropertySvc.UpdateMultiFamilyPropertyByID(ctx, id, input)
 }
 
 // DeleteProperty is the resolver for the deleteProperty field.
 func (r *mutationResolver) DeleteProperty(ctx context.Context, id string) (property.Property, error) {
-	return r.PropertySvc.DeleteByID(id)
+	return r.PropertySvc.DeleteByID(ctx, id)
 }
 
 // Property is the resolver for the property field.
@@ -43,7 +43,7 @@ func (r *queryResolver) Property(ctx context.Context, id string) (property.Prope
 
 // Properties is the resolver for the properties field.
 func (r *queryResolver) Properties(ctx context.Context) ([]property.Property, error) {
-	return r.PropertySvc.FindAll()
+	return r.PropertySvc.FindAll(ctx)
 }
 
 // Mutation returns MutationResolver implementation.

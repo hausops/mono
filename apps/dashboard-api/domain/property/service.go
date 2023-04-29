@@ -1,29 +1,35 @@
 package property
 
+import "context"
+
 type Service interface {
 	CreateSingleFamilyProperty(
-		CreateSingleFamilyPropertyInput,
+		ctx context.Context,
+		in CreateSingleFamilyPropertyInput,
 	) (*SingleFamilyProperty, error)
 
 	CreateMultiFamilyProperty(
-		CreateMultiFamilyPropertyInput,
+		ctx context.Context,
+		in CreateMultiFamilyPropertyInput,
 	) (*MultiFamilyProperty, error)
 
-	FindByID(id string) (Property, error)
+	FindByID(ctx context.Context, id string) (Property, error)
 
-	FindAll() ([]Property, error)
+	FindAll(ctx context.Context) ([]Property, error)
 
 	UpdateSingleFamilyPropertyByID(
+		ctx context.Context,
 		id string,
-		input UpdateSingleFamilyPropertyInput,
+		in UpdateSingleFamilyPropertyInput,
 	) (*SingleFamilyProperty, error)
 
 	UpdateMultiFamilyPropertyByID(
+		ctx context.Context,
 		id string,
-		input UpdateMultiFamilyPropertyInput,
+		in UpdateMultiFamilyPropertyInput,
 	) (*MultiFamilyProperty, error)
 
-	DeleteByID(id string) (Property, error)
+	DeleteByID(ctx context.Context, id string) (Property, error)
 }
 
 type CreateSingleFamilyPropertyInput struct {

@@ -23,20 +23,25 @@ func NewPropertyService(grpcConn *grpc.ClientConn) *PropertyService {
 	}
 }
 
-func (r *PropertyService) CreateSingleFamilyProperty(in property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+func (r *PropertyService) CreateSingleFamilyProperty(
+	_ context.Context,
+	in property.CreateSingleFamilyPropertyInput,
+) (*property.SingleFamilyProperty, error) {
 	panic("Not implemented - dapr.PropertyService.CreateSingleFamilyProperty")
 }
 
-func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+func (r *PropertyService) CreateMultiFamilyProperty(
+	_ context.Context,
+	in property.CreateMultiFamilyPropertyInput,
+) (*property.MultiFamilyProperty, error) {
 	panic("Not implemented - dapr.PropertyService.CreateMultiFamilyProperty")
 }
 
-func (r *PropertyService) FindByID(id string) (property.Property, error) {
+func (r *PropertyService) FindByID(_ context.Context, id string) (property.Property, error) {
 	panic("Not implemented - dapr.PropertyService.FindByID")
 }
 
-func (r *PropertyService) FindAll() ([]property.Property, error) {
-	ctx := context.TODO()
+func (r *PropertyService) FindAll(ctx context.Context) ([]property.Property, error) {
 	ctx = metadata.AppendToOutgoingContext(ctx, "dapr-app-id", "property-svc")
 
 	res, err := r.client.List(ctx, &emptypb.Empty{})
@@ -163,6 +168,7 @@ func decodeAddress(in *pb.Address) property.Address {
 }
 
 func (r *PropertyService) UpdateSingleFamilyPropertyByID(
+	_ context.Context,
 	id string,
 	in property.UpdateSingleFamilyPropertyInput,
 ) (*property.SingleFamilyProperty, error) {
@@ -170,12 +176,13 @@ func (r *PropertyService) UpdateSingleFamilyPropertyByID(
 }
 
 func (r *PropertyService) UpdateMultiFamilyPropertyByID(
+	_ context.Context,
 	id string,
 	in property.UpdateMultiFamilyPropertyInput,
 ) (*property.MultiFamilyProperty, error) {
 	panic("Not implemented - dapr.PropertyService.UpdateMultiFamilyPropertyByID")
 }
 
-func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
+func (r *PropertyService) DeleteByID(_ context.Context, id string) (property.Property, error) {
 	panic("Not implemented - dapr.PropertyService.DeleteByID")
 }

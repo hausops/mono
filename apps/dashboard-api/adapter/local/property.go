@@ -1,6 +1,7 @@
 package local
 
 import (
+	"context"
 	"errors"
 
 	"github.com/google/uuid"
@@ -18,7 +19,10 @@ func NewPropertyService() *PropertyService {
 	return &PropertyService{byId: make(map[string]property.Property)}
 }
 
-func (r *PropertyService) CreateSingleFamilyProperty(in property.CreateSingleFamilyPropertyInput) (*property.SingleFamilyProperty, error) {
+func (r *PropertyService) CreateSingleFamilyProperty(
+	_ context.Context,
+	in property.CreateSingleFamilyPropertyInput,
+) (*property.SingleFamilyProperty, error) {
 	unit := property.SingleFamilyPropertyUnit{
 		ID:         uuid.New().String(),
 		Bedrooms:   in.Unit.Bedrooms,
@@ -38,7 +42,10 @@ func (r *PropertyService) CreateSingleFamilyProperty(in property.CreateSingleFam
 	return &p, nil
 }
 
-func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamilyPropertyInput) (*property.MultiFamilyProperty, error) {
+func (r *PropertyService) CreateMultiFamilyProperty(
+	_ context.Context,
+	in property.CreateMultiFamilyPropertyInput,
+) (*property.MultiFamilyProperty, error) {
 	units := make([]property.MultiFamilyPropertyUnit, 0, len(in.Units))
 	for _, iu := range in.Units {
 		u := property.MultiFamilyPropertyUnit{
@@ -63,7 +70,7 @@ func (r *PropertyService) CreateMultiFamilyProperty(in property.CreateMultiFamil
 	return &p, nil
 }
 
-func (r *PropertyService) FindByID(id string) (property.Property, error) {
+func (r *PropertyService) FindByID(_ context.Context, id string) (property.Property, error) {
 	p, ok := r.byId[id]
 	if !ok {
 		return nil, property.NotFoundError{ID: id}
@@ -71,7 +78,7 @@ func (r *PropertyService) FindByID(id string) (property.Property, error) {
 	return p, nil
 }
 
-func (r *PropertyService) FindAll() ([]property.Property, error) {
+func (r *PropertyService) FindAll(_ context.Context) ([]property.Property, error) {
 	ps := make([]property.Property, 0, len(r.byId))
 	for _, p := range r.byId {
 		ps = append(ps, p)
@@ -80,6 +87,7 @@ func (r *PropertyService) FindAll() ([]property.Property, error) {
 }
 
 func (r *PropertyService) UpdateSingleFamilyPropertyByID(
+	_ context.Context,
 	id string,
 	in property.UpdateSingleFamilyPropertyInput,
 ) (*property.SingleFamilyProperty, error) {
@@ -99,6 +107,7 @@ func (r *PropertyService) UpdateSingleFamilyPropertyByID(
 }
 
 func (r *PropertyService) UpdateMultiFamilyPropertyByID(
+	_ context.Context,
 	id string,
 	in property.UpdateMultiFamilyPropertyInput,
 ) (*property.MultiFamilyProperty, error) {
@@ -117,7 +126,7 @@ func (r *PropertyService) UpdateMultiFamilyPropertyByID(
 	return &mp, nil
 }
 
-func (r *PropertyService) DeleteByID(id string) (property.Property, error) {
+func (r *PropertyService) DeleteByID(_ context.Context, id string) (property.Property, error) {
 	p, ok := r.byId[id]
 	if !ok {
 		return nil, property.NotFoundError{ID: id}
