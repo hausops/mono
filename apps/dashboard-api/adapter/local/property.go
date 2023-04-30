@@ -31,7 +31,7 @@ func (r *PropertyService) CreateSingleFamilyProperty(
 		RentAmount: in.Unit.RentAmount,
 	}
 
-	p := property.SingleFamilyProperty{
+	p := &property.SingleFamilyProperty{
 		ID:            uuid.New().String(),
 		CoverImageURL: in.CoverImageURL,
 		Address:       property.Address(in.Address),
@@ -39,7 +39,7 @@ func (r *PropertyService) CreateSingleFamilyProperty(
 		Unit:          unit,
 	}
 	r.byId[p.ID] = p
-	return &p, nil
+	return p, nil
 }
 
 func (r *PropertyService) CreateMultiFamilyProperty(
@@ -59,7 +59,7 @@ func (r *PropertyService) CreateMultiFamilyProperty(
 		units = append(units, u)
 	}
 
-	p := property.MultiFamilyProperty{
+	p := &property.MultiFamilyProperty{
 		ID:            uuid.New().String(),
 		CoverImageURL: in.CoverImageURL,
 		Address:       property.Address(in.Address),
@@ -67,7 +67,7 @@ func (r *PropertyService) CreateMultiFamilyProperty(
 		Units:         units,
 	}
 	r.byId[p.ID] = p
-	return &p, nil
+	return p, nil
 }
 
 func (r *PropertyService) FindByID(_ context.Context, id string) (property.Property, error) {
@@ -95,7 +95,7 @@ func (r *PropertyService) UpdateSingleFamilyPropertyByID(
 	if !ok {
 		return nil, property.NotFoundError{ID: id}
 	}
-	sp, ok := p.(property.SingleFamilyProperty)
+	sp, ok := p.(*property.SingleFamilyProperty)
 	if !ok {
 		return nil, errors.New("update property (single-family): property type mismatch")
 	}
@@ -103,7 +103,7 @@ func (r *PropertyService) UpdateSingleFamilyPropertyByID(
 		return nil, err
 	}
 	r.byId[id] = sp
-	return &sp, nil
+	return sp, nil
 }
 
 func (r *PropertyService) UpdateMultiFamilyPropertyByID(
@@ -115,7 +115,7 @@ func (r *PropertyService) UpdateMultiFamilyPropertyByID(
 	if !ok {
 		return nil, property.NotFoundError{ID: id}
 	}
-	mp, ok := p.(property.MultiFamilyProperty)
+	mp, ok := p.(*property.MultiFamilyProperty)
 	if !ok {
 		return nil, errors.New("update property (multi-family): property type mismatch")
 	}
@@ -123,7 +123,7 @@ func (r *PropertyService) UpdateMultiFamilyPropertyByID(
 		return nil, err
 	}
 	r.byId[id] = mp
-	return &mp, nil
+	return mp, nil
 }
 
 func (r *PropertyService) DeleteByID(_ context.Context, id string) (property.Property, error) {

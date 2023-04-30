@@ -28,13 +28,13 @@ type SingleFamilyProperty struct {
 	Unit          SingleFamilyPropertyUnit `json:"unit,omitempty"`
 }
 
-func (SingleFamilyProperty) IsProperty()     {}
-func (SingleFamilyProperty) IsPropertyInfo() {}
+func (*SingleFamilyProperty) IsProperty()     {}
+func (*SingleFamilyProperty) IsPropertyInfo() {}
 
-func (sp SingleFamilyProperty) GetID() string             { return sp.ID }
-func (sp SingleFamilyProperty) GetCoverImageURL() *string { return sp.CoverImageURL }
-func (sp SingleFamilyProperty) GetAddress() Address       { return sp.Address }
-func (sp SingleFamilyProperty) GetYearBuilt() *int        { return sp.YearBuilt }
+func (sp *SingleFamilyProperty) GetID() string             { return sp.ID }
+func (sp *SingleFamilyProperty) GetCoverImageURL() *string { return sp.CoverImageURL }
+func (sp *SingleFamilyProperty) GetAddress() Address       { return sp.Address }
+func (sp *SingleFamilyProperty) GetYearBuilt() *int        { return sp.YearBuilt }
 
 type SingleFamilyPropertyUnit struct {
 	ID            string         `json:"id"`
@@ -53,13 +53,13 @@ type MultiFamilyProperty struct {
 	Units         []MultiFamilyPropertyUnit `json:"units"`
 }
 
-func (MultiFamilyProperty) IsProperty()     {}
-func (MultiFamilyProperty) IsPropertyInfo() {}
+func (*MultiFamilyProperty) IsProperty()     {}
+func (*MultiFamilyProperty) IsPropertyInfo() {}
 
-func (mp MultiFamilyProperty) GetID() string             { return mp.ID }
-func (mp MultiFamilyProperty) GetCoverImageURL() *string { return mp.CoverImageURL }
-func (mp MultiFamilyProperty) GetAddress() Address       { return mp.Address }
-func (mp MultiFamilyProperty) GetYearBuilt() *int        { return mp.YearBuilt }
+func (mp *MultiFamilyProperty) GetID() string             { return mp.ID }
+func (mp *MultiFamilyProperty) GetCoverImageURL() *string { return mp.CoverImageURL }
+func (mp *MultiFamilyProperty) GetAddress() Address       { return mp.Address }
+func (mp *MultiFamilyProperty) GetYearBuilt() *int        { return mp.YearBuilt }
 
 type MultiFamilyPropertyUnit struct {
 	ID            string         `json:"id"`
