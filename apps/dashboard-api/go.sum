@@ -47,8 +47,8 @@ github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWm
 github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/hashicorp/golang-lru/v2 v2.0.1 h1:5pv5N1lT1fjLg2VQ5KWc7kmucp2x/kvFOnxuVTqZ6x4=
 github.com/hashicorp/golang-lru/v2 v2.0.1/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
-github.com/hausops/mono/services/property-svc v0.0.0-20230429053653-082ba7611023 h1:bgyMN3Sgx2BN8VQbWMSJl+hHppYkaPK8MMxFUByn6wc=
-github.com/hausops/mono/services/property-svc v0.0.0-20230429053653-082ba7611023/go.mod h1:CNNM8gURgvLUi4RO+4raDFzGvCiQBgeedRujCAQ4qSM=
+github.com/hausops/mono/services/property-svc v0.0.0-20230429151306-fd4a2713731b h1:f4cVNtuJa3BrDw4NhiSBTxAN7pedzMqjpq6oG7qA02I=
+github.com/hausops/mono/services/property-svc v0.0.0-20230429151306-fd4a2713731b/go.mod h1:CNNM8gURgvLUi4RO+4raDFzGvCiQBgeedRujCAQ4qSM=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/klauspost/cpuid/v2 v2.0.9 h1:lgaqFMSdTdQYdZ04uHyN2d/eKdOMyi2YLSvlQIBFYa4=
