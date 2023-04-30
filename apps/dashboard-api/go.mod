@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
-	github.com/hausops/mono/services/property-svc v0.0.0-20230429053653-082ba7611023
+	github.com/hausops/mono/services/property-svc v0.0.0-20230429151306-fd4a2713731b
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/vearne/gin-timeout v0.1.5
 	github.com/vektah/gqlparser/v2 v2.5.1

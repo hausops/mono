@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -1148,6 +1149,7 @@ func (ec *executionContext) _Mutation_createSingleFamilyProperty(ctx context.Con
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1214,6 +1216,7 @@ func (ec *executionContext) _Mutation_createMultiFamilyProperty(ctx context.Cont
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1280,6 +1283,7 @@ func (ec *executionContext) _Mutation_updateSingleFamilyProperty(ctx context.Con
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1346,6 +1350,7 @@ func (ec *executionContext) _Mutation_updateMultiFamilyProperty(ctx context.Cont
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1412,6 +1417,7 @@ func (ec *executionContext) _Mutation_deleteProperty(ctx context.Context, field 
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1466,6 +1472,7 @@ func (ec *executionContext) _Query_property(ctx context.Context, field graphql.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1520,6 +1527,7 @@ func (ec *executionContext) _Query_properties(ctx context.Context, field graphql
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -1563,6 +1571,7 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -1636,6 +1645,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -4258,8 +4268,8 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyUnitInput(ct
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateAdderssInput(ctx context.Context, obj interface{}) (property.UpdateAdderssInput, error) {
-	var it property.UpdateAdderssInput
+func (ec *executionContext) unmarshalInputUpdateAdderssInput(ctx context.Context, obj interface{}) (property.UpdateAddressInput, error) {
+	var it property.UpdateAddressInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -4474,15 +4484,11 @@ func (ec *executionContext) _Property(ctx context.Context, sel ast.SelectionSet,
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case property.SingleFamilyProperty:
-		return ec._SingleFamilyProperty(ctx, sel, &obj)
 	case *property.SingleFamilyProperty:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._SingleFamilyProperty(ctx, sel, obj)
-	case property.MultiFamilyProperty:
-		return ec._MultiFamilyProperty(ctx, sel, &obj)
 	case *property.MultiFamilyProperty:
 		if obj == nil {
 			return graphql.Null
@@ -4497,15 +4503,11 @@ func (ec *executionContext) _PropertyInfo(ctx context.Context, sel ast.Selection
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case property.SingleFamilyProperty:
-		return ec._SingleFamilyProperty(ctx, sel, &obj)
 	case *property.SingleFamilyProperty:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._SingleFamilyProperty(ctx, sel, obj)
-	case property.MultiFamilyProperty:
-		return ec._MultiFamilyProperty(ctx, sel, &obj)
 	case *property.MultiFamilyProperty:
 		if obj == nil {
 			return graphql.Null
@@ -4715,6 +4717,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
+	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -4730,35 +4733,53 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createSingleFamilyProperty(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createMultiFamilyProperty":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createMultiFamilyProperty(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateSingleFamilyProperty":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateSingleFamilyProperty(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateMultiFamilyProperty":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateMultiFamilyProperty(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deleteProperty":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProperty(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
 	return out
 }
 
@@ -4771,6 +4792,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	})
 
 	out := graphql.NewFieldSet(fields)
+	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -4790,6 +4812,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_property(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -4810,6 +4835,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_properties(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -4837,6 +4865,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		}
 	}
 	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
 	return out
 }
 
@@ -5853,7 +5884,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalOUpdateAdderssInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateAdderssInput(ctx context.Context, v interface{}) (*property.UpdateAdderssInput, error) {
+func (ec *executionContext) unmarshalOUpdateAdderssInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateAdderssInput(ctx context.Context, v interface{}) (*property.UpdateAddressInput, error) {
 	if v == nil {
 		return nil, nil
 	}
