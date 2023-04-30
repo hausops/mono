@@ -4268,8 +4268,8 @@ func (ec *executionContext) unmarshalInputCreateSingleFamilyPropertyUnitInput(ct
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateAdderssInput(ctx context.Context, obj interface{}) (property.UpdateAdderssInput, error) {
-	var it property.UpdateAdderssInput
+func (ec *executionContext) unmarshalInputUpdateAdderssInput(ctx context.Context, obj interface{}) (property.UpdateAddressInput, error) {
+	var it property.UpdateAddressInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -5884,7 +5884,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalOUpdateAdderssInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateAdderssInput(ctx context.Context, v interface{}) (*property.UpdateAdderssInput, error) {
+func (ec *executionContext) unmarshalOUpdateAdderssInput2ᚖgithubᚗcomᚋhausopsᚋmonoᚋappsᚋdashboardᚑapiᚋdomainᚋpropertyᚐUpdateAdderssInput(ctx context.Context, v interface{}) (*property.UpdateAddressInput, error) {
 	if v == nil {
 		return nil, nil
 	}
