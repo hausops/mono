@@ -2,6 +2,7 @@ package local
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/hausops/mono/services/property-svc/domain/property"
@@ -50,6 +51,27 @@ func (r *propertyRepository) List(_ context.Context) ([]property.Property, error
 }
 
 func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (property.Property, error) {
+	if p == nil {
+		return nil, fmt.Errorf("invalid parameter: property is nil")
+	}
+
+	if p.GetID() == (uuid.UUID{}) {
+		return nil, property.MissingIDError{Message: "missing property ID"}
+	}
+
+	switch t := p.(type) {
+	case property.SingleFamilyProperty:
+		if t.Unit.ID == (uuid.UUID{}) {
+			return nil, property.MissingIDError{Message: "missing unit ID"}
+		}
+	case property.MultiFamilyProperty:
+		for _, unit := range t.Units {
+			if unit.ID == (uuid.UUID{}) {
+				return nil, property.MissingIDError{Message: "missing unit ID"}
+			}
+		}
+	}
+
 	r.byID[p.GetID()] = p
 	return p, nil
 }

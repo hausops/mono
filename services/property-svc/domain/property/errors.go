@@ -10,6 +10,17 @@ var (
 	ErrNotFound  = errors.New("property not found")
 )
 
+// MissingIDError is returned when an ID is missing.
+type MissingIDError struct {
+	// Message is a human-readable description of the error.
+	Message string
+}
+
+// Error implements the error interface for MissingIDError.
+func (e MissingIDError) Error() string {
+	return e.Message
+}
+
 // UpdateWrongPropertyTypeError is returned when attempting to update
 // a property with an incompatible input type.
 type UpdateWrongPropertyTypeError struct {
