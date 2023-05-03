@@ -5,7 +5,6 @@ import (
 	"errors"
 	"math"
 	"testing"
-	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/go-cmp/cmp"
@@ -14,6 +13,7 @@ import (
 	"github.com/hausops/mono/services/property-svc/domain/property"
 )
 
+// TODO: test MultiFamilyProperty
 func TestPropertyService(t *testing.T) {
 	t.Parallel()
 
@@ -52,15 +52,7 @@ func TestPropertyService(t *testing.T) {
 			t.Error("p.Unit.DateUpdated is empty")
 		}
 
-		// Ignore the following fields when comparing the output using cmp.Diff()
-		p.ID = uuid.UUID{}
-		p.DateCreated = time.Time{}
-		p.DateUpdated = time.Time{}
-		p.Unit.ID = uuid.UUID{}
-		p.Unit.DateCreated = time.Time{}
-		p.Unit.DateUpdated = time.Time{}
-
-		if diff := cmp.Diff(input, p); diff != "" {
+		if diff := cmp.Diff(input, p, ignoreGenerated); diff != "" {
 			t.Errorf("Create(...): (-want +got)\n%s", diff)
 		}
 	})
@@ -121,7 +113,62 @@ func TestPropertyService(t *testing.T) {
 		}
 	})
 
-	// t.Run("Update", func(t *testing.T) {})
+	t.Run("Update", func(t *testing.T) {
+		svc := newTestPropertyService(t)
+
+		input := newFakeSingleFamilyPropertyInput(t)
+		created, err := svc.Create(context.Background(), input)
+		if err != nil {
+			t.Fatalf("Create(...) = %q; want no error", err)
+		}
+
+		updateYearBuilt := int32(1942)
+		updateUnitSize := truncate(gofakeit.Float32Range(840, 1200))
+		up := property.UpdateSingleFamilyProperty{
+			Address: &property.UpdateAddress{
+				Line1: &gofakeit.Address().Street,
+				Line2: &gofakeit.Address().Street,
+				Zip:   &gofakeit.Address().Zip,
+			},
+			YearBuilt: &updateYearBuilt,
+			Unit: &property.UpdateRentalUnit{
+				Size: &updateUnitSize,
+			},
+		}
+
+		t.Run("not found", func(t *testing.T) {
+			id := uuid.New()
+			_, err := svc.Update(context.Background(), id, up)
+			if !errors.Is(err, property.ErrNotFound) {
+				t.Errorf("FindByID(%s) = %q; want error %q",
+					id, err, property.ErrNotFound)
+			}
+		})
+
+		t.Run("found", func(t *testing.T) {
+			updated, err := svc.Update(context.Background(), created.GetID(), up)
+			if err != nil {
+				t.Errorf("Update(...) = %q; want no error", err)
+			}
+
+			c := created.(property.SingleFamilyProperty)
+			u := updated.(property.SingleFamilyProperty)
+			if c.DateUpdated == u.DateUpdated {
+				t.Error("DateUpdated should change.")
+			}
+
+			want := c
+			want.Address.Line1 = *up.Address.Line1
+			want.Address.Line2 = *up.Address.Line2
+			want.Address.Zip = *up.Address.Zip
+			want.YearBuilt = *up.YearBuilt
+			want.Unit.Size = *up.Unit.Size
+
+			if diff := cmp.Diff(want, updated, ignoreGenerated); diff != "" {
+				t.Errorf("Update(...): (-want +got)\n%s", diff)
+			}
+		})
+	})
 
 	t.Run("Delete", func(t *testing.T) {
 		p := newFakeSingleFamilyPropertyInput(t)
@@ -183,6 +230,17 @@ func newFakeSingleFamilyPropertyInput(t *testing.T) property.SingleFamilyPropert
 		},
 	}
 }
+
+// cmp.Option to ignore generated fields when comparing the output
+// using cmp.Diff()
+var ignoreGenerated = cmp.FilterPath(func(p cmp.Path) bool {
+	switch p.String() {
+	case "ID", "DateCreated", "DateUpdated",
+		"Unit.ID", "Unit.DateCreated", "Unit.DateUpdated":
+		return true
+	}
+	return false
+}, cmp.Ignore())
 
 func truncate(v float32) float32 {
 	return float32(math.Floor(float64(v)))
