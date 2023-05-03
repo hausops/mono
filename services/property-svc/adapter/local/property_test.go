@@ -95,6 +95,7 @@ func TestPropertyRepository(t *testing.T) {
 			t.Errorf("List() = %q; want no error", err)
 		}
 		if diff := cmp.Diff(ps, got); diff != "" {
+			t.Log("The result should be by the order of insertion.")
 			t.Errorf("List(): (-want +got)\n%s", diff)
 		}
 	})

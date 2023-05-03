@@ -10,6 +10,9 @@ import (
 
 type propertyRepository struct {
 	byID map[uuid.UUID]property.Property
+
+	// inserted keeps track of ID by an order of insertion.
+	inserted []uuid.UUID
 }
 
 // NewPropertyRepository creates a new instance of the property repository with
@@ -18,7 +21,8 @@ type propertyRepository struct {
 // The returned property repository can be used to store and retrieve properties.
 func NewPropertyRepository() *propertyRepository {
 	return &propertyRepository{
-		byID: make(map[uuid.UUID]property.Property),
+		byID:     make(map[uuid.UUID]property.Property),
+		inserted: make([]uuid.UUID, 0),
 	}
 }
 
@@ -31,6 +35,12 @@ func (r *propertyRepository) Delete(_ context.Context, id uuid.UUID) (property.P
 		return nil, property.ErrNotFound
 	}
 	delete(r.byID, id)
+	for i, insertedID := range r.inserted {
+		if id == insertedID {
+			r.inserted = append(r.inserted[:i], r.inserted[i+1:]...)
+			break
+		}
+	}
 	return p, nil
 }
 
@@ -43,9 +53,9 @@ func (r *propertyRepository) FindByID(_ context.Context, id uuid.UUID) (property
 }
 
 func (r *propertyRepository) List(_ context.Context) ([]property.Property, error) {
-	ps := make([]property.Property, 0, len(r.byID))
-	for _, p := range r.byID {
-		ps = append(ps, p)
+	ps := make([]property.Property, 0, len(r.inserted))
+	for _, id := range r.inserted {
+		ps = append(ps, r.byID[id])
 	}
 	return ps, nil
 }
@@ -72,7 +82,11 @@ func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (pro
 		}
 	}
 
-	r.byID[p.GetID()] = p
+	id := p.GetID()
+	if _, ok := r.byID[id]; !ok {
+		r.inserted = append(r.inserted, id)
+	}
+	r.byID[id] = p
 	return p, nil
 }
 
@@ -87,8 +101,11 @@ func (r *propertyRepository) Upsert(_ context.Context, p property.Property) (pro
 // with initial entries.
 func (r *propertyRepository) ReplaceProperties(ps []property.Property) *propertyRepository {
 	r.byID = make(map[uuid.UUID]property.Property, len(ps))
+	r.inserted = make([]uuid.UUID, 0, len(ps))
 	for _, p := range ps {
-		r.byID[p.GetID()] = p
+		id := p.GetID()
+		r.byID[id] = p
+		r.inserted = append(r.inserted, id)
 	}
 	return r
 }
