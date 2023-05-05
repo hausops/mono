@@ -1,7 +1,9 @@
 package config
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -30,24 +32,27 @@ func (c Config) Validate() error {
 	return nil
 }
 
-func LoadByFilename(filename string, c *Config) error {
-	b, err := os.ReadFile(filename)
+func LoadFromFile(filename string, c *Config) error {
+	f, err := os.Open(filename)
 	if err != nil {
-		return fmt.Errorf("read config from file %s: %w", filename, err)
+		return fmt.Errorf("open config file: %w", err)
 	}
+	defer f.Close()
 
-	if err := Load(b, c); err != nil {
-		return fmt.Errorf("load config from file %s: %w", filename, err)
+	if err := Load(f, c); err != nil {
+		return fmt.Errorf("load config %s: %w", filename, err)
 	}
 
 	return nil
 }
 
-func Load(b []byte, c *Config) error {
+func Load(r io.Reader, c *Config) error {
 	setDefaults(c)
 
-	if err := yaml.UnmarshalStrict(b, c); err != nil {
-		return fmt.Errorf("cannot unmarshal config: %w", err)
+	decoder := yaml.NewDecoder(r)
+	decoder.SetStrict(true)
+	if err := decoder.Decode(c); err != nil && !errors.Is(err, io.EOF) {
+		return fmt.Errorf("decode config: %w", err)
 	}
 
 	if err := c.Validate(); err != nil {
