@@ -30,16 +30,24 @@ func (c Config) Validate() error {
 	return nil
 }
 
-func Load(filename string, c *Config) error {
-	setDefaults(c)
-
-	d, err := os.ReadFile(filename)
+func LoadByFilename(filename string, c *Config) error {
+	b, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("read config from file %s: %w", filename, err)
 	}
 
-	if err := yaml.UnmarshalStrict(d, c); err != nil {
-		return fmt.Errorf("cannot unmarshal config %s: %w", filename, err)
+	if err := Load(b, c); err != nil {
+		return fmt.Errorf("load config from file %s: %w", filename, err)
+	}
+
+	return nil
+}
+
+func Load(b []byte, c *Config) error {
+	setDefaults(c)
+
+	if err := yaml.UnmarshalStrict(b, c); err != nil {
+		return fmt.Errorf("cannot unmarshal config: %w", err)
 	}
 
 	if err := c.Validate(); err != nil {

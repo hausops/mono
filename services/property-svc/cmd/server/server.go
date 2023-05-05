@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	if err := config.Load(configFile, &c); err != nil {
+	if err := config.LoadByFilename(configFile, &c); err != nil {
 		log.Fatal(err)
 	}
 
