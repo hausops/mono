@@ -10,8 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/google/uuid"
-	"github.com/hausops/mono/services/property-svc/adapter/local"
-	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/domain/property"
 	"github.com/hausops/mono/services/property-svc/pb"
 )
@@ -21,13 +19,8 @@ type server struct {
 	svc *property.Service
 }
 
-// TODO: handle c.Proxy once adapter/dapr is implemented.
-func NewServer(_ config.Config) *server {
-	repo := local.
-		NewPropertyRepository().
-		ReplaceProperties(local.ExampleProperties())
-
-	return &server{svc: property.NewService(repo)}
+func NewServer(svc *property.Service) *server {
+	return &server{svc: svc}
 }
 
 func (s *server) Create(ctx context.Context, in *pb.CreatePropertyRequest) (*pb.PropertyResponse, error) {

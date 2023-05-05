@@ -23,7 +23,8 @@ func New(c config.Config, logger *zap.Logger) *grpc.Server {
 		)),
 	)
 
-	pb.RegisterPropertyServer(s, property.NewServer(c))
+	deps := newDependencies(c)
+	pb.RegisterPropertyServer(s, property.NewServer(deps.propertySvc))
 
 	if c.Mode == config.ModeDev {
 		reflection.Register(s)
