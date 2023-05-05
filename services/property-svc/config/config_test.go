@@ -59,7 +59,59 @@ func TestLoad(t *testing.T) {
 
 		err = config.Load(bytes.NewReader(configData), &c)
 		if err == nil {
-			t.Fatalf("Load(...); expected error, but got nil")
+			t.Errorf("Load(...); want error, but got nil")
 		}
 	})
+}
+
+func TestConfig_Validate(t *testing.T) {
+	tcs := []struct {
+		name    string
+		config  config.Config
+		wantErr bool
+	}{
+		{
+			name: "valid configuration",
+			config: config.Config{
+				Mode:  config.ModeProd,
+				Proxy: config.ProxyNone,
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid mode",
+			config: config.Config{
+				Mode:  "invalid",
+				Proxy: config.ProxyNone,
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid proxy",
+			config: config.Config{
+				Mode:  config.ModeProd,
+				Proxy: "invalid",
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid mode and proxy",
+			config: config.Config{
+				Mode:  "invalid",
+				Proxy: "invalid",
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.config.Validate()
+			if tc.wantErr && err == nil {
+				t.Fatalf("Validate(); want error, but got nil")
+			} else if !tc.wantErr && err != nil {
+				t.Errorf("Validate() error = %v, want no error", err)
+			}
+		})
+	}
 }

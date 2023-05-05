@@ -32,6 +32,7 @@ func (c Config) Validate() error {
 	return nil
 }
 
+// LoadFromFile loads a YAML configuration from filename and decode it to c.
 func LoadFromFile(filename string, c *Config) error {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -46,6 +47,8 @@ func LoadFromFile(filename string, c *Config) error {
 	return nil
 }
 
+// Load decodes YAML data from r to c, sets defaults for missing fields,
+// and performs validation.
 func Load(r io.Reader, c *Config) error {
 	setDefaults(c)
 
