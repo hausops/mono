@@ -19,8 +19,8 @@ type server struct {
 	svc *property.Service
 }
 
-func NewServer(repo property.Repository) *server {
-	return &server{svc: property.NewService(repo)}
+func NewServer(svc *property.Service) *server {
+	return &server{svc: svc}
 }
 
 func (s *server) Create(ctx context.Context, in *pb.CreatePropertyRequest) (*pb.PropertyResponse, error) {
