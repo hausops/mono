@@ -7,7 +7,6 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"go.uber.org/zap"
 
-	"github.com/hausops/mono/services/property-svc/adapter/local"
 	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/grpcserver/internal/property"
 	"github.com/hausops/mono/services/property-svc/pb"
@@ -24,11 +23,7 @@ func New(c config.Config, logger *zap.Logger) *grpc.Server {
 		)),
 	)
 
-	propertyRepo := local.
-		NewPropertyRepository().
-		ReplaceProperties(local.ExampleProperties())
-
-	pb.RegisterPropertyServer(s, property.NewServer(propertyRepo))
+	pb.RegisterPropertyServer(s, property.NewServer(c))
 
 	if c.Mode == config.ModeDev {
 		reflection.Register(s)

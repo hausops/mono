@@ -8,7 +8,26 @@ import (
 )
 
 type Config struct {
-	Mode Mode `yaml:"mode"`
+	Mode  Mode  `yaml:"mode"`
+	Proxy Proxy `yaml:"proxy"`
+}
+
+func (c Config) Validate() error {
+	switch c.Mode {
+	case ModeProd, ModeDev:
+		break
+	default:
+		return fmt.Errorf("unknown mode: %v", c.Mode)
+	}
+
+	switch c.Proxy {
+	case ProxyNone, ProxyDapr:
+		break
+	default:
+		return fmt.Errorf("unknown proxy: %v", c.Proxy)
+	}
+
+	return nil
 }
 
 func Load(filename string, c *Config) error {
@@ -22,11 +41,17 @@ func Load(filename string, c *Config) error {
 	if err := yaml.UnmarshalStrict(d, c); err != nil {
 		return fmt.Errorf("cannot unmarshal config %s: %w", filename, err)
 	}
+
+	if err := c.Validate(); err != nil {
+		return fmt.Errorf("validate config: %w", err)
+	}
+
 	return nil
 }
 
 func setDefaults(c *Config) {
 	c.Mode = ModeProd
+	c.Proxy = ProxyDapr
 }
 
 type Mode string
@@ -34,4 +59,11 @@ type Mode string
 const (
 	ModeProd Mode = "prod"
 	ModeDev  Mode = "dev"
+)
+
+type Proxy string
+
+const (
+	ProxyNone Proxy = "none"
+	ProxyDapr Proxy = "dapr"
 )
