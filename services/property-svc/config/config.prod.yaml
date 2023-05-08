@@ -1,2 +1,2 @@
 mode: prod
-proxy: dapr
+store: mongo

@@ -20,7 +20,7 @@ func TestLoad(t *testing.T) {
 
 		want := config.Config{
 			Mode:  config.ModeProd,
-			Proxy: config.ProxyDapr,
+			Store: config.StoreMongo,
 		}
 		if diff := cmp.Diff(want, c); diff != "" {
 			t.Errorf(`Load(""); (-want +got)\n%s`, diff)
@@ -42,7 +42,7 @@ func TestLoad(t *testing.T) {
 
 		want := config.Config{
 			Mode:  config.ModeDev,
-			Proxy: config.ProxyNone,
+			Store: config.StoreMongo,
 		}
 		if diff := cmp.Diff(want, c); diff != "" {
 			t.Errorf("Load(...); (-want +got)\n%s", diff)
@@ -74,7 +74,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "valid configuration",
 			config: config.Config{
 				Mode:  config.ModeProd,
-				Proxy: config.ProxyNone,
+				Store: config.StoreLocal,
 			},
 			wantErr: false,
 		},
@@ -82,7 +82,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "invalid mode",
 			config: config.Config{
 				Mode:  "invalid",
-				Proxy: config.ProxyNone,
+				Store: config.StoreLocal,
 			},
 			wantErr: true,
 		},
@@ -90,7 +90,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "invalid proxy",
 			config: config.Config{
 				Mode:  config.ModeProd,
-				Proxy: "invalid",
+				Store: "invalid",
 			},
 			wantErr: true,
 		},
@@ -98,7 +98,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "invalid mode and proxy",
 			config: config.Config{
 				Mode:  "invalid",
-				Proxy: "invalid",
+				Store: "invalid",
 			},
 			wantErr: true,
 		},

@@ -1,2 +1,2 @@
 mode: dev
-proxy: none
+store: mongo

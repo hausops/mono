@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	Mode  Mode  `yaml:"mode"`
-	Proxy Proxy `yaml:"proxy"`
+	Store Store `yaml:"store"`
 }
 
 func (c Config) Validate() error {
@@ -22,11 +22,11 @@ func (c Config) Validate() error {
 		return fmt.Errorf("unknown mode: %v", c.Mode)
 	}
 
-	switch c.Proxy {
-	case ProxyNone, ProxyDapr:
+	switch c.Store {
+	case StoreLocal, StoreMongo:
 		break
 	default:
-		return fmt.Errorf("unknown proxy: %v", c.Proxy)
+		return fmt.Errorf("unknown store: %v", c.Store)
 	}
 
 	return nil
@@ -67,7 +67,7 @@ func Load(r io.Reader, c *Config) error {
 
 func setDefaults(c *Config) {
 	c.Mode = ModeProd
-	c.Proxy = ProxyDapr
+	c.Store = StoreMongo
 }
 
 type Mode string
@@ -77,9 +77,9 @@ const (
 	ModeDev  Mode = "dev"
 )
 
-type Proxy string
+type Store string
 
 const (
-	ProxyNone Proxy = "none"
-	ProxyDapr Proxy = "dapr"
+	StoreLocal Store = "local"
+	StoreMongo Store = "mongo"
 )
