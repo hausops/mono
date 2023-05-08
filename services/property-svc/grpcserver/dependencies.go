@@ -1,23 +1,55 @@
 package grpcserver
 
 import (
+	"context"
+	"fmt"
+	"time"
+
 	"github.com/hausops/mono/services/property-svc/adapter/local"
+	"github.com/hausops/mono/services/property-svc/adapter/mongo"
 	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/domain/property"
 )
 
 type dependencies struct {
 	propertySvc *property.Service
+	cleanUp     func(context.Context) error
 }
 
-// newDependencies sets up dependencies for running grpcserver based on c.
-func newDependencies(c config.Config) dependencies {
-	// TODO: handle c.Proxy once adapter/dapr is implemented.
-	propertyRepo := local.
-		NewPropertyRepository().
-		ReplaceProperties(local.ExampleProperties())
+// type dependency interface {
+// 	cleanUp(context.Context) error
+// }
 
-	return dependencies{
-		propertySvc: property.NewService(propertyRepo),
+func newDependencies(ctx context.Context, c config.Config) (*dependencies, error) {
+	var deps dependencies
+	switch c.Store {
+	case config.StoreLocal:
+		propertyRepo := local.
+			NewPropertyRepository().
+			ReplaceProperties(local.ExampleProperties())
+
+		deps = dependencies{
+			propertySvc: property.NewService(propertyRepo),
+			cleanUp:     func(_ context.Context) error { return nil },
+		}
+
+	case config.StoreMongo:
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+
+		mongoClient, err := mongo.Conn(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("connect to mongo: %w", err)
+		}
+		propertyRepo := mongo.NewPropertyRepository(mongoClient)
+
+		deps = dependencies{
+			propertySvc: property.NewService(propertyRepo),
+			cleanUp: func(ctx context.Context) error {
+				return mongoClient.Disconnect(ctx)
+			},
+		}
 	}
+
+	return &deps, nil
 }

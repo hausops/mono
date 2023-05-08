@@ -5,6 +5,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/hausops/mono/services/property-svc/adapter/mongo/internal/property"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,4 +18,8 @@ func Conn(ctx context.Context) (*mongo.Client, error) {
 		SetTimeout(1 * time.Second)
 
 	return mongo.Connect(ctx, opt)
+}
+
+func NewPropertyRepository(client *mongo.Client) *property.Repository {
+	return property.NewRepository(client)
 }
