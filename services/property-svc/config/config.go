@@ -6,27 +6,64 @@ import (
 	"io"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Mode  Mode  `yaml:"mode"`
-	Store Store `yaml:"store"`
+	Mode      mode
+	Datastore datastore
+}
+
+func (c *Config) UnmarshalYAML(node *yaml.Node) error {
+	var config struct {
+		Mode      mode                 `yaml:"mode"`
+		Datastore map[string]yaml.Node `yaml:"datastore"`
+	}
+
+	if err := node.Decode(&config); err != nil {
+		return err
+	}
+
+	// Set mode
+	c.Mode = config.Mode
+
+	// Set datastore
+	switch kind := config.Datastore["kind"].Value; kind {
+	case "local":
+		c.Datastore = LocalDatastore{}
+	case "mongo":
+		var mongo MongoDatastore
+		spec := config.Datastore["spec"]
+		if err := spec.Decode(&mongo); err != nil {
+			return err
+		}
+		c.Datastore = mongo
+	default:
+		return fmt.Errorf("unknown datastore kind: %s", kind)
+	}
+
+	if err := c.Validate(); err != nil {
+		return fmt.Errorf("validate config: %w", err)
+	}
+
+	return nil
 }
 
 func (c Config) Validate() error {
 	switch c.Mode {
 	case ModeProd, ModeDev:
-		break
 	default:
 		return fmt.Errorf("unknown mode: %v", c.Mode)
 	}
 
-	switch c.Store {
-	case StoreLocal, StoreMongo:
-		break
+	switch t := c.Datastore.(type) {
+	case LocalDatastore:
+	case MongoDatastore:
+		if t.URI == "" {
+			return errors.New("mongo datastore missing URI field")
+		}
 	default:
-		return fmt.Errorf("unknown store: %v", c.Store)
+		return fmt.Errorf("unknown datastore: %v", c.Datastore)
 	}
 
 	return nil
@@ -50,36 +87,32 @@ func LoadFromFile(filename string, c *Config) error {
 // Load decodes YAML data from r to c, sets defaults for missing fields,
 // and performs validation.
 func Load(r io.Reader, c *Config) error {
-	setDefaults(c)
-
 	decoder := yaml.NewDecoder(r)
-	decoder.SetStrict(true)
+	decoder.KnownFields(true)
 	if err := decoder.Decode(c); err != nil && !errors.Is(err, io.EOF) {
 		return fmt.Errorf("decode config: %w", err)
 	}
-
-	if err := c.Validate(); err != nil {
-		return fmt.Errorf("validate config: %w", err)
-	}
-
 	return nil
 }
 
-func setDefaults(c *Config) {
-	c.Mode = ModeProd
-	c.Store = StoreMongo
+type mode string
+
+const (
+	ModeProd mode = "prod"
+	ModeDev  mode = "dev"
+)
+
+type datastore interface {
+	isDatastore()
 }
 
-type Mode string
+type LocalDatastore struct{}
 
-const (
-	ModeProd Mode = "prod"
-	ModeDev  Mode = "dev"
-)
+func (d LocalDatastore) isDatastore() {}
 
-type Store string
+type MongoDatastore struct {
+	// URI is the mongo connection URI.
+	URI string `yaml:"uri"`
+}
 
-const (
-	StoreLocal Store = "local"
-	StoreMongo Store = "mongo"
-)
+func (d MongoDatastore) isDatastore() {}

@@ -22,8 +22,8 @@ type dependencies struct {
 
 func newDependencies(ctx context.Context, c config.Config) (*dependencies, error) {
 	var deps dependencies
-	switch c.Store {
-	case config.StoreLocal:
+	switch t := c.Datastore.(type) {
+	case config.LocalDatastore:
 		propertyRepo := local.
 			NewPropertyRepository().
 			ReplaceProperties(local.ExampleProperties())
@@ -33,11 +33,11 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 			cleanUp:     func(_ context.Context) error { return nil },
 		}
 
-	case config.StoreMongo:
+	case config.MongoDatastore:
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
 
-		mongoClient, err := mongo.Conn(ctx)
+		mongoClient, err := mongo.Conn(ctx, t.URI)
 		if err != nil {
 			return nil, fmt.Errorf("connect to mongo: %w", err)
 		}

@@ -10,23 +10,6 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	t.Run("set defaults", func(t *testing.T) {
-		var c config.Config
-
-		err := config.Load(bytes.NewReader([]byte("")), &c)
-		if err != nil {
-			t.Fatalf(`Load(""); unexpected error: %v`, err)
-		}
-
-		want := config.Config{
-			Mode:  config.ModeProd,
-			Store: config.StoreMongo,
-		}
-		if diff := cmp.Diff(want, c); diff != "" {
-			t.Errorf(`Load(""); (-want +got)\n%s`, diff)
-		}
-	})
-
 	t.Run("valid config", func(t *testing.T) {
 		var c config.Config
 
@@ -41,8 +24,10 @@ func TestLoad(t *testing.T) {
 		}
 
 		want := config.Config{
-			Mode:  config.ModeDev,
-			Store: config.StoreMongo,
+			Mode: config.ModeDev,
+			Datastore: config.MongoDatastore{
+				URI: "mongodb://localhost:27017",
+			},
 		}
 		if diff := cmp.Diff(want, c); diff != "" {
 			t.Errorf("Load(...); (-want +got)\n%s", diff)
@@ -73,32 +58,32 @@ func TestConfig_Validate(t *testing.T) {
 		{
 			name: "valid configuration",
 			config: config.Config{
-				Mode:  config.ModeProd,
-				Store: config.StoreLocal,
+				Mode:      config.ModeProd,
+				Datastore: config.LocalDatastore{},
 			},
 			wantErr: false,
 		},
 		{
 			name: "invalid mode",
 			config: config.Config{
-				Mode:  "invalid",
-				Store: config.StoreLocal,
+				Mode:      "invalid",
+				Datastore: config.LocalDatastore{},
 			},
 			wantErr: true,
 		},
 		{
-			name: "invalid proxy",
+			name: "invalid datastore",
 			config: config.Config{
-				Mode:  config.ModeProd,
-				Store: "invalid",
+				Mode:      config.ModeProd,
+				Datastore: config.MongoDatastore{},
 			},
 			wantErr: true,
 		},
 		{
-			name: "invalid mode and proxy",
+			name: "invalid datastore (nil)",
 			config: config.Config{
-				Mode:  "invalid",
-				Store: "invalid",
+				Mode:      config.ModeProd,
+				Datastore: nil,
 			},
 			wantErr: true,
 		},

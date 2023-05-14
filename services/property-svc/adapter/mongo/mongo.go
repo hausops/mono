@@ -10,8 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Conn(ctx context.Context) (*mongo.Client, error) {
-	uri := "mongodb://localhost:27017"
+func Conn(ctx context.Context, uri string) (*mongo.Client, error) {
 	opt := options.Client().
 		ApplyURI(uri).
 		SetMaxPoolSize(16).
