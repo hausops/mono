@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/hausops/mono/services/property-svc/config"
 	"github.com/hausops/mono/services/property-svc/grpcserver"
@@ -17,7 +18,7 @@ import (
 
 func main() {
 	var configFile string
-	flag.StringVar(&configFile, "c", "config/config.prod.yaml", "path to the config file")
+	flag.StringVar(&configFile, "c", "config.yaml", "path to the config file")
 
 	flag.Parse()
 
@@ -29,7 +30,10 @@ func main() {
 	log.Printf("using config %+v\n", c)
 
 	logger := newLogger(c)
-	s := grpcserver.New(c, logger)
+	s, err := grpcserver.New(context.Background(), c, logger)
+	if err != nil {
+		log.Fatalf("new grpcserver: %v", err)
+	}
 
 	port := os.Getenv("APP_PORT")
 	// if port is "" a random free port will be chosen.
@@ -49,12 +53,11 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	// Call the cancel function to release resources in case of early return
 	defer cancel()
-
 	<-ctx.Done()
-	log.Println("Stopping server gracefully...")
-	// TODO: Implement a timeout for shutting down if it takes too long
-	s.GracefulStop()
-	log.Println("Server shut down successfully")
+
+	timeout, cancelTimeout := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelTimeout()
+	s.GracefulStop(timeout)
 }
 
 func newLogger(c config.Config) (logger *zap.Logger) {

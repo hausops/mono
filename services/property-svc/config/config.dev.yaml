@@ -1,4 +1,0 @@
-mode: dev
-# TODO change to dapr once adapter/dapr is implemented
-proxy: none
-# proxy: dapr

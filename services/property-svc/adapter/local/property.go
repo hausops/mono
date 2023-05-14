@@ -26,6 +26,9 @@ func NewPropertyRepository() *propertyRepository {
 	}
 }
 
+// Ensure propertyRepository implements the property.Repository interface.
+var _ property.Repository = (*propertyRepository)(nil)
+
 func (r *propertyRepository) Delete(_ context.Context, id uuid.UUID) (property.Property, error) {
 	p, ok := r.byID[id]
 	if !ok {
