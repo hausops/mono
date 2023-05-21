@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package hausops.mono.services.user;
+
+service UserService {
+  rpc Create(EmailRequest) returns (User);
+  rpc FindByEmail(EmailRequest) returns (User);
+}
+
+message EmailRequest { string email = 1; }
+// message UserResponse { User user = 1; }
+
+message User {
+  string id = 1;
+  string email = 3;
+  string name = 5;
+  bool verified = 10;
+  string date_created = 13;
+  string date_updated = 14;
+}
