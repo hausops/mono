@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/hausops/mono/services/user-svc/adapter/local"
 	"github.com/hausops/mono/services/user-svc/config"
 	"github.com/hausops/mono/services/user-svc/grpcserver/internal/user"
 	"github.com/hausops/mono/services/user-svc/pb"
@@ -35,7 +36,9 @@ func New(ctx context.Context, c config.Config, logger *zap.Logger) (*server, err
 	if err != nil {
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
-	pb.RegisterUserServiceServer(s, user.NewServer(deps.userSvc))
+
+	userRepo := local.NewUserRepository()
+	pb.RegisterUserServiceServer(s, user.NewServer(userRepo))
 
 	if c.Mode == config.ModeDev {
 		reflection.Register(s)

@@ -4,13 +4,11 @@ import (
 	"net/mail"
 	"time"
 
-	// "github.com/google/uuid"
-	"github.com/speps/go-hashids/v2"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	// ID          uuid.UUID
-	ID          hashids.HashID
+	ID          uuid.UUID
 	Email       mail.Address
 	Name        string
 	Verified    bool
