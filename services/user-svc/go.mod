@@ -3,6 +3,7 @@ module github.com/hausops/mono/services/user-svc
 go 1.20
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.21.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	go.uber.org/zap v1.24.0
