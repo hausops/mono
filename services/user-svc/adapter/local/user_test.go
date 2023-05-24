@@ -102,6 +102,105 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	}
 }
 
+func TestUserRepository_Upsert(t *testing.T) {
+	ctx := context.Background()
+	repo := local.NewUserRepository()
+
+	u := user.User{
+		ID:    uuid.New(),
+		Email: mail.Address{Address: gofakeit.Email()},
+	}
+
+	// Insert a new user.
+	{
+		inserted, err := repo.Upsert(ctx, u)
+		if err != nil {
+			t.Errorf("Upsert failed: %v", err)
+		}
+		if inserted != u {
+			t.Error("Upsert returned incorrect user")
+		}
+	}
+
+	// Update with the same user info.
+	{
+		updated, err := repo.Upsert(ctx, u)
+		if err != nil {
+			t.Errorf("Upsert failed: %v", err)
+		}
+		if updated != u {
+			t.Error("Upsert returned incorrect user")
+		}
+	}
+
+	// Insert a new user with a duplicate email.
+	{
+		_, err := repo.Upsert(ctx, user.User{
+			ID:    uuid.New(),
+			Email: u.Email,
+		})
+		if err != user.ErrEmailAlreadyUsed {
+			t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
+		}
+	}
+
+	// Update a user to use a duplicate email.
+	{
+		// Setup: add a new user with a different email first.
+		u2 := user.User{
+			ID:    uuid.New(),
+			Email: mail.Address{Address: gofakeit.Email()},
+		}
+		if _, err := repo.Upsert(ctx, u2); err != nil {
+			t.Fatalf("Upsert user2 failed: %v", err)
+		}
+
+		_, err := repo.Upsert(ctx, user.User{
+			ID:    u2.ID,
+			Email: u.Email,
+		})
+		if err != user.ErrEmailAlreadyUsed {
+			t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
+		}
+	}
+
+	// Update an existing user with a different email.
+	up := user.User{
+		ID:    u.ID,
+		Email: mail.Address{Address: gofakeit.Email()},
+	}
+
+	updated, err := repo.Upsert(ctx, up)
+	if err != nil {
+		t.Errorf("Upsert failed: %v", err)
+	}
+	if updated != up {
+		t.Error("Upsert returned incorrect user")
+	}
+
+	// Find the user by ID after the update.
+	{
+		found, err := repo.FindByID(ctx, u.ID)
+		if err != nil {
+			t.Errorf("FindByID failed: %v", err)
+		}
+		if found != up {
+			t.Error("FindByID returned incorrect user after update")
+		}
+	}
+
+	// Find the user by email after the update.
+	{
+		found, err := repo.FindByEmail(ctx, up.Email)
+		if err != nil {
+			t.Errorf("FindByEmail failed: %v", err)
+		}
+		if found != up {
+			t.Error("FindByEmail returned incorrect user after update")
+		}
+	}
+}
+
 func generateTestUsers(t *testing.T) []user.User {
 	t.Helper()
 	users := make([]user.User, 3)
