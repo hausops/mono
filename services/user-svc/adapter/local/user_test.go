@@ -18,16 +18,7 @@ import (
 func TestUserRepository_Delete(t *testing.T) {
 	ctx := context.Background()
 	repo := local.NewUserRepository()
-
-	var users []user.User
-	for i := 0; i < 3; i++ {
-		u := user.User{
-			ID:    uuid.New(),
-			Email: mail.Address{Address: gofakeit.Email()},
-		}
-		users = append(users, u)
-	}
-
+	users := generateTestUsers(t)
 	for i, u := range users {
 		if _, err := repo.Upsert(ctx, u); err != nil {
 			t.Fatalf("Upsert users[%d] failed: %v", i, err)
@@ -67,4 +58,58 @@ func TestUserRepository_Delete(t *testing.T) {
 			t.Errorf("FindByID users[%d] returned incorrect user", i)
 		}
 	}
+}
+
+func TestUserRepository_FindByID(t *testing.T) {
+	ctx := context.Background()
+	repo := local.NewUserRepository()
+	users := generateTestUsers(t)
+	for i, u := range users {
+		if _, err := repo.Upsert(ctx, u); err != nil {
+			t.Fatalf("Upsert users[%d] failed: %v", i, err)
+		}
+	}
+
+	for i, u := range users {
+		found, err := repo.FindByID(ctx, u.ID)
+		if err != nil {
+			t.Errorf("FindByID users[%d] failed: %v", i, err)
+		}
+		if found != u {
+			t.Errorf("FindByID users[%d] returned incorrect user", i)
+		}
+	}
+}
+
+func TestUserRepository_FindByEmail(t *testing.T) {
+	ctx := context.Background()
+	repo := local.NewUserRepository()
+	users := generateTestUsers(t)
+	for i, u := range users {
+		if _, err := repo.Upsert(ctx, u); err != nil {
+			t.Fatalf("Upsert users[%d] failed: %v", i, err)
+		}
+	}
+
+	for i, u := range users {
+		found, err := repo.FindByEmail(ctx, u.Email)
+		if err != nil {
+			t.Errorf("FindByEmail users[%d] failed: %v", i, err)
+		}
+		if found != u {
+			t.Errorf("FindByEmail users[%d] returned incorrect user", i)
+		}
+	}
+}
+
+func generateTestUsers(t *testing.T) []user.User {
+	t.Helper()
+	users := make([]user.User, 3)
+	for i := 0; i < len(users); i++ {
+		users[i] = user.User{
+			ID:    uuid.New(),
+			Email: mail.Address{Address: gofakeit.Email()},
+		}
+	}
+	return users
 }
