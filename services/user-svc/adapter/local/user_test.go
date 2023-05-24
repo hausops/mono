@@ -25,7 +25,13 @@ func TestUserRepository_Delete(t *testing.T) {
 		}
 	}
 
-	// Test deleting a user.
+	// Delete a user that does not exist.
+	_, err := repo.Delete(ctx, uuid.New())
+	if err != user.ErrNotFound {
+		t.Error("Deleted user that does not exist")
+	}
+
+	// Delete a user.
 	u := us[1]
 	deleted, err := repo.Delete(ctx, u.ID)
 	if err != nil {
