@@ -78,6 +78,11 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 			}
 		}
 
+		_, err := repo.FindByID(ctx, uuid.New())
+		if err != user.ErrNotFound {
+			t.Errorf("FindByID(randomID) error = %v, want: ErrNotFound", err)
+		}
+
 		for i, u := range us {
 			found, err := repo.FindByID(ctx, u.ID)
 			if err != nil {
@@ -96,6 +101,11 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 			if _, err := repo.Upsert(ctx, u); err != nil {
 				t.Fatalf("Upsert users[%d] failed: %v", i, err)
 			}
+		}
+
+		_, err := repo.FindByEmail(ctx, mail.Address{Address: gofakeit.Email()})
+		if err != user.ErrNotFound {
+			t.Errorf("FindByEmail(randomEmail) error = %v, want: ErrNotFound", err)
 		}
 
 		for i, u := range us {
