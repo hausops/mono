@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/mail"
 	"time"
@@ -38,10 +39,16 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 		DateUpdated: now,
 	}
 
-	if _, err := s.repo.Upsert(ctx, u); err != nil {
-		return nil, fmt.Errorf("user.Repository.Upsert(%v): %w", u, err)
+	created, err := s.repo.Upsert(ctx, u)
+	if err != nil {
+		if errors.Is(err, user.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, fmt.Errorf("user.Repository.Upsert(%s, %s): %w",
+			u.ID, u.Email.Address, err)
 	}
-	return fromUser(u), nil
+
+	return encodeUser(created), nil
 }
 
 func (s *server) FindByEmail(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
@@ -51,14 +58,18 @@ func (s *server) FindByEmail(ctx context.Context, in *pb.EmailRequest) (*pb.User
 	}
 
 	email := *emailPtr
-	u, err := s.repo.FindByEmail(ctx, email)
+	found, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
-		return nil, fmt.Errorf("user.Repository.FindByEmail(%v): %w", email.Address, err)
+		if errors.Is(err, user.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, fmt.Errorf("user.Repository.FindByEmail(%s): %w", email.Address, err)
 	}
-	return fromUser(u), nil
+
+	return encodeUser(found), nil
 }
 
-func fromUser(u user.User) *pb.User {
+func encodeUser(u user.User) *pb.User {
 	return &pb.User{
 		Id:          u.ID.String(),
 		Email:       u.Email.Address,
