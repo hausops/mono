@@ -125,6 +125,28 @@ func TestUserRepository_Upsert(t *testing.T) {
 		if inserted != u {
 			t.Error("Upsert returned incorrect user")
 		}
+
+		// Find the user by ID after the insert.
+		{
+			found, err := repo.FindByID(ctx, u.ID)
+			if err != nil {
+				t.Errorf("FindByID failed: %v", err)
+			}
+			if found != inserted {
+				t.Error("FindByID returned incorrect user after insert")
+			}
+		}
+
+		// Find the user by email after the insert.
+		{
+			found, err := repo.FindByEmail(ctx, u.Email)
+			if err != nil {
+				t.Errorf("FindByEmail failed: %v", err)
+			}
+			if found != inserted {
+				t.Error("FindByEmail returned incorrect user after insert")
+			}
+		}
 	})
 
 	t.Run("Update with the same user info", func(t *testing.T) {
@@ -212,7 +234,7 @@ func TestUserRepository_Upsert(t *testing.T) {
 			if err != nil {
 				t.Errorf("FindByID failed: %v", err)
 			}
-			if found != up {
+			if found != updated {
 				t.Error("FindByID returned incorrect user after update")
 			}
 		}
@@ -223,8 +245,16 @@ func TestUserRepository_Upsert(t *testing.T) {
 			if err != nil {
 				t.Errorf("FindByEmail failed: %v", err)
 			}
-			if found != up {
+			if found != updated {
 				t.Error("FindByEmail returned incorrect user after update")
+			}
+		}
+
+		// Find the user by the _old_ email after the update.
+		{
+			_, err := repo.FindByEmail(ctx, u.Email)
+			if err != user.ErrNotFound {
+				t.Error("Updated user found by the old email")
 			}
 		}
 	})
