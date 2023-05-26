@@ -66,7 +66,7 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 	if prevID, ok := r.byEmail[u.Email.Address]; ok {
 		// email must be unique
 		if u.ID != prevID {
-			return user.User{}, user.ErrEmailAlreadyUsed
+			return user.User{}, user.ErrEmailTaken
 		}
 	}
 

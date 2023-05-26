@@ -188,7 +188,7 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 				ID:    uuid.New(),
 				Email: u.Email,
 			})
-			if err != user.ErrEmailAlreadyUsed {
+			if err != user.ErrEmailTaken {
 				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
 			}
 		})
@@ -213,7 +213,7 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 				ID:    u2.ID,
 				Email: u.Email,
 			})
-			if err != user.ErrEmailAlreadyUsed {
+			if err != user.ErrEmailTaken {
 				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
 			}
 		})
