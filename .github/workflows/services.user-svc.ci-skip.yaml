@@ -1,0 +1,14 @@
+name: services/user-svc
+
+on:
+  pull_request:
+    paths-ignore:
+      - services/user-svc/**
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+    steps:
+      - run: 'echo "Skip due to unrelated change"'
