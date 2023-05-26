@@ -20,14 +20,20 @@ type userRepository struct {
 
 // NewUserRepository creates a new userRepository instance
 // and create a email index if one is not already set up.
-func NewUserRepository(ctx context.Context, c *mongo.Client) (*userRepository, error) {
-	uc := c.Database("user-svc").Collection("users")
+func NewUserRepository(
+	ctx context.Context,
+	// Take collection so we can use a different database when testing.
+	collection *mongo.Collection,
+) (*userRepository, error) {
+	if name := collection.Name(); name != "users" {
+		return nil, fmt.Errorf("wrong collection name: %s", name)
+	}
 
-	if err := createEmailIndex(ctx, uc); err != nil {
+	if err := createEmailIndex(ctx, collection); err != nil {
 		return nil, fmt.Errorf("create email index: %w", err)
 	}
 
-	return &userRepository{collection: uc}, nil
+	return &userRepository{collection: collection}, nil
 }
 
 // createEmailIndex creates a unique index on the "email" field of userCollection.

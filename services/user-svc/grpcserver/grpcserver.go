@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/hausops/mono/services/user-svc/adapter/local"
+	"github.com/hausops/mono/services/user-svc/adapter/mongo"
 	"github.com/hausops/mono/services/user-svc/config"
 	"github.com/hausops/mono/services/user-svc/grpcserver/internal/user"
 	"github.com/hausops/mono/services/user-svc/pb"
@@ -37,7 +37,21 @@ func New(ctx context.Context, c config.Config, logger *zap.Logger) (*server, err
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
 
-	userRepo := local.NewUserRepository()
+	// TEMPORARY
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	mongoClient, err := mongo.Conn(ctx, "mongodb://localhost:27017")
+	if err != nil {
+		return nil, fmt.Errorf("connect to mongo: %w", err)
+	}
+	uc := mongoClient.Database("user-svc").Collection("users")
+	userRepo, err := mongo.NewUserRepository(ctx, uc)
+	if err != nil {
+		return nil, fmt.Errorf("new user repository (mongo): %w", err)
+	}
+
+	// userRepo := local.NewUserRepository()
 	pb.RegisterUserServiceServer(s, user.NewServer(userRepo))
 
 	if c.Mode == config.ModeDev {
