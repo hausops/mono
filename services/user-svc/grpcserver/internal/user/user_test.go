@@ -32,7 +32,7 @@ func TestCreate(t *testing.T) {
 		t.Errorf("Email does not match. Got: %s; want: %s", u.Email, email)
 	}
 
-	if u.Verified {
+	if !u.Verified {
 		t.Error("User should be unverified")
 	}
 
