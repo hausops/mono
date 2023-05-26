@@ -73,7 +73,6 @@ func encodeUser(u user.User) *pb.User {
 	return &pb.User{
 		Id:          u.ID.String(),
 		Email:       u.Email.Address,
-		Name:        u.Name,
 		Verified:    u.Verified,
 		DateCreated: u.DateCreated.Format(time.RFC3339),
 		DateUpdated: u.DateUpdated.Format(time.RFC3339),
