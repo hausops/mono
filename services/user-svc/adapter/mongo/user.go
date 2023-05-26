@@ -104,11 +104,13 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 	// the specific key causing the issue.
 	{
 		existing, err := r.FindByEmail(ctx, u.Email)
-		if err != nil && !errors.Is(err, user.ErrNotFound) {
+		switch {
+		// There's nothing to check the email is not used by anyone.
+		case errors.Is(err, user.ErrNotFound):
+			break
+		case err != nil:
 			return user.User{}, fmt.Errorf("find exising user by email: %w", err)
-		}
-
-		if existing.ID != u.ID {
+		case existing.ID != u.ID:
 			return user.User{}, user.ErrEmailTaken
 		}
 	}
