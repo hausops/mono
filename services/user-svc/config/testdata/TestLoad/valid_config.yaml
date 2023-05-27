@@ -1,6 +1,5 @@
 mode: dev
 datastore:
-  # kind: local
   kind: mongo
   spec:
     uri: mongodb://localhost:27017
