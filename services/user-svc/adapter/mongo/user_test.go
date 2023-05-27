@@ -2,6 +2,7 @@ package mongo_test
 
 import (
 	"context"
+	"flag"
 	"testing"
 	"time"
 
@@ -10,11 +11,19 @@ import (
 	usertesting "github.com/hausops/mono/services/user-svc/domain/user/testing"
 )
 
+// Run this test manually with -mongoURI "mongo://..."
+// e.g. go test ./adapter/mongo -mongoURI "mongodb://localhost:27017"
+var uri = flag.String("mongoURI", "", "mongodb connection URI string")
+
 func TestUserRepository(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	if *uri == "" {
+		t.Skip()
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	c, err := mongo.Conn(ctx, "mongodb://localhost:27017")
+	c, err := mongo.Conn(ctx, *uri)
 	if err != nil {
 		t.Fatalf("connect to mongo: %v", err)
 	}
