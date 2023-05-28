@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -9,11 +10,12 @@ import (
 	"github.com/hausops/mono/services/user-svc/adapter/mongo"
 	"github.com/hausops/mono/services/user-svc/config"
 	"github.com/hausops/mono/services/user-svc/domain/user"
+	"golang.org/x/sync/errgroup"
 )
 
 type dependencies struct {
-	userRepo user.Repository
-	cleanUp  func(context.Context) error
+	userRepo      user.Repository
+	closeHandlers []func(context.Context) error
 }
 
 func newDependencies(ctx context.Context, c config.Config) (*dependencies, error) {
@@ -22,7 +24,6 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 	case config.LocalDatastore:
 		deps = dependencies{
 			userRepo: local.NewUserRepository(),
-			cleanUp:  func(_ context.Context) error { return nil },
 		}
 
 	case config.MongoDatastore:
@@ -33,6 +34,11 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 		if err != nil {
 			return nil, fmt.Errorf("connect to mongo: %w", err)
 		}
+
+		deps.onClose(func(ctx context.Context) error {
+			return c.Disconnect(ctx)
+		})
+
 		uc := c.Database("user-svc").Collection("users")
 		userRepo, err := mongo.NewUserRepository(ctx, uc)
 		if err != nil {
@@ -41,11 +47,32 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 
 		deps = dependencies{
 			userRepo: userRepo,
-			cleanUp: func(ctx context.Context) error {
-				return c.Disconnect(ctx)
-			},
 		}
 	}
 
+	if err := deps.validate(); err != nil {
+		return nil, fmt.Errorf("invalid dependencies: %w", err)
+	}
+
 	return &deps, nil
+}
+
+func (d *dependencies) validate() error {
+	if d.userRepo == nil {
+		return errors.New("user repo is not set")
+	}
+	return nil
+}
+
+func (d *dependencies) onClose(h func(context.Context) error) {
+	d.closeHandlers = append(d.closeHandlers, h)
+}
+
+func (d *dependencies) close(ctx context.Context) error {
+	var g errgroup.Group
+	for _, h := range d.closeHandlers {
+		h := h // https://golang.org/doc/faq#closures_and_goroutines
+		g.Go(func() error { return h(ctx) })
+	}
+	return g.Wait()
 }

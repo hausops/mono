@@ -64,7 +64,7 @@ func (s *server) GracefulStop(ctx context.Context) {
 	}
 
 	s.logger.Info("Cleaning up dependencies")
-	if err := s.deps.cleanUp(ctx); err != nil {
+	if err := s.deps.close(ctx); err != nil {
 		s.logger.Error("Error cleaning up dependencies", zap.Error(err))
 	} else {
 		s.logger.Info("Successfully cleaned up dependencies")
