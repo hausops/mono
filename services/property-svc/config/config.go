@@ -21,7 +21,7 @@ func (c *Config) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	if err := node.Decode(&config); err != nil {
-		return err
+		return fmt.Errorf("decode config from YAML: %w", err)
 	}
 
 	// Set mode
@@ -35,7 +35,7 @@ func (c *Config) UnmarshalYAML(node *yaml.Node) error {
 		var mongo MongoDatastore
 		spec := config.Datastore["spec"]
 		if err := spec.Decode(&mongo); err != nil {
-			return err
+			return fmt.Errorf("decode datastore spec from YAML: %w", err)
 		}
 		c.Datastore = mongo
 	default:
@@ -49,7 +49,7 @@ func (c *Config) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (c Config) Validate() error {
+func (c *Config) Validate() error {
 	switch c.Mode {
 	case ModeProd, ModeDev:
 	default:
