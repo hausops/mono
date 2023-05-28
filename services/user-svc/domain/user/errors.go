@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	ErrEmailAlreadyUsed = errors.New("email already used")
-	ErrInvalidID        = errors.New("invalid user id")
-	ErrNotFound         = errors.New("user not found")
+	ErrEmailTaken = errors.New("email already taken")
+	ErrInvalidID  = errors.New("invalid user id")
+	ErrMissingID  = errors.New("missing user id")
+	ErrNotFound   = errors.New("user not found")
 )

@@ -15,12 +15,19 @@ import (
 // the implementation of user.Repository adheres to the expected behaviors.
 //
 // newRepo is a factory function that should return the concrete implementation
-// of user.Repository under test.
-func TestRepository(t *testing.T, newRepo func() user.Repository) {
+// of user.Repository under test and teardown function.
+func TestRepository(t *testing.T,
+	newRepo func() (
+		user.Repository,
+		func(),
+	),
+) {
 	ctx := context.Background()
 
 	t.Run("Delete", func(t *testing.T) {
-		repo := newRepo()
+		repo, teardown := newRepo()
+		defer teardown()
+
 		us := generateTestUsers(t, 3)
 		for i, u := range us {
 			if _, err := repo.Upsert(ctx, u); err != nil {
@@ -70,7 +77,9 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 	})
 
 	t.Run("FindByID", func(t *testing.T) {
-		repo := newRepo()
+		repo, teardown := newRepo()
+		defer teardown()
+
 		us := generateTestUsers(t, 3)
 		for i, u := range us {
 			if _, err := repo.Upsert(ctx, u); err != nil {
@@ -95,7 +104,9 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 	})
 
 	t.Run("FindByEmail", func(t *testing.T) {
-		repo := newRepo()
+		repo, teardown := newRepo()
+		defer teardown()
+
 		us := generateTestUsers(t, 3)
 		for i, u := range us {
 			if _, err := repo.Upsert(ctx, u); err != nil {
@@ -120,8 +131,6 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 	})
 
 	t.Run("Upsert", func(t *testing.T) {
-		ctx := context.Background()
-
 		t.Run("Insert a new user", func(t *testing.T) {
 			repo := local.NewUserRepository()
 			u := user.User{
@@ -188,7 +197,7 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 				ID:    uuid.New(),
 				Email: u.Email,
 			})
-			if err != user.ErrEmailAlreadyUsed {
+			if err != user.ErrEmailTaken {
 				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
 			}
 		})
@@ -213,7 +222,7 @@ func TestRepository(t *testing.T, newRepo func() user.Repository) {
 				ID:    u2.ID,
 				Email: u.Email,
 			})
-			if err != user.ErrEmailAlreadyUsed {
+			if err != user.ErrEmailTaken {
 				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
 			}
 		})

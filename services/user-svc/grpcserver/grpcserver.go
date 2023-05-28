@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/hausops/mono/services/user-svc/adapter/local"
 	"github.com/hausops/mono/services/user-svc/config"
 	"github.com/hausops/mono/services/user-svc/grpcserver/internal/user"
 	"github.com/hausops/mono/services/user-svc/pb"
@@ -37,8 +36,7 @@ func New(ctx context.Context, c config.Config, logger *zap.Logger) (*server, err
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
 
-	userRepo := local.NewUserRepository()
-	pb.RegisterUserServiceServer(s, user.NewServer(userRepo))
+	pb.RegisterUserServiceServer(s, user.NewServer(deps.userRepo))
 
 	if c.Mode == config.ModeDev {
 		reflection.Register(s)
@@ -66,7 +64,7 @@ func (s *server) GracefulStop(ctx context.Context) {
 	}
 
 	s.logger.Info("Cleaning up dependencies")
-	if err := s.deps.cleanUp(ctx); err != nil {
+	if err := s.deps.close(ctx); err != nil {
 		s.logger.Error("Error cleaning up dependencies", zap.Error(err))
 	} else {
 		s.logger.Info("Successfully cleaned up dependencies")

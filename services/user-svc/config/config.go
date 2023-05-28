@@ -10,14 +10,60 @@ import (
 )
 
 type Config struct {
-	Mode mode
+	Mode      mode
+	Datastore datastore
 }
 
-func (c Config) Validate() error {
+func (c *Config) UnmarshalYAML(node *yaml.Node) error {
+	var config struct {
+		Mode      mode                 `yaml:"mode"`
+		Datastore map[string]yaml.Node `yaml:"datastore"`
+	}
+
+	if err := node.Decode(&config); err != nil {
+		return fmt.Errorf("decode config from YAML: %w", err)
+	}
+
+	// Set mode
+	c.Mode = config.Mode
+
+	// Set datastore
+	switch kind := config.Datastore["kind"].Value; kind {
+	case "local":
+		c.Datastore = LocalDatastore{}
+	case "mongo":
+		var mongo MongoDatastore
+		spec := config.Datastore["spec"]
+		if err := spec.Decode(&mongo); err != nil {
+			return fmt.Errorf("decode datastore spec from YAML: %w", err)
+		}
+		c.Datastore = mongo
+	default:
+		return fmt.Errorf("unknown datastore kind: %s", kind)
+	}
+
+	if err := c.Validate(); err != nil {
+		return fmt.Errorf("validate config: %w", err)
+	}
+
+	return nil
+}
+
+func (c *Config) Validate() error {
 	switch c.Mode {
 	case ModeProd, ModeDev:
 	default:
 		return fmt.Errorf("unknown mode: %v", c.Mode)
+	}
+
+	switch t := c.Datastore.(type) {
+	case LocalDatastore:
+	case MongoDatastore:
+		if t.URI == "" {
+			return errors.New("mongo datastore missing URI field")
+		}
+	default:
+		return fmt.Errorf("unknown datastore: %v", c.Datastore)
 	}
 
 	return nil
@@ -55,3 +101,18 @@ const (
 	ModeProd mode = "prod"
 	ModeDev  mode = "dev"
 )
+
+type datastore interface {
+	isDatastore()
+}
+
+type LocalDatastore struct{}
+
+func (d LocalDatastore) isDatastore() {}
+
+type MongoDatastore struct {
+	// URI is the mongo connection URI.
+	URI string `yaml:"uri"`
+}
+
+func (d MongoDatastore) isDatastore() {}
