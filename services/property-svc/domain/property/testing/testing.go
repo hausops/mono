@@ -1,4 +1,4 @@
-// Package testing provide test clients and helpers for the user domain.
+// Package testing provide test clients and helpers for the property domain.
 package testing
 
 import (

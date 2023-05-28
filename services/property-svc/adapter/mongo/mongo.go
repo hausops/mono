@@ -34,6 +34,6 @@ func Conn(ctx context.Context, uri string) (*mongo.Client, error) {
 	return c, nil
 }
 
-func NewPropertyRepository(client *mongo.Client) *property.Repository {
-	return property.NewRepository(client)
+func NewPropertyRepository(collection *mongo.Collection) (*property.Repository, error) {
+	return property.NewRepository(collection)
 }
