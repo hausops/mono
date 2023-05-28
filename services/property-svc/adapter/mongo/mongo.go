@@ -10,15 +10,30 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Conn creates a mongodb client with default options and test the connection.
+//
+// uri is the mongodb connection string URI.
+// See: https://www.mongodb.com/docs/manual/reference/connection-string/
 func Conn(ctx context.Context, uri string) (*mongo.Client, error) {
 	opt := options.Client().
 		ApplyURI(uri).
 		SetMaxPoolSize(16).
 		SetTimeout(1 * time.Second)
 
-	return mongo.Connect(ctx, opt)
+	c, err := mongo.Connect(ctx, opt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Test the connection
+	if err = c.Ping(ctx, nil); err != nil {
+		c.Disconnect(ctx)
+		return nil, err
+	}
+
+	return c, nil
 }
 
-func NewPropertyRepository(client *mongo.Client) *property.Repository {
-	return property.NewRepository(client)
+func NewPropertyRepository(collection *mongo.Collection) (*property.Repository, error) {
+	return property.NewRepository(collection)
 }

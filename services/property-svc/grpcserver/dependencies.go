@@ -43,7 +43,11 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 			return c.Disconnect(ctx)
 		})
 
-		propertyRepo := mongo.NewPropertyRepository(c)
+		pc := c.Database("property-svc").Collection("properties")
+		propertyRepo, err := mongo.NewPropertyRepository(pc)
+		if err != nil {
+			return nil, fmt.Errorf("new property repository (mongo): %w", err)
+		}
 
 		deps = dependencies{
 			propertySvc: property.NewService(propertyRepo),

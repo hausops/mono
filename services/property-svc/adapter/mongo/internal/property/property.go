@@ -17,10 +17,11 @@ type Repository struct {
 	collection *mongo.Collection
 }
 
-func NewRepository(client *mongo.Client) *Repository {
-	return &Repository{
-		collection: client.Database("property-svc").Collection("properties"),
+func NewRepository(collection *mongo.Collection) (*Repository, error) {
+	if name := collection.Name(); name != "properties" {
+		return nil, fmt.Errorf("wrong collection name: %s", name)
 	}
+	return &Repository{collection: collection}, nil
 }
 
 // Ensure repository implements the property.Repository interface.
