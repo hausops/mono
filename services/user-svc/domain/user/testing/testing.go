@@ -12,12 +12,12 @@ import (
 
 func generateTestUsers(t *testing.T, count int) []user.User {
 	t.Helper()
-	us := make([]user.User, count)
-	for i := 0; i < len(us); i++ {
-		us[i] = user.User{
+	uu := make([]user.User, count)
+	for i := 0; i < len(uu); i++ {
+		uu[i] = user.User{
 			ID:    uuid.New(),
 			Email: mail.Address{Address: gofakeit.Email()},
 		}
 	}
-	return us
+	return uu
 }

@@ -19,16 +19,16 @@ func Conn(ctx context.Context, uri string) (*mongo.Client, error) {
 		SetMaxPoolSize(16).
 		SetTimeout(1 * time.Second)
 
-	c, err := mongo.Connect(ctx, opt)
+	client, err := mongo.Connect(ctx, opt)
 	if err != nil {
 		return nil, err
 	}
 
 	// Test the connection
-	if err = c.Ping(ctx, nil); err != nil {
-		c.Disconnect(ctx)
+	if err = client.Ping(ctx, nil); err != nil {
+		client.Disconnect(ctx)
 		return nil, err
 	}
 
-	return c, nil
+	return client, nil
 }

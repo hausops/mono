@@ -23,19 +23,19 @@ func TestUserRepository(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	c, err := mongo.Conn(ctx, *uri)
+	client, err := mongo.Conn(ctx, *uri)
 	if err != nil {
 		t.Fatalf("connect to mongo: %v", err)
 	}
-	defer c.Disconnect(ctx)
+	defer client.Disconnect(ctx)
 
-	uc := c.Database("user-svc-test").Collection("users")
-	repo, err := mongo.NewUserRepository(ctx, uc)
+	userCollection := client.Database("user-svc-test").Collection("users")
+	repo, err := mongo.NewUserRepository(ctx, userCollection)
 	if err != nil {
 		t.Fatalf("new user repository (mongo): %v", err)
 	}
 
 	usertesting.TestRepository(t, func() (user.Repository, func()) {
-		return repo, func() { uc.Drop(ctx) }
+		return repo, func() { userCollection.Drop(ctx) }
 	})
 }

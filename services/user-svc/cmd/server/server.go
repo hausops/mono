@@ -22,15 +22,15 @@ func main() {
 
 	flag.Parse()
 
-	var c config.Config
-	if err := config.LoadFromFile(configFile, &c); err != nil {
+	var conf config.Config
+	if err := config.LoadFromFile(configFile, &conf); err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("using config %+v\n", c)
+	log.Printf("using config %+v\n", conf)
 
-	logger := newLogger(c)
-	s, err := grpcserver.New(context.Background(), c, logger)
+	logger := newLogger(conf)
+	srv, err := grpcserver.New(context.Background(), conf, logger)
 	if err != nil {
 		log.Fatalf("new grpcserver: %v", err)
 	}
@@ -44,7 +44,7 @@ func main() {
 
 	go func() {
 		log.Printf("server listening on %v", conn.Addr())
-		if err := s.Serve(conn); err != nil {
+		if err := srv.Serve(conn); err != nil {
 			log.Fatalf("failed to serve: %v", err)
 		}
 	}()
@@ -57,12 +57,12 @@ func main() {
 
 	timeout, cancelTimeout := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelTimeout()
-	s.GracefulStop(timeout)
+	srv.GracefulStop(timeout)
 }
 
-func newLogger(c config.Config) (logger *zap.Logger) {
+func newLogger(conf config.Config) (logger *zap.Logger) {
 	var err error
-	switch c.Mode {
+	switch conf.Mode {
 	case config.ModeDev:
 		logger, err = zap.NewDevelopment()
 	default:

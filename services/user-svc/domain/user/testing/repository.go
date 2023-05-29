@@ -19,7 +19,7 @@ import (
 func TestRepository(t *testing.T,
 	newRepo func() (
 		user.Repository,
-		func(),
+		func(), // teardown
 	),
 ) {
 	ctx := context.Background()
@@ -28,8 +28,8 @@ func TestRepository(t *testing.T,
 		repo, teardown := newRepo()
 		defer teardown()
 
-		us := generateTestUsers(t, 3)
-		for i, u := range us {
+		uu := generateTestUsers(t, 3)
+		for i, u := range uu {
 			if _, err := repo.Upsert(ctx, u); err != nil {
 				t.Fatalf("Upsert users[%d] failed: %v", i, err)
 			}
@@ -42,7 +42,7 @@ func TestRepository(t *testing.T,
 		}
 
 		// Delete a user.
-		u := us[1]
+		u := uu[1]
 		deleted, err := repo.Delete(ctx, u.ID)
 		if err != nil {
 			t.Errorf("Delete failed: %v", err)
@@ -65,7 +65,7 @@ func TestRepository(t *testing.T,
 
 		// The other users still exist in the repository.
 		for _, i := range []int{0, 2} {
-			u := us[i]
+			u := uu[i]
 			found, err := repo.FindByID(ctx, u.ID)
 			if err != nil {
 				t.Errorf("FindByID users[%d] failed: %v", i, err)
@@ -80,8 +80,8 @@ func TestRepository(t *testing.T,
 		repo, teardown := newRepo()
 		defer teardown()
 
-		us := generateTestUsers(t, 3)
-		for i, u := range us {
+		uu := generateTestUsers(t, 3)
+		for i, u := range uu {
 			if _, err := repo.Upsert(ctx, u); err != nil {
 				t.Fatalf("Upsert users[%d] failed: %v", i, err)
 			}
@@ -92,7 +92,7 @@ func TestRepository(t *testing.T,
 			t.Errorf("FindByID(randomID) error = %v, want: ErrNotFound", err)
 		}
 
-		for i, u := range us {
+		for i, u := range uu {
 			found, err := repo.FindByID(ctx, u.ID)
 			if err != nil {
 				t.Errorf("FindByID users[%d] failed: %v", i, err)
@@ -107,8 +107,8 @@ func TestRepository(t *testing.T,
 		repo, teardown := newRepo()
 		defer teardown()
 
-		us := generateTestUsers(t, 3)
-		for i, u := range us {
+		uu := generateTestUsers(t, 3)
+		for i, u := range uu {
 			if _, err := repo.Upsert(ctx, u); err != nil {
 				t.Fatalf("Upsert users[%d] failed: %v", i, err)
 			}
@@ -119,7 +119,7 @@ func TestRepository(t *testing.T,
 			t.Errorf("FindByEmail(randomEmail) error = %v, want: ErrNotFound", err)
 		}
 
-		for i, u := range us {
+		for i, u := range uu {
 			found, err := repo.FindByEmail(ctx, u.Email)
 			if err != nil {
 				t.Errorf("FindByEmail users[%d] failed: %v", i, err)
@@ -205,11 +205,11 @@ func TestRepository(t *testing.T,
 		t.Run("Update a user to use a duplicate email", func(t *testing.T) {
 			repo := local.NewUserRepository()
 
-			u := user.User{
+			u1 := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
-			mustRepositoryUpsert(t, ctx, repo, u)
+			mustRepositoryUpsert(t, ctx, repo, u1)
 
 			u2 := user.User{
 				ID:    uuid.New(),
@@ -217,10 +217,10 @@ func TestRepository(t *testing.T,
 			}
 			mustRepositoryUpsert(t, ctx, repo, u2)
 
-			// Update u2.Email to u.Email
+			// Update u2.Email to u1.Email
 			_, err := repo.Upsert(ctx, user.User{
 				ID:    u2.ID,
-				Email: u.Email,
+				Email: u1.Email,
 			})
 			if err != user.ErrEmailTaken {
 				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")

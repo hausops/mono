@@ -17,7 +17,6 @@ import (
 type server struct {
 	pb.UnimplementedUserServiceServer
 	repo user.Repository
-	// svc  *user.Service
 }
 
 func NewServer(repo user.Repository) *server {
