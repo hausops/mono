@@ -22,8 +22,8 @@ type server struct {
 	logger *zap.Logger
 }
 
-func New(ctx context.Context, c config.Config, logger *zap.Logger) (*server, error) {
-	s := grpc.NewServer(
+func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, error) {
+	srv := grpc.NewServer(
 		grpc.ConnectionTimeout(time.Second),
 		grpc.MaxConcurrentStreams(100),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
@@ -31,18 +31,18 @@ func New(ctx context.Context, c config.Config, logger *zap.Logger) (*server, err
 		)),
 	)
 
-	deps, err := newDependencies(ctx, c)
+	deps, err := newDependencies(ctx, conf)
 	if err != nil {
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
 
-	pb.RegisterUserServiceServer(s, user.NewServer(deps.userRepo))
+	pb.RegisterUserServiceServer(srv, user.NewServer(deps.userRepo))
 
-	if c.Mode == config.ModeDev {
-		reflection.Register(s)
+	if conf.Mode == config.ModeDev {
+		reflection.Register(srv)
 	}
 
-	return &server{s, deps, logger}, nil
+	return &server{srv, deps, logger}, nil
 }
 
 // GracefulStop gracefully stops the server and cleans up dependencies.

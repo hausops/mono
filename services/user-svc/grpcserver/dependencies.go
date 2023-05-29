@@ -18,9 +18,9 @@ type dependencies struct {
 	closeHandlers []func(context.Context) error
 }
 
-func newDependencies(ctx context.Context, c config.Config) (*dependencies, error) {
+func newDependencies(ctx context.Context, conf config.Config) (*dependencies, error) {
 	var deps dependencies
-	switch t := c.Datastore.(type) {
+	switch t := conf.Datastore.(type) {
 	case config.LocalDatastore:
 		deps = dependencies{
 			userRepo: local.NewUserRepository(),
@@ -30,16 +30,16 @@ func newDependencies(ctx context.Context, c config.Config) (*dependencies, error
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
 
-		c, err := mongo.Conn(ctx, t.URI)
+		client, err := mongo.Conn(ctx, t.URI)
 		if err != nil {
 			return nil, fmt.Errorf("connect to mongo: %w", err)
 		}
 
 		deps.onClose(func(ctx context.Context) error {
-			return c.Disconnect(ctx)
+			return client.Disconnect(ctx)
 		})
 
-		uc := c.Database("user-svc").Collection("users")
+		uc := client.Database("user-svc").Collection("users")
 		userRepo, err := mongo.NewUserRepository(ctx, uc)
 		if err != nil {
 			return nil, fmt.Errorf("new user repository (mongo): %w", err)

@@ -23,30 +23,31 @@ type userRepository struct {
 func NewUserRepository(
 	ctx context.Context,
 	// Take collection so we can use a different database when testing.
-	collection *mongo.Collection,
+	userCollection *mongo.Collection,
 ) (*userRepository, error) {
-	if name := collection.Name(); name != "users" {
+	if name := userCollection.Name(); name != "users" {
 		return nil, fmt.Errorf("wrong collection name: %s", name)
 	}
 
-	if err := createEmailIndex(ctx, collection); err != nil {
+	if err := createEmailIndex(ctx, userCollection); err != nil {
 		return nil, fmt.Errorf("create email index: %w", err)
 	}
 
-	return &userRepository{collection: collection}, nil
+	return &userRepository{collection: userCollection}, nil
 }
 
 // createEmailIndex creates a unique index on the "email" field of userCollection.
 func createEmailIndex(ctx context.Context, userCollection *mongo.Collection) error {
-	m := mongo.IndexModel{
-		Keys:    bson.M{"email": 1},
-		Options: options.Index().SetUnique(true),
-	}
-
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	_, err := userCollection.Indexes().CreateOne(ctx, m)
+	_, err := userCollection.Indexes().CreateOne(
+		ctx,
+		mongo.IndexModel{
+			Keys:    bson.M{"email": 1},
+			Options: options.Index().SetUnique(true),
+		},
+	)
 	if err != nil {
 		return err
 	}

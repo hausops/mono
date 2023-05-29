@@ -15,25 +15,25 @@ type Config struct {
 }
 
 func (c *Config) UnmarshalYAML(node *yaml.Node) error {
-	var config struct {
+	var conf struct {
 		Mode      mode                 `yaml:"mode"`
 		Datastore map[string]yaml.Node `yaml:"datastore"`
 	}
 
-	if err := node.Decode(&config); err != nil {
+	if err := node.Decode(&conf); err != nil {
 		return fmt.Errorf("decode config from YAML: %w", err)
 	}
 
 	// Set mode
-	c.Mode = config.Mode
+	c.Mode = conf.Mode
 
 	// Set datastore
-	switch kind := config.Datastore["kind"].Value; kind {
+	switch kind := conf.Datastore["kind"].Value; kind {
 	case "local":
 		c.Datastore = LocalDatastore{}
 	case "mongo":
 		var mongo MongoDatastore
-		spec := config.Datastore["spec"]
+		spec := conf.Datastore["spec"]
 		if err := spec.Decode(&mongo); err != nil {
 			return fmt.Errorf("decode datastore spec from YAML: %w", err)
 		}
