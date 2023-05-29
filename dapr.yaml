@@ -11,3 +11,7 @@ apps:
     appPort: 51001
     appProtocol: grpc
     command: ["make", "dev"]
+  - appDirPath: services/user-svc
+    appPort: 51002
+    appProtocol: grpc
+    command: ["make", "dev"]
