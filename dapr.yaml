@@ -2,12 +2,15 @@ version: 1
 common:
   env:
     DEBUG: true
+  resourcesPath: .dapr/components
 apps:
   - appDirPath: apps/dashboard-api
     appPort: 9098
     appProtocol: grpc
     command: ["make", "run"]
   - appDirPath: services/property-svc
+    # appPort is required so the dapr sidecar knows where to forward requests
+    # to the service process.
     appPort: 51001
     appProtocol: grpc
     command: ["make", "dev"]
