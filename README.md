@@ -19,11 +19,20 @@ This guide assumes using Podman, but Docker can be used instead. If you choose t
    podman machine start
    ```
 
+1. Initialize dapr components:
+
+   ```sh
+   dapr init --container-runtime podman
+   ```
+
 1. Run all services locally as configured in `hausops/mono/dapr.yaml` using [Dapr Multi-App Run](https://docs.dapr.io/developing-applications/local-development/multi-app-dapr-run/multi-app-overview/):
 
    ```sh
    # cd hausops/mono
    dapr run -f .
+
+   # to see services running via dapr
+   dapr list
    ```
 
 1. To work on a service (temporary measure; let's figure out something better):
