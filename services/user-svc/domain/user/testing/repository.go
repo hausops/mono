@@ -2,6 +2,7 @@ package testing
 
 import (
 	"context"
+	"errors"
 	"net/mail"
 	"testing"
 
@@ -197,8 +198,8 @@ func TestRepository(t *testing.T,
 				ID:    uuid.New(),
 				Email: u.Email,
 			})
-			if err != user.ErrEmailTaken {
-				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
+			if !errors.Is(err, user.ErrEmailTaken) {
+				t.Error("Upsert did not return ErrEmailTaken for duplicate email")
 			}
 		})
 
@@ -222,8 +223,8 @@ func TestRepository(t *testing.T,
 				ID:    u2.ID,
 				Email: u1.Email,
 			})
-			if err != user.ErrEmailTaken {
-				t.Error("Upsert did not return ErrEmailAlreadyUsed for duplicate email")
+			if !errors.Is(err, user.ErrEmailTaken) {
+				t.Error("Upsert did not return ErrEmailTaken for duplicate email")
 			}
 		})
 
