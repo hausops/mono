@@ -24,7 +24,7 @@ func NewServer(repo user.Repository) *server {
 }
 
 func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
-	emailPtr, err := mail.ParseAddress(in.Email)
+	email, err := mail.ParseAddress(in.Email)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
 	}
@@ -32,7 +32,7 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 	now := time.Now().UTC()
 	u := user.User{
 		ID:          uuid.New(),
-		Email:       *emailPtr,
+		Email:       *email,
 		Verified:    false,
 		DateCreated: now,
 		DateUpdated: now,
@@ -40,8 +40,8 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 
 	created, err := s.repo.Upsert(ctx, u)
 	if err != nil {
-		if errors.Is(err, user.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, err.Error())
+		if errors.Is(err, user.ErrEmailTaken) {
+			return nil, status.Error(codes.AlreadyExists, err.Error())
 		}
 		return nil, fmt.Errorf("user.Repository.Upsert(%s, %s): %w",
 			u.ID, u.Email.Address, err)
@@ -51,13 +51,12 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 }
 
 func (s *server) FindByEmail(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
-	emailPtr, err := mail.ParseAddress(in.Email)
+	email, err := mail.ParseAddress(in.Email)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
 	}
 
-	email := *emailPtr
-	found, err := s.repo.FindByEmail(ctx, email)
+	found, err := s.repo.FindByEmail(ctx, *email)
 	if err != nil {
 		if errors.Is(err, user.ErrNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())

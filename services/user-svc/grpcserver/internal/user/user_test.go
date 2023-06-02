@@ -21,7 +21,7 @@ func TestCreate(t *testing.T) {
 
 	u, err := svc.Create(context.Background(), req)
 	if err != nil {
-		t.Errorf("Create(%s) = error %v", email, err)
+		t.Errorf("Create(%s) error = %v", email, err)
 	}
 
 	if _, err := uuid.Parse(u.Id); err != nil {
@@ -64,40 +64,63 @@ func TestCreate_InvalidEmail(t *testing.T) {
 	}
 }
 
-func TestFindByEmail(t *testing.T) {
+func TestCreate_EmailTaken(t *testing.T) {
 	svc := user.NewServer(local.NewUserRepository())
+	u := mustCreateUser(t, svc)
 
-	email := gofakeit.Email()
-	req := &pb.EmailRequest{Email: email}
+	req := &pb.EmailRequest{Email: u.Email}
 
 	_, err := svc.Create(context.Background(), req)
-	if err != nil {
-		t.Fatalf("Create(%s) = error %v", email, err)
+	if err == nil {
+		t.Errorf("Create(%s) got no error", u.Email)
 	}
 
-	u, err := svc.FindByEmail(context.Background(), req)
+	s, _ := status.FromError(err)
+	got := s.Code()
+	want := codes.AlreadyExists
+	if got != want {
+		t.Errorf("Create(%s) got %s error code; want %s", u.Email, got, want)
+	}
+}
+
+func TestFindByEmail(t *testing.T) {
+	svc := user.NewServer(local.NewUserRepository())
+	u := mustCreateUser(t, svc)
+
+	req := &pb.EmailRequest{Email: u.Email}
+
+	found, err := svc.FindByEmail(context.Background(), req)
 	if err != nil {
-		t.Errorf("FindByEmail(%s) = error %v", email, err)
+		t.Errorf("FindByEmail(%s) error = %v", u.Email, err)
 	}
 
-	if u.Email != email {
-		t.Errorf("Email does not match. Got: %s; want: %s", u.Email, email)
+	got := found.Email
+	want := u.Email
+	if got != want {
+		t.Errorf("Email does not match. Got: %s; want: %s", got, want)
+	}
+}
+
+func TestFindByEmail_InvalidEmail(t *testing.T) {
+	svc := user.NewServer(local.NewUserRepository())
+	mustCreateUser(t, svc)
+
+	email := "invalid-email"
+	req := &pb.EmailRequest{Email: email}
+
+	_, err := svc.FindByEmail(context.Background(), req)
+
+	s, _ := status.FromError(err)
+	got := s.Code()
+	want := codes.InvalidArgument
+	if got != want {
+		t.Errorf("FindByEmail(%s) got %s error code; want %s", email, got, want)
 	}
 }
 
 func TestFindByEmail_NotFound(t *testing.T) {
 	svc := user.NewServer(local.NewUserRepository())
-
-	// Setup: create user
-	{
-		email := gofakeit.Email()
-		req := &pb.EmailRequest{Email: email}
-
-		_, err := svc.Create(context.Background(), req)
-		if err != nil {
-			t.Fatalf("Create(%s) = error %v", email, err)
-		}
-	}
+	mustCreateUser(t, svc)
 
 	email := "non-existing-email@hausops.com"
 	req := &pb.EmailRequest{Email: email}
@@ -113,4 +136,16 @@ func TestFindByEmail_NotFound(t *testing.T) {
 	if got != want {
 		t.Errorf("FindByEmail(%s) got %s error code; want %s", email, got, want)
 	}
+}
+
+func mustCreateUser(t *testing.T, svc pb.UserServiceServer) *pb.User {
+	t.Helper()
+	email := gofakeit.Email()
+	req := &pb.EmailRequest{Email: email}
+
+	u, err := svc.Create(context.Background(), req)
+	if err != nil {
+		t.Fatalf("Create(%s) error = %v", email, err)
+	}
+	return u
 }
