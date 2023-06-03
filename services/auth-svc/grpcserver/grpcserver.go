@@ -36,7 +36,16 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
 
-	pb.RegisterAuthServer(srv, auth.NewServer())
+	pb.RegisterAuthServer(
+		srv,
+		auth.NewServer(
+			logger,
+			deps.userSvc,
+			deps.credentialRepo,
+			// deps.verificationRepo,
+			deps.email,
+		),
+	)
 
 	if conf.Mode == config.ModeDev {
 		reflection.Register(srv)
