@@ -13,7 +13,7 @@ type userRepository struct {
 	byID map[uuid.UUID]user.User
 
 	// byEmail maps email address to user ID.
-	byEmail map[string]uuid.UUID
+	byEmail map[mail.Address]uuid.UUID
 }
 
 // NewUserRepository creates a new instance of the userRepository with
@@ -23,7 +23,7 @@ type userRepository struct {
 func NewUserRepository() *userRepository {
 	return &userRepository{
 		byID:    make(map[uuid.UUID]user.User),
-		byEmail: make(map[string]uuid.UUID),
+		byEmail: make(map[mail.Address]uuid.UUID),
 	}
 }
 
@@ -36,7 +36,7 @@ func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) (user.User, e
 		return user.User{}, user.ErrNotFound
 	}
 	delete(r.byID, id)
-	delete(r.byEmail, u.Email.Address)
+	delete(r.byEmail, u.Email)
 	return u, nil
 }
 
@@ -49,7 +49,7 @@ func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (user.User,
 }
 
 func (r *userRepository) FindByEmail(ctx context.Context, email mail.Address) (user.User, error) {
-	id, ok := r.byEmail[email.Address]
+	id, ok := r.byEmail[email]
 	if !ok {
 		return user.User{}, user.ErrNotFound
 	}
@@ -63,7 +63,7 @@ func (r *userRepository) FindByEmail(ctx context.Context, email mail.Address) (u
 
 func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, error) {
 	// Check if the email address is already associated with another user.
-	if prevID, ok := r.byEmail[u.Email.Address]; ok {
+	if prevID, ok := r.byEmail[u.Email]; ok {
 		// email must be unique
 		if u.ID != prevID {
 			return user.User{}, user.ErrEmailTaken
@@ -74,11 +74,11 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 	if prev, ok := r.byID[u.ID]; ok {
 		// If the email address is changed, remove the old email mapping.
 		if u.Email.Address != prev.Email.Address {
-			delete(r.byEmail, prev.Email.Address)
+			delete(r.byEmail, prev.Email)
 		}
 	}
 
 	r.byID[u.ID] = u
-	r.byEmail[u.Email.Address] = u.ID
+	r.byEmail[u.Email] = u.ID
 	return u, nil
 }
