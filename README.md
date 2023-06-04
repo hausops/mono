@@ -43,8 +43,13 @@ This guide assumes using Podman, but Docker can be used instead. If you choose t
    ```sh
    # Example
 
+   # HTTP
    # cd apps/dashboard-api
    dapr run --app-id dashboard-api -- make run
+
+   # gRPC
+   # cd services/user-svc
+   dapr run --app-id user-svc --app-protocol grpc -- make dev
    ```
 
    This way, you don't have to start/stop all services running via Multi-App Run when you need to start/stop the service under development.
