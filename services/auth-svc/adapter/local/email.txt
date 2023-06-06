@@ -1,0 +1,4 @@
+Send email
+  To: {{.To}}
+  Subject: {{.Subject}}
+  Body: {{.Body}}

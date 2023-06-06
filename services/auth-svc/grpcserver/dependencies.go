@@ -10,16 +10,17 @@ import (
 	"github.com/hausops/mono/services/auth-svc/config"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
 	"github.com/hausops/mono/services/auth-svc/domain/email"
+	"github.com/hausops/mono/services/auth-svc/domain/verification"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
 	"golang.org/x/sync/errgroup"
 )
 
 type dependencies struct {
-	userSvc        userpb.UserServiceClient
-	credentialRepo credential.Repository
-	// verificationRepo verification.Repository
-	email         email.Dispatcher
-	closeHandlers []func(context.Context) error
+	userSvc          userpb.UserServiceClient
+	credentialRepo   credential.Repository
+	verificationRepo verification.Repository
+	email            email.Dispatcher
+	closeHandlers    []func(context.Context) error
 }
 
 func newDependencies(ctx context.Context, conf config.Config) (*dependencies, error) {
@@ -36,7 +37,7 @@ func newDependencies(ctx context.Context, conf config.Config) (*dependencies, er
 
 	deps.userSvc = dapr.NewUserService(conn)
 	deps.credentialRepo = local.NewCredentialRepository()
-	// deps.verificationRepo = local.NewVerificationRepository()
+	deps.verificationRepo = local.NewVerificationRepository()
 	deps.email = local.NewEmailDispatcher()
 
 	if err := deps.validate(); err != nil {
