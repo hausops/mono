@@ -11,8 +11,6 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/verification"
 	"github.com/hausops/mono/services/auth-svc/pb"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
-	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,24 +18,21 @@ import (
 
 type server struct {
 	pb.UnimplementedAuthServer
-	logger            *zap.Logger
 	userSvc           userpb.UserServiceClient
-	credentialRepo    credential.Repository
+	credentialSvc     *credential.Service
 	verificationRepo  verification.Repository
 	verificationEmail *verificationEmailSender
 }
 
 func NewServer(
-	logger *zap.Logger,
 	userSvc userpb.UserServiceClient,
-	credentialRepo credential.Repository,
+	credentialSvc *credential.Service,
 	verificationRepo verification.Repository,
 	email email.Dispatcher,
 ) *server {
 	return &server{
-		logger:            logger,
 		userSvc:           userSvc,
-		credentialRepo:    credentialRepo,
+		credentialSvc:     credentialSvc,
 		verificationRepo:  verificationRepo,
 		verificationEmail: newVerificationEmailSender(email),
 	}
@@ -50,7 +45,7 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 	}
 
 	// TODO: password policy + strength
-	if r.GetPassword() == "" {
+	if len(r.GetPassword()) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "Invalid password")
 	}
 
@@ -65,20 +60,9 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		}
 	}
 
-	hashedPassword, err := hashPassword(r.GetPassword())
+	err = s.credentialSvc.Save(ctx, *email, r.GetPassword())
 	if err != nil {
-		return nil, fmt.Errorf("hash password: %w", err)
-	}
-
-	err = s.credentialRepo.Upsert(
-		ctx,
-		credential.Credential{
-			Email:    *email,
-			Password: hashedPassword,
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("save credential %s: %w", email.Address, err)
+		return nil, fmt.Errorf("credentialSvc.Save(%s): %w", email.Address, err)
 	}
 
 	verificationToken := verification.GenerateToken()
@@ -99,10 +83,6 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 	}
 
 	return new(emptypb.Empty), nil
-}
-
-func hashPassword(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 }
 
 type verificationEmailSender struct {

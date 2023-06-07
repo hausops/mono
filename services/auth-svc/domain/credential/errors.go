@@ -5,5 +5,6 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("credentail not found")
+	ErrInvalidPassword = errors.New("invalid password")
+	ErrNotFound        = errors.New("credential not found")
 )

@@ -17,7 +17,7 @@ import (
 
 type dependencies struct {
 	userSvc          userpb.UserServiceClient
-	credentialRepo   credential.Repository
+	credentialSvc    *credential.Service
 	verificationRepo verification.Repository
 	email            email.Dispatcher
 	closeHandlers    []func(context.Context) error
@@ -36,7 +36,7 @@ func newDependencies(ctx context.Context, conf config.Config) (*dependencies, er
 	})
 
 	deps.userSvc = dapr.NewUserService(conn)
-	deps.credentialRepo = local.NewCredentialRepository()
+	deps.credentialSvc = credential.NewService(local.NewCredentialRepository())
 	deps.verificationRepo = local.NewVerificationRepository()
 	deps.email = local.NewEmailDispatcher()
 
@@ -51,8 +51,8 @@ func (d *dependencies) validate() error {
 	if d.userSvc == nil {
 		return errors.New("user service is not set")
 	}
-	if d.credentialRepo == nil {
-		return errors.New("credentail repo is not set")
+	if d.credentialSvc == nil {
+		return errors.New("credentail service is not set")
 	}
 	if d.email == nil {
 		return errors.New("email dispatcher is not set")
