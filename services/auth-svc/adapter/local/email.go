@@ -3,9 +3,10 @@ package local
 import (
 	"context"
 	"fmt"
-	"net/mail"
 	"os"
 	"text/template"
+
+	"github.com/hausops/mono/services/auth-svc/domain/email"
 )
 
 type emailDispatcher struct {
@@ -21,20 +22,26 @@ func NewEmailDispatcher() *emailDispatcher {
 const emailTemplate = `
 Send email
   To: {{.To}}
+  From: {{.From}}
   Subject: {{.Subject}}
   Body: {{.Body}}
 `
 
-func (ed *emailDispatcher) Send(
-	_ context.Context, to mail.Address, subject string, body string,
-) error {
+func (ed *emailDispatcher) Send(_ context.Context, d email.Delivery, msg email.Message) error {
+	body := msg.PlainText
+	if msg.HTML != "" {
+		body = msg.HTML
+	}
+
 	err := ed.tmpl.Execute(os.Stdout, struct {
 		To      string
+		From    string
 		Subject string
 		Body    string
 	}{
-		To:      to.Address,
-		Subject: subject,
+		To:      d.To.String(),
+		From:    d.From.String(),
+		Subject: d.Subject,
 		Body:    body,
 	})
 	if err != nil {

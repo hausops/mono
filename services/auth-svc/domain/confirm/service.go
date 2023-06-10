@@ -31,14 +31,27 @@ func NewService(
 func (s *Service) SendEmail(ctx context.Context, to mail.Address) error {
 	token := generateToken()
 
-	subject := "Confirm your email address to start using HausOps"
-	body := fmt.Sprintf("Confirm your email address: https://auth.hausops.com/confirm?t=%s", token)
-	err := s.email.Send(ctx, to, subject, body)
-	if err != nil {
-		return err
+	{
+		delivery := email.Delivery{
+			To:      to,
+			From:    mail.Address{Name: "HausOps", Address: "no-reply@hausops.com"},
+			Subject: "Confirm your email address to start using HausOps",
+		}
+
+		msg := email.Message{
+			PlainText: fmt.Sprintf(
+				"Confirm your email address: https://auth.hausops.com/confirm?t=%s",
+				token,
+			),
+		}
+
+		err := s.email.Send(ctx, delivery, msg)
+		if err != nil {
+			return err
+		}
 	}
 
-	err = s.pending.Upsert(ctx, Pending{Email: to, Token: token})
+	err := s.pending.Upsert(ctx, Pending{Email: to, Token: token})
 	if err != nil {
 		return err
 	}
