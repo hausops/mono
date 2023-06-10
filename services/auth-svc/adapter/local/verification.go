@@ -2,31 +2,70 @@ package local
 
 import (
 	"context"
+	"net/mail"
 
 	"github.com/hausops/mono/services/auth-svc/domain/verification"
 )
 
-type verificationRepository struct {
-	byToken map[verification.Token]verification.PendingVerification
+// Pending Verification
+
+type pendingVerificationRepository struct {
+	byToken map[verification.Token]verification.Pending
 }
 
-func NewVerificationRepository() *verificationRepository {
-	return &verificationRepository{
-		byToken: make(map[verification.Token]verification.PendingVerification),
+func NewPendingVerificationRepository() *pendingVerificationRepository {
+	return &pendingVerificationRepository{
+		byToken: make(map[verification.Token]verification.Pending),
 	}
 }
 
-var _ verification.Repository = (*verificationRepository)(nil)
+var _ verification.PendingRepository = (*pendingVerificationRepository)(nil)
 
-func (r *verificationRepository) FindByToken(ctx context.Context, token verification.Token) (*verification.PendingVerification, error) {
+func (r *pendingVerificationRepository) DeleteByToken(ctx context.Context, token verification.Token) (*verification.Pending, error) {
 	ver, ok := r.byToken[token]
 	if !ok {
-		return nil, verification.ErrNotFound
+		return nil, verification.ErrPendingNotFound
+	}
+	delete(r.byToken, token)
+	return &ver, nil
+}
+
+func (r *pendingVerificationRepository) FindByToken(ctx context.Context, token verification.Token) (*verification.Pending, error) {
+	ver, ok := r.byToken[token]
+	if !ok {
+		return nil, verification.ErrPendingNotFound
 	}
 	return &ver, nil
 }
 
-func (r *verificationRepository) Upsert(ctx context.Context, ver verification.PendingVerification) error {
-	r.byToken[ver.Token] = ver
+func (r *pendingVerificationRepository) Upsert(ctx context.Context, pending verification.Pending) error {
+	r.byToken[pending.Token] = pending
+	return nil
+}
+
+// Verified Email
+
+type verifiedEmailRepository struct {
+	byEmail map[mail.Address]struct{}
+}
+
+func NewVerifiedEmailRepository() *verifiedEmailRepository {
+	return &verifiedEmailRepository{
+		byEmail: make(map[mail.Address]struct{}),
+	}
+}
+
+var _ verification.VerifiedRepository = (*verifiedEmailRepository)(nil)
+
+func (r *verifiedEmailRepository) ExistByEmail(ctx context.Context, email mail.Address) error {
+	_, ok := r.byEmail[email]
+	if !ok {
+		return verification.ErrEmailNotVerified
+	}
+	return nil
+}
+
+func (r *verifiedEmailRepository) Upsert(ctx context.Context, email mail.Address) error {
+	r.byEmail[email] = struct{}{}
 	return nil
 }

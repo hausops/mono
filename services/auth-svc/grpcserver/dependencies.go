@@ -2,25 +2,22 @@ package grpcserver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/hausops/mono/services/auth-svc/adapter/dapr"
 	"github.com/hausops/mono/services/auth-svc/adapter/local"
 	"github.com/hausops/mono/services/auth-svc/config"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
-	"github.com/hausops/mono/services/auth-svc/domain/email"
 	"github.com/hausops/mono/services/auth-svc/domain/verification"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
 	"golang.org/x/sync/errgroup"
 )
 
 type dependencies struct {
-	userSvc          userpb.UserServiceClient
-	credentialSvc    *credential.Service
-	verificationRepo verification.Repository
-	email            email.Dispatcher
-	closeHandlers    []func(context.Context) error
+	userSvc         userpb.UserServiceClient
+	credentialSvc   *credential.Service
+	verificationSvc *verification.Service
+	closeHandlers   []func(context.Context) error
 }
 
 func newDependencies(ctx context.Context, conf config.Config) (*dependencies, error) {
@@ -37,27 +34,13 @@ func newDependencies(ctx context.Context, conf config.Config) (*dependencies, er
 
 	deps.userSvc = dapr.NewUserService(conn)
 	deps.credentialSvc = credential.NewService(local.NewCredentialRepository())
-	deps.verificationRepo = local.NewVerificationRepository()
-	deps.email = local.NewEmailDispatcher()
-
-	if err := deps.validate(); err != nil {
-		return nil, fmt.Errorf("invalid dependencies: %w", err)
-	}
+	deps.verificationSvc = verification.NewService(
+		local.NewPendingVerificationRepository(),
+		local.NewVerifiedEmailRepository(),
+		local.NewEmailDispatcher(),
+	)
 
 	return &deps, nil
-}
-
-func (d *dependencies) validate() error {
-	if d.userSvc == nil {
-		return errors.New("user service is not set")
-	}
-	if d.credentialSvc == nil {
-		return errors.New("credentail service is not set")
-	}
-	if d.email == nil {
-		return errors.New("email dispatcher is not set")
-	}
-	return nil
 }
 
 func (d *dependencies) onClose(h func(context.Context) error) {

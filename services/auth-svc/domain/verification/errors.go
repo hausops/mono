@@ -5,5 +5,6 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("verification not found")
+	ErrEmailNotVerified = errors.New("the email is not verified")
+	ErrPendingNotFound  = errors.New("pending verification record not found")
 )

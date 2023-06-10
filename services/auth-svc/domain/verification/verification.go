@@ -1,5 +1,5 @@
-// Package verification implements domain logic related to user's
-// proof of ownership (verification) over an email address.
+// Package verification implements domain logic related to verifying
+// a user's ownership of an email address.
 package verification
 
 import (
@@ -9,8 +9,8 @@ import (
 	"github.com/rs/xid"
 )
 
-// PendingVerification represents ...
-type PendingVerification struct {
+// Pending represents a pending email verification.
+type Pending struct {
 	Email mail.Address
 	Token Token
 }
