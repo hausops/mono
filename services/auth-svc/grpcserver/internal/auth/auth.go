@@ -60,21 +60,9 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		return nil, fmt.Errorf("save credential: %w", err)
 	}
 
-	verificationToken := verification.GenerateToken()
-	err = s.verification.SendEmail(ctx, *email, verificationToken)
+	err = s.verification.SendEmail(ctx, *email)
 	if err != nil {
 		return nil, fmt.Errorf("send verification email (%s): %w", email.Address, err)
-	}
-
-	err = s.verification.SavePending(
-		ctx,
-		verification.Pending{
-			Email: *email,
-			Token: verificationToken,
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("save pending verification: %w", err)
 	}
 
 	return new(emptypb.Empty), nil

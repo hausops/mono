@@ -23,17 +23,23 @@ func NewService(pending PendingRepository, verified VerifiedRepository, email em
 	}
 }
 
-// SavePending saves a pending email address verification record.
-func (s *Service) SavePending(ctx context.Context, pending Pending) error {
-	return s.pending.Upsert(ctx, pending)
-}
+// SendEmail generates a new verification token and sends an email to
+// the specified `to` address in order to verify the email address.
+func (s *Service) SendEmail(ctx context.Context, to mail.Address) error {
+	token := generateToken()
 
-// SendEmail sends an email to the specified `to` address
-// for email address verification.
-func (s *Service) SendEmail(ctx context.Context, to mail.Address, token Token) error {
 	subject := "Verify your email to start using HausOps"
 	body := fmt.Sprintf("Verify your email address: https://auth.hausops.com/verify-email?t=%s", token)
-	return s.email.Send(ctx, to, subject, body)
+	err := s.email.Send(ctx, to, subject, body)
+	if err != nil {
+		return err
+	}
+
+	err = s.pending.Upsert(ctx, Pending{Email: to, Token: token})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Verify marks the email address associated with the token as verified

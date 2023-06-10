@@ -26,6 +26,6 @@ func (t Token) String() string {
 	return xid.ID(t).String()
 }
 
-func GenerateToken() Token {
+func generateToken() Token {
 	return Token(xid.New())
 }
