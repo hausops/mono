@@ -8,17 +8,27 @@ import (
 	"text/template"
 )
 
-type emailDispatcher struct{}
+type emailDispatcher struct {
+	tmpl *template.Template
+}
 
 func NewEmailDispatcher() *emailDispatcher {
-	return &emailDispatcher{}
+	return &emailDispatcher{
+		tmpl: template.Must(template.New("local").Parse(emailTemplate)),
+	}
 }
+
+const emailTemplate = `
+Send email
+  To: {{.To}}
+  Subject: {{.Subject}}
+  Body: {{.Body}}
+`
 
 func (ed *emailDispatcher) Send(
 	_ context.Context, to mail.Address, subject string, body string,
 ) error {
-	tmpl := template.Must(template.ParseFiles("adapter/local/email.txt"))
-	err := tmpl.Execute(os.Stdout, struct {
+	err := ed.tmpl.Execute(os.Stdout, struct {
 		To      string
 		Subject string
 		Body    string
