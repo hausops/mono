@@ -15,11 +15,11 @@ service Auth {
 
   // ResetPassword
 
-  // GetVerificationToken(Email) returns (VerificationToken);
-  // SendVerificationEmail
+  // GetConfirmationToken(Email) returns (ConfirmationToken);
+  // SendConfirmationEmail
   // ^ also handle resend
 
-  // VerifyEmail(VerificationToken) returns (VerifyEmailResult);
+  // ConfirmEmail(ConfirmationToken) returns (ConfirmEmailResult);
 }
 
 message SignUpRequest {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/mail"
 
+	"github.com/hausops/mono/services/auth-svc/domain/confirm"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
-	"github.com/hausops/mono/services/auth-svc/domain/verification"
 	"github.com/hausops/mono/services/auth-svc/pb"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
 	"google.golang.org/grpc/codes"
@@ -16,20 +16,20 @@ import (
 
 type server struct {
 	pb.UnimplementedAuthServer
-	user         userpb.UserServiceClient
-	credential   *credential.Service
-	verification *verification.Service
+	user       userpb.UserServiceClient
+	credential *credential.Service
+	confirm    *confirm.Service
 }
 
 func NewServer(
 	user userpb.UserServiceClient,
 	credential *credential.Service,
-	verification *verification.Service,
+	confirm *confirm.Service,
 ) *server {
 	return &server{
-		user:         user,
-		credential:   credential,
-		verification: verification,
+		user:       user,
+		credential: credential,
+		confirm:    confirm,
 	}
 }
 
@@ -60,9 +60,9 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		return nil, fmt.Errorf("save credential: %w", err)
 	}
 
-	err = s.verification.SendEmail(ctx, *email)
+	err = s.confirm.SendEmail(ctx, *email)
 	if err != nil {
-		return nil, fmt.Errorf("send verification email (%s): %w", email.Address, err)
+		return nil, fmt.Errorf("send confirm email (%s): %w", email.Address, err)
 	}
 
 	return new(emptypb.Empty), nil
