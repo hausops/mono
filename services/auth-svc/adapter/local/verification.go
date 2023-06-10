@@ -55,17 +55,19 @@ func NewVerifiedEmailRepository() *verifiedEmailRepository {
 	}
 }
 
-var _ verification.VerifiedRepository = (*verifiedEmailRepository)(nil)
+var _ verification.VerifiedEmailRepository = (*verifiedEmailRepository)(nil)
 
-func (r *verifiedEmailRepository) ExistByEmail(ctx context.Context, email mail.Address) error {
+func (r *verifiedEmailRepository) Add(ctx context.Context, email mail.Address) error {
 	_, ok := r.byEmail[email]
-	if !ok {
-		return verification.ErrEmailNotVerified
+	if ok {
+		return verification.ErrEmailAlreadyExists
 	}
+
+	r.byEmail[email] = struct{}{}
 	return nil
 }
 
-func (r *verifiedEmailRepository) Upsert(ctx context.Context, email mail.Address) error {
-	r.byEmail[email] = struct{}{}
-	return nil
+func (r *verifiedEmailRepository) Exist(ctx context.Context, email mail.Address) bool {
+	_, ok := r.byEmail[email]
+	return ok
 }

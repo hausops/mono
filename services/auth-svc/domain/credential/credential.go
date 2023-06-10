@@ -10,5 +10,5 @@ import "net/mail"
 type Credential struct {
 	Email    mail.Address
 	Password []byte
-	// Expiration
+	// ExpireAt time.Time
 }

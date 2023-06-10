@@ -2,7 +2,6 @@ package verification
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/mail"
 
@@ -11,11 +10,11 @@ import (
 
 type Service struct {
 	pending  PendingRepository
-	verified VerifiedRepository
+	verified VerifiedEmailRepository
 	email    email.Dispatcher
 }
 
-func NewService(pending PendingRepository, verified VerifiedRepository, email email.Dispatcher) *Service {
+func NewService(pending PendingRepository, verified VerifiedEmailRepository, email email.Dispatcher) *Service {
 	return &Service{
 		pending:  pending,
 		verified: verified,
@@ -45,28 +44,22 @@ func (s *Service) SendEmail(ctx context.Context, to mail.Address) error {
 // Verify marks the email address associated with the token as verified
 // and deletes the corresponding pending verification record for the token.
 func (s *Service) Verify(ctx context.Context, token Token) error {
-	ver, err := s.pending.DeleteByToken(ctx, token)
+	pending, err := s.pending.DeleteByToken(ctx, token)
 	if err != nil {
 		return fmt.Errorf("delete pending verification: %w", err)
 	}
 
-	err = s.verified.Upsert(ctx, ver.Email)
+	email := pending.Email
+	err = s.verified.Add(ctx, email)
 	if err != nil {
-		return fmt.Errorf("upsert verified email (%s): %w", ver.Email.Address, err)
+		return fmt.Errorf("upsert verified email (%s): %w", email.Address, err)
 	}
 	return nil
 }
 
-// CheckVerified checks if the email address is verified.
+// IsVerified checks if the email address is verified.
 // It returns true if the email address is verified, false otherwise.
 // An error is returned if there's an issue retrieving the verification information.
-func (s *Service) CheckVerified(ctx context.Context, email mail.Address) (bool, error) {
-	err := s.verified.ExistByEmail(ctx, email)
-	if err != nil {
-		if errors.Is(err, ErrEmailNotVerified) {
-			return false, nil
-		}
-		return false, fmt.Errorf("verified.ExistsByEmail(%s): %w", email.Address, err)
-	}
-	return true, nil
+func (s *Service) IsVerified(ctx context.Context, email mail.Address) bool {
+	return s.verified.Exist(ctx, email)
 }
