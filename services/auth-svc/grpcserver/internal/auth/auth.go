@@ -67,3 +67,29 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 
 	return new(emptypb.Empty), nil
 }
+
+func (s *server) ResendConfirmationEmail(
+	ctx context.Context,
+	r *pb.ResendConfirmationEmailRequest,
+) (*emptypb.Empty, error) {
+	email, err := mail.ParseAddress(r.GetEmail())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
+	}
+
+	if ok := s.credential.ExistByEmail(ctx, *email); !ok {
+		return nil, status.Error(codes.NotFound, "Credential not found")
+	}
+
+	confirmed := s.confirm.IsConfirmed(ctx, *email)
+	if confirmed {
+		return nil, status.Error(codes.FailedPrecondition, "Email already confirmed")
+	}
+
+	err = s.confirm.SendEmail(ctx, *email)
+	if err != nil {
+		return nil, fmt.Errorf("send confirm email (%s): %w", email.Address, err)
+	}
+
+	return new(emptypb.Empty), nil
+}

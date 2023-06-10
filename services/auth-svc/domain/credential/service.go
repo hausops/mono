@@ -18,6 +18,11 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
+func (s *Service) ExistByEmail(ctx context.Context, email mail.Address) bool {
+	_, err := s.repo.FindByEmail(ctx, email)
+	return err != nil
+}
+
 // Save upserts the credential to the credential repo.
 func (s *Service) Save(ctx context.Context, email mail.Address, password []byte) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)

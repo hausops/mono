@@ -8,18 +8,16 @@ import "google/protobuf/empty.proto";
 
 service Auth {
   rpc SignUp(SignUpRequest) returns (google.protobuf.Empty);
+  rpc ResendConfirmationEmail(ResendConfirmationEmailRequest)
+      returns (google.protobuf.Empty);
+
+  // rpc ConfirmEmail(ConfirmEmailRequest) returns (ConfirmEmailResponse);
 
   // rpc Login(LoginRequest) returns (LoginResponse);
-  // rpc Logout(LogoutRequest) returns (LogoutResponse);
+  // rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
   // rpc CheckSession(CheckSessionRequest) returns (CheckSessionResponse);
 
   // ResetPassword
-
-  // GetConfirmationToken(Email) returns (ConfirmationToken);
-  // SendConfirmationEmail
-  // ^ also handle resend
-
-  // ConfirmEmail(ConfirmationToken) returns (ConfirmEmailResult);
 }
 
 message SignUpRequest {
@@ -27,9 +25,27 @@ message SignUpRequest {
   bytes password = 2;
 }
 
+message ResendConfirmationEmailRequest { string email = 1; }
+
+// message ConfirmEmailRequest { bytes token = 1; }
+
+// message ConfirmEmailResponse {
+//   message Success { string access_token = 1; }
+//   message InvalidToken {}
+//   message AlreadyConfirmed {}
+
+//   oneof result {
+//     Success success = 1;
+//     InvalidToken invalid_token = 2;
+//     AlreadyConfirmed already_confirmed = 3;
+//   }
+// }
+
+// message Session { string access_token = 1; }
+
 // message LoginRequest {
 //   string email = 1;
-//   string password = 2;
+//   bytes password = 2;
 // }
 
 // message LoginResponse {
@@ -43,8 +59,6 @@ message SignUpRequest {
 // }
 
 // message LogoutRequest { string access_token = 1; }
-
-// message LogoutResponse {}
 
 // message CheckSessionRequest { string access_token = 1; }
 
