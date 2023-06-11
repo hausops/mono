@@ -42,6 +42,7 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 			deps.userSvc,
 			deps.credentialRepo,
 			deps.confirmRepo,
+			deps.sessionRepo,
 			deps.email,
 		),
 	)
