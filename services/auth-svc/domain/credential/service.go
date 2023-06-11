@@ -24,17 +24,9 @@ func (s *Service) Lookup(ctx context.Context, email mail.Address) (*Credential, 
 }
 
 // Save upserts credential to the repo.
-func (s *Service) Save(ctx context.Context, email mail.Address, password []byte) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-	if err != nil {
-		return fmt.Errorf("hash password: %w", err)
-	}
-
-	cred := Credential{
-		Email:    email,
-		Password: hashedPassword,
-	}
-	err = s.repo.Upsert(ctx, cred)
+func (s *Service) Save(ctx context.Context, email mail.Address, hashedPassword []byte) error {
+	cred := Credential{Email: email, Password: hashedPassword}
+	err := s.repo.Upsert(ctx, cred)
 	if err != nil {
 		return fmt.Errorf("repo.Upsert(%s): %w", email.Address, err)
 	}

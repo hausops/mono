@@ -39,12 +39,17 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
 	}
 
-	// TODO: password policy + strength
-	if len(r.GetPassword()) == 0 {
+	password := r.GetPassword()
+	err = credential.ValidatePassword(string(password))
+	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid password")
 	}
 
-	// TODO: rollback the user creation if any steps below fail
+	hashedPassword, err := credential.HashPassword(password)
+	if err != nil {
+		return nil, fmt.Errorf("hash password: %w", err)
+	}
+
 	_, err = s.user.Create(ctx, &userpb.EmailRequest{Email: email.Address})
 	if err != nil {
 		switch st, _ := status.FromError(err); st.Code() {
@@ -55,7 +60,7 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		}
 	}
 
-	err = s.credential.Save(ctx, *email, r.GetPassword())
+	err = s.credential.Save(ctx, *email, hashedPassword)
 	if err != nil {
 		return nil, fmt.Errorf("save credential: %w", err)
 	}
