@@ -8,7 +8,6 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/uuid"
-	"github.com/hausops/mono/services/user-svc/adapter/local"
 	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
@@ -133,7 +132,9 @@ func TestRepository(t *testing.T,
 
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new user", func(t *testing.T) {
-			repo := local.NewUserRepository()
+			repo, teardown := newRepo()
+			defer teardown()
+
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -171,11 +172,14 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Update with the same user info", func(t *testing.T) {
-			repo := local.NewUserRepository()
+			repo, teardown := newRepo()
+			defer teardown()
+
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
+			mustRepositoryUpsert(t, ctx, repo, u)
 
 			updated, err := repo.Upsert(ctx, u)
 			if err != nil {
@@ -187,7 +191,9 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Insert a new user with a duplicate email", func(t *testing.T) {
-			repo := local.NewUserRepository()
+			repo, teardown := newRepo()
+			defer teardown()
+
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -204,7 +210,8 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Update a user to use a duplicate email", func(t *testing.T) {
-			repo := local.NewUserRepository()
+			repo, teardown := newRepo()
+			defer teardown()
 
 			u1 := user.User{
 				ID:    uuid.New(),
@@ -229,7 +236,9 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Update an existing user with a different email", func(t *testing.T) {
-			repo := local.NewUserRepository()
+			repo, teardown := newRepo()
+			defer teardown()
+
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
