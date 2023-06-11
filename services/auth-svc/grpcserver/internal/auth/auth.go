@@ -77,7 +77,7 @@ func (s *server) ResendConfirmationEmail(
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
 	}
 
-	if ok := s.credential.ExistByEmail(ctx, *email); !ok {
+	if _, err := s.credential.Lookup(ctx, *email); err != nil {
 		return nil, status.Error(codes.NotFound, "Credential not found")
 	}
 
