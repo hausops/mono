@@ -9,6 +9,13 @@ import (
 	"github.com/rs/xid"
 )
 
+// Record represents whether an email is confirmed.
+type Record struct {
+	Email       mail.Address
+	IsConfirmed bool
+	Token       *Token
+}
+
 // Pending represents a pending email confirmation.
 type Pending struct {
 	Email mail.Address
@@ -22,12 +29,12 @@ func (t Token) String() string {
 	return xid.ID(t).String()
 }
 
-// generateToken creates a new randomized Token.
-func generateToken() Token {
+// GenerateToken creates a new randomized Token.
+func GenerateToken() Token {
 	return Token(xid.New())
 }
 
-func parseToken(raw []byte) (Token, error) {
+func ParseToken(raw []byte) (Token, error) {
 	id, err := xid.FromBytes(raw)
 	if errors.Is(err, xid.ErrInvalidID) {
 		return Token{}, ErrInvalidToken

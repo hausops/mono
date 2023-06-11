@@ -40,8 +40,9 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 		srv,
 		auth.NewServer(
 			deps.userSvc,
-			deps.credentialSvc,
-			deps.confirmSvc,
+			deps.credentialRepo,
+			deps.confirmRepo,
+			deps.email,
 		),
 	)
 

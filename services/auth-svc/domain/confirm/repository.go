@@ -5,29 +5,15 @@ import (
 	"net/mail"
 )
 
-// PendingRepository interface declares the behavior this package needs
-// to perists and retrieve data related to pending email confirmation.
-type PendingRepository interface {
-	// DeleteByToken deletes the pending confirmation associated
-	// with the given token.
-	// It returns the deleted record if the deletion is successful.
-	// It returns ErrNotFound if no matching record is found for the token.
-	DeleteByToken(ctx context.Context, token Token) (*Pending, error)
+// Repository interface declares the behavior this package needs
+// to perists and retrieve data related to email confirmation.
+type Repository interface {
+	// FindByToken retrieves a record for the given email address.
+	FindByEmail(context.Context, mail.Address) (Record, error)
 
-	// FindByToken retrieves a pending confirmation based on the given token.
-	FindByToken(ctx context.Context, token Token) (*Pending, error)
+	// FindByToken retrieves a record based on the given token.
+	FindByToken(context.Context, Token) (Record, error)
 
-	// Upsert inserts or updates a pending confirmation.
-	Upsert(ctx context.Context, pending Pending) error
-}
-
-// ConfirmedEmailRepository interface declares the behavior this package needs
-// to perists and retrieve data related to confirmed email addresses.
-type ConfirmedEmailRepository interface {
-	// Add inserts email to the repository.
-	// If the email already exists, it returns ErrEmailAlreadyExists.
-	Add(ctx context.Context, email mail.Address) error
-
-	// Exist checks whether the given email address is in the repository.
-	Exist(ctx context.Context, email mail.Address) bool
+	// Upsert inserts or updates an email confirmation record.
+	Upsert(context.Context, Record) error
 }

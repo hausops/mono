@@ -7,67 +7,56 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
 )
 
-// Pending confirmation
-
-type pendingConfirmationRepository struct {
-	byToken map[confirm.Token]confirm.Pending
+type confirmRepository struct {
+	// Email is the primary key.
+	byEmail map[mail.Address]confirm.Record
+	// Token is an index.
+	byToken map[confirm.Token]mail.Address
 }
 
-func NewPendingConfirmationRepository() *pendingConfirmationRepository {
-	return &pendingConfirmationRepository{
-		byToken: make(map[confirm.Token]confirm.Pending),
+func NewConfirmRepository() *confirmRepository {
+	return &confirmRepository{
+		byEmail: make(map[mail.Address]confirm.Record),
+		byToken: make(map[confirm.Token]mail.Address),
 	}
 }
 
-var _ confirm.PendingRepository = (*pendingConfirmationRepository)(nil)
+var _ confirm.Repository = (*confirmRepository)(nil)
 
-func (r *pendingConfirmationRepository) DeleteByToken(ctx context.Context, token confirm.Token) (*confirm.Pending, error) {
-	ver, ok := r.byToken[token]
+func (r *confirmRepository) FindByEmail(_ context.Context, email mail.Address) (confirm.Record, error) {
+	rec, ok := r.byEmail[email]
 	if !ok {
-		return nil, confirm.ErrPendingNotFound
+		return confirm.Record{}, confirm.ErrNotFound
 	}
-	delete(r.byToken, token)
-	return &ver, nil
+	return rec, nil
 }
 
-func (r *pendingConfirmationRepository) FindByToken(ctx context.Context, token confirm.Token) (*confirm.Pending, error) {
-	ver, ok := r.byToken[token]
+func (r *confirmRepository) FindByToken(_ context.Context, token confirm.Token) (confirm.Record, error) {
+	email, ok := r.byToken[token]
 	if !ok {
-		return nil, confirm.ErrPendingNotFound
+		return confirm.Record{}, confirm.ErrNotFound
 	}
-	return &ver, nil
+
+	rec, ok := r.byEmail[email]
+	if !ok {
+		return confirm.Record{}, confirm.ErrNotFound
+	}
+	return rec, nil
 }
 
-func (r *pendingConfirmationRepository) Upsert(ctx context.Context, pending confirm.Pending) error {
-	r.byToken[pending.Token] = pending
+func (r *confirmRepository) Upsert(_ context.Context, rec confirm.Record) error {
+	email := rec.Email
+
+	// If updating, remove the previous token index for the record.
+	if prev, ok := r.byEmail[email]; ok {
+		if prev.Token != nil {
+			delete(r.byToken, *prev.Token)
+		}
+	}
+
+	r.byEmail[email] = rec
+	if rec.Token != nil {
+		r.byToken[*rec.Token] = email
+	}
 	return nil
-}
-
-// Confirmed Email
-
-type confirmedEmailRepository struct {
-	byEmail map[mail.Address]struct{}
-}
-
-func NewConfirmedEmailRepository() *confirmedEmailRepository {
-	return &confirmedEmailRepository{
-		byEmail: make(map[mail.Address]struct{}),
-	}
-}
-
-var _ confirm.ConfirmedEmailRepository = (*confirmedEmailRepository)(nil)
-
-func (r *confirmedEmailRepository) Add(ctx context.Context, email mail.Address) error {
-	_, ok := r.byEmail[email]
-	if ok {
-		return confirm.ErrEmailAlreadyExists
-	}
-
-	r.byEmail[email] = struct{}{}
-	return nil
-}
-
-func (r *confirmedEmailRepository) Exist(ctx context.Context, email mail.Address) bool {
-	_, ok := r.byEmail[email]
-	return ok
 }

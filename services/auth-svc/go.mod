@@ -3,6 +3,7 @@ module github.com/hausops/mono/services/auth-svc
 go 1.20
 
 require (
+	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/hausops/mono/services/user-svc v0.0.0-20230529135640-7edd4954033f
 	github.com/rs/xid v1.5.0

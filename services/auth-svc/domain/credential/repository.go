@@ -10,9 +10,9 @@ import (
 type Repository interface {
 	// FindByEmail returns the credential with the given email, or an error
 	// if the credential was not found.
-	FindByEmail(ctx context.Context, email mail.Address) (*Credential, error)
+	FindByEmail(context.Context, mail.Address) (*Credential, error)
 
 	// Upsert adds cred to the repository if it does not exist, or replaces
 	// the stored credential with the same email (without merging).
-	Upsert(ctx context.Context, cred Credential) error
+	Upsert(context.Context, Credential) error
 }
