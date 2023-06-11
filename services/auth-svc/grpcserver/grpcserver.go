@@ -39,6 +39,7 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 	pb.RegisterAuthServer(
 		srv,
 		auth.NewServer(
+			logger,
 			deps.userSvc,
 			deps.credentialRepo,
 			deps.confirmRepo,

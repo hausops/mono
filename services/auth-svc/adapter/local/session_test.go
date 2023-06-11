@@ -14,20 +14,20 @@ import (
 func TestSessionRepository(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("DeleteByAccessToken", func(t *testing.T) {
+	t.Run("DeleteByEmail", func(t *testing.T) {
 		repo := local.NewSessionRepository()
 		sessions := generateTestSessions(t, 3)
 		mustConfirmRepositoryUpsertMany(t, ctx, repo, sessions)
 
 		// Delete a session that does not exist.
-		_, err := repo.DeleteByAccessToken(ctx, session.NewAccessToken())
+		_, err := repo.DeleteByEmail(ctx, generateTestSession(t).Email)
 		if err != session.ErrNotFound {
 			t.Error("Deleted a session that does not exist")
 		}
 
 		// Delete a session.
 		sess := sessions[1]
-		deleted, err := repo.DeleteByAccessToken(ctx, sess.AccessToken)
+		deleted, err := repo.DeleteByEmail(ctx, sess.Email)
 		if err != nil {
 			t.Errorf("Delete failed: %v", err)
 		}
@@ -35,16 +35,16 @@ func TestSessionRepository(t *testing.T) {
 			t.Error("Delete returned incorrect session")
 		}
 
-		// The deleted session is no longer found by access token.
-		_, err = repo.FindByAccessToken(ctx, deleted.AccessToken)
-		if err != session.ErrNotFound {
-			t.Error("Deleted session found by ID")
-		}
-
 		// The deleted session is no longer found by email.
 		_, err = repo.FindByEmail(ctx, deleted.Email)
 		if err != session.ErrNotFound {
 			t.Error("Deleted session found by email")
+		}
+
+		// The deleted session is no longer found by access token.
+		_, err = repo.FindByAccessToken(ctx, deleted.AccessToken)
+		if err != session.ErrNotFound {
+			t.Error("Deleted session found by ID")
 		}
 
 		// The other sessions still exist in the repository.

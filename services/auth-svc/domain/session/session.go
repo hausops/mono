@@ -35,13 +35,10 @@ func (at AccessToken) String() string {
 	return xid.ID(at).String()
 }
 
-type TokenStore interface {
-	// Store used to store a new token entry.
-	// Store(ctx context.Context, token Token) error
-
-	// Lookup used to get token entry by its signature.
-	// Lookup(ctx context.Context, signature string) (Token, error)
-
-	// Revoke used to delete token entry by its signature.
-	// Revoke(ctx context.Context, signature string) error
+func ParseAccessToken(b []byte) (AccessToken, error) {
+	id, err := xid.FromBytes(b)
+	if err != nil {
+		return AccessToken{}, ErrInvalidToken
+	}
+	return AccessToken(id), nil
 }

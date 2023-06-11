@@ -13,6 +13,7 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/session"
 	"github.com/hausops/mono/services/auth-svc/pb"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,6 +22,7 @@ import (
 
 type server struct {
 	pb.UnimplementedAuthServer
+	log            *zap.Logger
 	user           userpb.UserServiceClient
 	credentialRepo credential.Repository
 	confirmRepo    confirm.Repository
@@ -29,6 +31,7 @@ type server struct {
 }
 
 func NewServer(
+	log *zap.Logger,
 	user userpb.UserServiceClient,
 	credentialRepo credential.Repository,
 	confirmRepo confirm.Repository,
@@ -36,6 +39,7 @@ func NewServer(
 	email email.Dispatcher,
 ) *server {
 	return &server{
+		log:            log,
 		user:           user,
 		credentialRepo: credentialRepo,
 		confirmRepo:    confirmRepo,
@@ -227,4 +231,57 @@ func (s *server) sendConfirmEmail(ctx context.Context, to mail.Address) error {
 	}
 
 	return s.confirmRepo.Upsert(ctx, rec)
+}
+
+func (s *server) Logout(ctx context.Context, r *pb.LogoutRequest) (*emptypb.Empty, error) {
+	accessToken, err := session.ParseAccessToken(r.GetAccessToken())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid token")
+	}
+
+	sess, err := s.sessionRepo.FindByAccessToken(ctx, accessToken)
+	if err != nil {
+		return nil, fmt.Errorf("find session by access token (%s): %w", accessToken, err)
+	}
+
+	_, err = s.sessionRepo.DeleteByEmail(ctx, sess.Email)
+	if err != nil {
+		return nil, fmt.Errorf("delete session by email (%s): %w", sess.Email.Address, err)
+	}
+
+	return new(emptypb.Empty), nil
+}
+
+func (s *server) CheckSession(ctx context.Context, r *pb.CheckSessionRequest) (*pb.CheckSessionResponse, error) {
+	accessToken, err := session.ParseAccessToken(r.GetAccessToken())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid token")
+	}
+
+	sess, err := s.sessionRepo.FindByAccessToken(ctx, accessToken)
+	if err != nil {
+		if errors.Is(err, session.ErrNotFound) {
+			return &pb.CheckSessionResponse{Valid: false}, nil
+		}
+		return nil, err
+	}
+
+	if sess.IsExpired() {
+		go func() {
+			_, err := s.sessionRepo.DeleteByEmail(ctx, sess.Email)
+			if err != nil {
+				s.log.Error("Failed to delete expired session by email",
+					zap.String("email", sess.Email.Address),
+					zap.Error(err),
+				)
+			}
+		}()
+		return &pb.CheckSessionResponse{Valid: false}, nil
+	}
+
+	res := &pb.CheckSessionResponse{
+		Valid: true,
+		Email: sess.Email.Address,
+	}
+	return res, nil
 }

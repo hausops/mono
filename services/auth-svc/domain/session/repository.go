@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	DeleteByAccessToken(context.Context, AccessToken) (Session, error)
+	DeleteByEmail(context.Context, mail.Address) (Session, error)
 
 	FindByAccessToken(context.Context, AccessToken) (Session, error)
 

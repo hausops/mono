@@ -9,13 +9,13 @@ import "google/protobuf/empty.proto";
 service Auth {
   rpc SignUp(SignUpRequest) returns (google.protobuf.Empty);
   rpc ResendConfirmationEmail(EmailRequest) returns (google.protobuf.Empty);
-
   rpc ConfirmEmail(ConfirmEmailRequest) returns (Session);
-  // rpc CheckAccountStatus(EmailRequest) returns (AccountStatus);
 
   rpc Login(LoginRequest) returns (Session);
-  // rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
-  // rpc CheckSession(CheckSessionRequest) returns (CheckSessionResponse);
+  rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
+  rpc CheckSession(CheckSessionRequest) returns (CheckSessionResponse);
+
+  // rpc CheckAccountStatus(EmailRequest) returns (AccountStatus);
 
   // ResetPassword
   // RefreshSession
@@ -41,15 +41,15 @@ message LoginRequest {
   bytes password = 2;
 }
 
-// message LogoutRequest { string access_token = 1; }
+message LogoutRequest { bytes access_token = 1; }
 
-// message CheckSessionRequest { string access_token = 1; }
+message CheckSessionRequest { bytes access_token = 1; }
 
-// message CheckSessionResponse {
-//   bool valid = 1;
-//   string user_id = 2;
-//   string email = 3;
-// }
+message CheckSessionResponse {
+  bool valid = 1;
+  // string user_id = 2;
+  string email = 3;
+}
 
 // message AccountStatus {
 //   string user_id = 1;

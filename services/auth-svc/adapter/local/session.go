@@ -23,19 +23,14 @@ func NewSessionRepository() *sessionRepository {
 
 var _ session.Repository = (*sessionRepository)(nil)
 
-func (r *sessionRepository) DeleteByAccessToken(_ context.Context, token session.AccessToken) (session.Session, error) {
-	email, ok := r.byAccessToken[token]
-	if !ok {
-		return session.Session{}, session.ErrNotFound
-	}
-
+func (r *sessionRepository) DeleteByEmail(_ context.Context, email mail.Address) (session.Session, error) {
 	sess, ok := r.byEmail[email]
 	if !ok {
 		return session.Session{}, session.ErrNotFound
 	}
 
 	delete(r.byEmail, email)
-	delete(r.byAccessToken, token)
+	delete(r.byAccessToken, sess.AccessToken)
 	return sess, nil
 }
 

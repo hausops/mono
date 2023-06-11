@@ -3,5 +3,6 @@ package session
 import "errors"
 
 var (
-	ErrNotFound = errors.New("session not found")
+	ErrInvalidToken = errors.New("invalid token")
+	ErrNotFound     = errors.New("session not found")
 )
