@@ -31,9 +31,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ResendConfirmationEmail(ctx context.Context, in *ResendConfirmationEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...grpc.CallOption) (*ConfirmEmailResponse, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	ResendConfirmationEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...grpc.CallOption) (*Session, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Session, error)
 }
 
 type authClient struct {
@@ -53,7 +53,7 @@ func (c *authClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *authClient) ResendConfirmationEmail(ctx context.Context, in *ResendConfirmationEmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *authClient) ResendConfirmationEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Auth_ResendConfirmationEmail_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -62,8 +62,8 @@ func (c *authClient) ResendConfirmationEmail(ctx context.Context, in *ResendConf
 	return out, nil
 }
 
-func (c *authClient) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...grpc.CallOption) (*ConfirmEmailResponse, error) {
-	out := new(ConfirmEmailResponse)
+func (c *authClient) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...grpc.CallOption) (*Session, error) {
+	out := new(Session)
 	err := c.cc.Invoke(ctx, Auth_ConfirmEmail_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -71,8 +71,8 @@ func (c *authClient) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, 
 	return out, nil
 }
 
-func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
+func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Session, error) {
+	out := new(Session)
 	err := c.cc.Invoke(ctx, Auth_Login_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,9 +85,9 @@ func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.C
 // for forward compatibility
 type AuthServer interface {
 	SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error)
-	ResendConfirmationEmail(context.Context, *ResendConfirmationEmailRequest) (*emptypb.Empty, error)
-	ConfirmEmail(context.Context, *ConfirmEmailRequest) (*ConfirmEmailResponse, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	ResendConfirmationEmail(context.Context, *EmailRequest) (*emptypb.Empty, error)
+	ConfirmEmail(context.Context, *ConfirmEmailRequest) (*Session, error)
+	Login(context.Context, *LoginRequest) (*Session, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -98,13 +98,13 @@ type UnimplementedAuthServer struct {
 func (UnimplementedAuthServer) SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
-func (UnimplementedAuthServer) ResendConfirmationEmail(context.Context, *ResendConfirmationEmailRequest) (*emptypb.Empty, error) {
+func (UnimplementedAuthServer) ResendConfirmationEmail(context.Context, *EmailRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResendConfirmationEmail not implemented")
 }
-func (UnimplementedAuthServer) ConfirmEmail(context.Context, *ConfirmEmailRequest) (*ConfirmEmailResponse, error) {
+func (UnimplementedAuthServer) ConfirmEmail(context.Context, *ConfirmEmailRequest) (*Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmEmail not implemented")
 }
-func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
@@ -139,7 +139,7 @@ func _Auth_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interfa
 }
 
 func _Auth_ResendConfirmationEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResendConfirmationEmailRequest)
+	in := new(EmailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ func _Auth_ResendConfirmationEmail_Handler(srv interface{}, ctx context.Context,
 		FullMethod: Auth_ResendConfirmationEmail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).ResendConfirmationEmail(ctx, req.(*ResendConfirmationEmailRequest))
+		return srv.(AuthServer).ResendConfirmationEmail(ctx, req.(*EmailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

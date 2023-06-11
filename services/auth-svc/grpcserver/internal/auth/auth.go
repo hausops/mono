@@ -89,10 +89,7 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 	return new(emptypb.Empty), nil
 }
 
-func (s *server) ResendConfirmationEmail(
-	ctx context.Context,
-	r *pb.ResendConfirmationEmailRequest,
-) (*emptypb.Empty, error) {
+func (s *server) ResendConfirmationEmail(ctx context.Context, r *pb.EmailRequest) (*emptypb.Empty, error) {
 	email, err := mail.ParseAddress(r.GetEmail())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
@@ -119,10 +116,7 @@ func (s *server) ResendConfirmationEmail(
 	return new(emptypb.Empty), nil
 }
 
-func (s *server) ConfirmEmail(
-	ctx context.Context,
-	r *pb.ConfirmEmailRequest,
-) (*pb.ConfirmEmailResponse, error) {
+func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*pb.Session, error) {
 	token, err := confirm.ParseToken(r.GetToken())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid token")
@@ -157,13 +151,14 @@ func (s *server) ConfirmEmail(
 		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
 	}
 
-	res := &pb.ConfirmEmailResponse{
+	res := &pb.Session{
+		Email:       sess.Email.Address,
 		AccessToken: sess.AccessToken.String(),
 	}
 	return res, nil
 }
 
-func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, error) {
 	email, err := mail.ParseAddress(r.GetEmail())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
@@ -193,7 +188,8 @@ func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginRespon
 		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
 	}
 
-	res := &pb.LoginResponse{
+	res := &pb.Session{
+		Email:       sess.Email.Address,
 		AccessToken: sess.AccessToken.String(),
 	}
 	return res, nil
