@@ -18,41 +18,31 @@ import (
 
 type server struct {
 	*grpc.Server
-	deps   *dependencies
-	logger *zap.Logger
+	deps *dependencies
+	log  *zap.Logger
 }
 
-func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, error) {
+func New(ctx context.Context, conf config.Config, log *zap.Logger) (*server, error) {
 	srv := grpc.NewServer(
 		grpc.ConnectionTimeout(time.Second),
 		grpc.MaxConcurrentStreams(100),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpc_zap.UnaryServerInterceptor(logger),
+			grpc_zap.UnaryServerInterceptor(log),
 		)),
 	)
 
-	deps, err := newDependencies(ctx, conf)
+	deps, err := newDependencies(ctx, conf, log)
 	if err != nil {
 		return nil, fmt.Errorf("new dependencies: %w", err)
 	}
 
-	pb.RegisterAuthServer(
-		srv,
-		auth.NewServer(
-			logger,
-			deps.userSvc,
-			deps.credentialRepo,
-			deps.confirmRepo,
-			deps.sessionRepo,
-			deps.email,
-		),
-	)
+	pb.RegisterAuthServer(srv, auth.NewServer(deps.authSvc))
 
 	if conf.Mode == config.ModeDev {
 		reflection.Register(srv)
 	}
 
-	return &server{srv, deps, logger}, nil
+	return &server{srv, deps, log}, nil
 }
 
 // GracefulStop gracefully stops the server and cleans up dependencies.
@@ -60,7 +50,7 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 // stops the server.
 func (s *server) GracefulStop(ctx context.Context) {
 	// flushes logs at the end
-	defer s.logger.Sync()
+	defer s.log.Sync()
 
 	stopped := make(chan struct{})
 	go func() {
@@ -70,16 +60,16 @@ func (s *server) GracefulStop(ctx context.Context) {
 
 	select {
 	case <-stopped:
-		s.logger.Info("Server gracefully stopped")
+		s.log.Info("Server gracefully stopped")
 	case <-ctx.Done():
 		s.Server.Stop()
-		s.logger.Warn("Server forcefully stopped due to timeout exceeded")
+		s.log.Warn("Server forcefully stopped due to timeout exceeded")
 	}
 
-	s.logger.Info("Cleaning up dependencies")
+	s.log.Info("Cleaning up dependencies")
 	if err := s.deps.close(ctx); err != nil {
-		s.logger.Error("Error cleaning up dependencies", zap.Error(err))
+		s.log.Error("Error cleaning up dependencies", zap.Error(err))
 	} else {
-		s.logger.Info("Successfully cleaned up dependencies")
+		s.log.Info("Successfully cleaned up dependencies")
 	}
 }

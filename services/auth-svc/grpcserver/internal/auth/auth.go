@@ -2,19 +2,13 @@ package auth
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"net/mail"
-	"time"
 
+	"github.com/hausops/mono/services/auth-svc/domain/auth"
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
-	"github.com/hausops/mono/services/auth-svc/domain/email"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
 	"github.com/hausops/mono/services/auth-svc/pb"
-	userpb "github.com/hausops/mono/services/user-svc/pb"
-	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -22,72 +16,29 @@ import (
 
 type server struct {
 	pb.UnimplementedAuthServer
-	log            *zap.Logger
-	user           userpb.UserServiceClient
-	credentialRepo credential.Repository
-	confirmRepo    confirm.Repository
-	sessionRepo    session.Repository
-	email          email.Dispatcher
+	auth *auth.Service
 }
 
-func NewServer(
-	log *zap.Logger,
-	user userpb.UserServiceClient,
-	credentialRepo credential.Repository,
-	confirmRepo confirm.Repository,
-	sessionRepo session.Repository,
-	email email.Dispatcher,
-) *server {
-	return &server{
-		log:            log,
-		user:           user,
-		credentialRepo: credentialRepo,
-		confirmRepo:    confirmRepo,
-		sessionRepo:    sessionRepo,
-		email:          email,
-	}
+func NewServer(auth *auth.Service) *server {
+	return &server{auth: auth}
 }
 
 func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empty, error) {
 	email, err := mail.ParseAddress(r.GetEmail())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
+		return nil, status.Error(codes.InvalidArgument, "invalid email address")
 	}
 
-	password := r.GetPassword()
-	err = credential.ValidatePassword(string(password))
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid password")
-	}
+	err = s.auth.SignUp(ctx, *email, r.GetPassword())
 
-	hashedPassword, err := credential.HashPassword(password)
 	if err != nil {
-		return nil, fmt.Errorf("hash password: %w", err)
-	}
-
-	_, err = s.user.Create(ctx, &userpb.EmailRequest{Email: email.Address})
-	if err != nil {
-		switch st, _ := status.FromError(err); st.Code() {
-		case codes.AlreadyExists:
+		switch err {
+		case credential.ErrAlreadyExists:
 			return nil, status.Error(codes.AlreadyExists, err.Error())
-		default:
-			return nil, fmt.Errorf("user.Create(%s): %w", email.Address, err)
+		case credential.ErrInvalidPassword:
+			return nil, status.Error(codes.InvalidArgument, "invalid password")
 		}
-	}
-
-	cred := credential.Credential{
-		Email:    *email,
-		Password: hashedPassword,
-	}
-
-	err = s.credentialRepo.Upsert(ctx, cred)
-	if err != nil {
-		return nil, fmt.Errorf("credentialRepo.Upsert(%s): %w", email.Address, err)
-	}
-
-	err = s.sendConfirmEmail(ctx, *email)
-	if err != nil {
-		return nil, fmt.Errorf("send confirm email (%s): %w", email.Address, err)
+		return nil, err
 	}
 
 	return new(emptypb.Empty), nil
@@ -96,25 +47,19 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 func (s *server) ResendConfirmationEmail(ctx context.Context, r *pb.EmailRequest) (*emptypb.Empty, error) {
 	email, err := mail.ParseAddress(r.GetEmail())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
+		return nil, status.Error(codes.InvalidArgument, "invalid email address")
 	}
 
-	if _, err := s.credentialRepo.FindByEmail(ctx, *email); err != nil {
-		return nil, status.Error(codes.NotFound, "credential not found")
-	}
+	err = s.auth.ResendConfirmationEmail(ctx, *email)
 
-	rec, err := s.confirmRepo.FindByEmail(ctx, *email)
 	if err != nil {
+		switch err {
+		case credential.ErrNotFound, confirm.ErrNotFound:
+			return nil, status.Error(codes.NotFound, err.Error())
+		case confirm.ErrAlreadyConfirmed:
+			return nil, status.Error(codes.FailedPrecondition, err.Error())
+		}
 		return nil, err
-	}
-
-	if rec.IsConfirmed {
-		return nil, status.Error(codes.FailedPrecondition, "Email already confirmed")
-	}
-
-	err = s.sendConfirmEmail(ctx, *email)
-	if err != nil {
-		return nil, fmt.Errorf("send confirm email (%s): %w", email.Address, err)
 	}
 
 	return new(emptypb.Empty), nil
@@ -126,33 +71,16 @@ func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*
 		return nil, status.Error(codes.InvalidArgument, "invalid token")
 	}
 
-	rec, err := s.confirmRepo.FindByToken(ctx, token)
+	sess, err := s.auth.ConfirmEmail(ctx, token)
+
 	if err != nil {
-		if errors.Is(err, confirm.ErrNotFound) {
+		switch err {
+		case confirm.ErrNotFound:
 			return nil, status.Error(codes.InvalidArgument, "invalid token")
+		case confirm.ErrAlreadyConfirmed:
+			return nil, status.Error(codes.FailedPrecondition, err.Error())
 		}
 		return nil, err
-	}
-
-	if rec.IsConfirmed {
-		return nil, status.Error(codes.FailedPrecondition, "email already confirmed")
-	}
-
-	confirmed := confirm.Record{
-		Email:       rec.Email,
-		IsConfirmed: true,
-		Token:       nil,
-	}
-
-	err = s.confirmRepo.Upsert(ctx, confirmed)
-	if err != nil {
-		return nil, fmt.Errorf("confirmRepo.Upsert(%s): %w", rec.Email.Address, err)
-	}
-
-	sess := session.NewSession(confirmed.Email, 24*time.Hour)
-	err = s.sessionRepo.Upsert(ctx, sess)
-	if err != nil {
-		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
 	}
 
 	res := &pb.Session{
@@ -165,31 +93,21 @@ func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*
 func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, error) {
 	email, err := mail.ParseAddress(r.GetEmail())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
+		return nil, status.Error(codes.InvalidArgument, "invalid email address")
 	}
 
-	cred, err := s.credentialRepo.FindByEmail(ctx, *email)
+	sess, err := s.auth.Login(ctx, *email, r.GetPassword())
+
 	if err != nil {
-		if errors.Is(err, credential.ErrNotFound) {
+		switch err {
+		case credential.ErrNotFound:
 			// Return as "not found" from service back-end.
 			// It will be turned to permission denied: invalid credential in auth-api.
 			return nil, status.Error(codes.NotFound, err.Error())
+		case credential.ErrInvalidPassword:
+			return nil, status.Error(codes.PermissionDenied, err.Error())
 		}
-		return nil, fmt.Errorf("credentialRepo.FindByEmail(%s): %w", email.Address, err)
-	}
-
-	err = bcrypt.CompareHashAndPassword(cred.Password, r.GetPassword())
-	if err != nil {
-		return nil, status.Error(
-			codes.PermissionDenied,
-			credential.ErrInvalidPassword.Error(),
-		)
-	}
-
-	sess := session.NewSession(cred.Email, 24*time.Hour)
-	err = s.sessionRepo.Upsert(ctx, sess)
-	if err != nil {
-		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
+		return nil, err
 	}
 
 	res := &pb.Session{
@@ -199,56 +117,16 @@ func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, er
 	return res, nil
 }
 
-// sendConfirmEmail generates a new confirm record and sends an email to
-// the specified `to` address to confirm the email address.
-func (s *server) sendConfirmEmail(ctx context.Context, to mail.Address) error {
-	token := confirm.GenerateToken()
-
-	{
-		delivery := email.Delivery{
-			To:      to,
-			From:    mail.Address{Name: "HausOps", Address: "no-reply@hausops.com"},
-			Subject: "Confirm your email address to start using HausOps",
-		}
-
-		msg := email.Message{
-			PlainText: fmt.Sprintf(
-				"Confirm your email address: https://auth.hausops.com/confirm?t=%s",
-				token,
-			),
-		}
-
-		err := s.email.Send(ctx, delivery, msg)
-		if err != nil {
-			return err
-		}
-	}
-
-	rec := confirm.Record{
-		Email:       to,
-		Token:       &token,
-		IsConfirmed: false,
-	}
-
-	return s.confirmRepo.Upsert(ctx, rec)
-}
-
 func (s *server) Logout(ctx context.Context, r *pb.LogoutRequest) (*emptypb.Empty, error) {
 	accessToken, err := session.ParseAccessToken(r.GetAccessToken())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid token")
 	}
 
-	sess, err := s.sessionRepo.FindByAccessToken(ctx, accessToken)
+	err = s.auth.Logout(ctx, accessToken)
 	if err != nil {
-		return nil, fmt.Errorf("find session by access token (%s): %w", accessToken, err)
+		return nil, err
 	}
-
-	_, err = s.sessionRepo.DeleteByEmail(ctx, sess.Email)
-	if err != nil {
-		return nil, fmt.Errorf("delete session by email (%s): %w", sess.Email.Address, err)
-	}
-
 	return new(emptypb.Empty), nil
 }
 
@@ -258,25 +136,14 @@ func (s *server) CheckSession(ctx context.Context, r *pb.CheckSessionRequest) (*
 		return nil, status.Error(codes.InvalidArgument, "invalid token")
 	}
 
-	sess, err := s.sessionRepo.FindByAccessToken(ctx, accessToken)
+	sess, err := s.auth.CheckSession(ctx, accessToken)
+
 	if err != nil {
-		if errors.Is(err, session.ErrNotFound) {
+		switch err {
+		case session.ErrExpired, session.ErrNotFound:
 			return &pb.CheckSessionResponse{Valid: false}, nil
 		}
 		return nil, err
-	}
-
-	if sess.IsExpired() {
-		go func() {
-			_, err := s.sessionRepo.DeleteByEmail(ctx, sess.Email)
-			if err != nil {
-				s.log.Error("Failed to delete expired session by email",
-					zap.String("email", sess.Email.Address),
-					zap.Error(err),
-				)
-			}
-		}()
-		return &pb.CheckSessionResponse{Valid: false}, nil
 	}
 
 	res := &pb.CheckSessionResponse{

@@ -5,6 +5,7 @@ import (
 )
 
 var (
-	ErrInvalidToken = errors.New("invalid confirmation token")
-	ErrNotFound     = errors.New("confirmation record not found")
+	ErrAlreadyConfirmed = errors.New("email already confirmed")
+	ErrInvalidToken     = errors.New("invalid confirmation token")
+	ErrNotFound         = errors.New("confirmation record not found")
 )

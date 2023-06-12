@@ -168,7 +168,7 @@ func TestSessionRepository(t *testing.T) {
 			sess := generateTestSession(t)
 			mustConfirmRepositoryUpsert(t, ctx, repo, sess)
 
-			up := session.NewSession(sess.Email, 30*time.Minute)
+			up := session.New(sess.Email, 30*time.Minute)
 			err := repo.Upsert(ctx, up)
 			if err != nil {
 				t.Errorf("Upsert failed: %v", err)
@@ -218,7 +218,7 @@ func generateTestSessions(t *testing.T, count int) []session.Session {
 
 func generateTestSession(t *testing.T) session.Session {
 	email := mail.Address{Address: gofakeit.Email()}
-	return session.NewSession(email, 15*time.Minute)
+	return session.New(email, 15*time.Minute)
 }
 
 func mustConfirmRepositoryUpsert(

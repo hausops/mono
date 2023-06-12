@@ -13,7 +13,9 @@ type Session struct {
 	ExpireAt    time.Time
 }
 
-func NewSession(email mail.Address, expireAfter time.Duration) Session {
+// New constructs a new Session with a new random access token
+// with the expiration based on expireAfter.
+func New(email mail.Address, expireAfter time.Duration) Session {
 	return Session{
 		AccessToken: NewAccessToken(),
 		Email:       email,
