@@ -3,7 +3,6 @@
 package confirm
 
 import (
-	"errors"
 	"net/mail"
 
 	"github.com/rs/xid"
@@ -34,9 +33,9 @@ func GenerateToken() Token {
 	return Token(xid.New())
 }
 
-func ParseToken(raw []byte) (Token, error) {
-	id, err := xid.FromBytes(raw)
-	if errors.Is(err, xid.ErrInvalidID) {
+func ParseToken(s string) (Token, error) {
+	id, err := xid.FromString(s)
+	if err != nil {
 		return Token{}, ErrInvalidToken
 	}
 	return Token(id), nil

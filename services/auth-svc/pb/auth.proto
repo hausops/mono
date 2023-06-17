@@ -34,16 +34,16 @@ message SignUpRequest {
   bytes password = 2;
 }
 
-message ConfirmEmailRequest { bytes token = 1; }
+message ConfirmEmailRequest { string token = 1; }
 
 message LoginRequest {
   string email = 1;
   bytes password = 2;
 }
 
-message LogoutRequest { bytes access_token = 1; }
+message LogoutRequest { string access_token = 1; }
 
-message CheckSessionRequest { bytes access_token = 1; }
+message CheckSessionRequest { string access_token = 1; }
 
 message CheckSessionResponse {
   bool valid = 1;
