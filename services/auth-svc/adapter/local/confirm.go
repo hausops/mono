@@ -49,14 +49,12 @@ func (r *confirmRepository) Upsert(_ context.Context, rec confirm.Record) error 
 
 	// If updating, remove the previous token index for the record.
 	if prev, ok := r.byEmail[email]; ok {
-		if prev.Token != nil {
-			delete(r.byToken, *prev.Token)
-		}
+		delete(r.byToken, prev.Token)
 	}
 
 	r.byEmail[email] = rec
-	if rec.Token != nil {
-		r.byToken[*rec.Token] = email
+	if !rec.Token.IsZero() {
+		r.byToken[rec.Token] = email
 	}
 	return nil
 }

@@ -16,7 +16,7 @@ func generateTestRecords(t *testing.T, count int) []confirm.Record {
 		token := confirm.GenerateToken()
 		records[i] = confirm.Record{
 			Email:       mail.Address{Address: gofakeit.Email()},
-			Token:       &token,
+			Token:       token,
 			IsConfirmed: false,
 		}
 	}

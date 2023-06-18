@@ -120,7 +120,7 @@ func (s *Service) ConfirmEmail(ctx context.Context, token confirm.Token) (*sessi
 	confirmed := confirm.Record{
 		Email:       rec.Email,
 		IsConfirmed: true,
-		Token:       nil,
+		Token:       confirm.Token{},
 	}
 
 	err = s.repos.Confirm.Upsert(ctx, confirmed)
@@ -222,7 +222,7 @@ func (s *Service) sendConfirmEmail(ctx context.Context, to mail.Address) error {
 
 	rec := confirm.Record{
 		Email:       to,
-		Token:       &token,
+		Token:       token,
 		IsConfirmed: false,
 	}
 

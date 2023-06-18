@@ -50,10 +50,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 		}
 
 		for i, rec := range records {
-			if rec.Token == nil {
-				continue
-			}
-			found, err := repo.FindByToken(ctx, *rec.Token)
+			found, err := repo.FindByToken(ctx, rec.Token)
 			if err != nil {
 				t.Errorf("records[%d]: FindByToken failed: %v", i, err)
 			}
@@ -69,7 +66,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
 				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       &token,
+				Token:       token,
 				IsConfirmed: false,
 			}
 
@@ -106,7 +103,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
 				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       &token,
+				Token:       token,
 				IsConfirmed: false,
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
@@ -130,7 +127,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
 				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       &token,
+				Token:       token,
 				IsConfirmed: false,
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
@@ -138,7 +135,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			newToken := confirm.GenerateToken()
 			up := confirm.Record{
 				Email:       rec.Email,
-				Token:       &newToken,
+				Token:       newToken,
 				IsConfirmed: rec.IsConfirmed,
 			}
 
@@ -160,7 +157,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 			// Find the record by token after the update.
 			{
-				found, err := repo.FindByToken(ctx, *up.Token)
+				found, err := repo.FindByToken(ctx, up.Token)
 				if err != nil {
 					t.Errorf("FindByToken failed: %v", err)
 				}
@@ -171,7 +168,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 			// Find the record by the _old_ token after the update.
 			{
-				_, err := repo.FindByToken(ctx, *rec.Token)
+				_, err := repo.FindByToken(ctx, rec.Token)
 				if err != confirm.ErrNotFound {
 					t.Error("Updated record found by the old token")
 				}
@@ -183,14 +180,14 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
 				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       &token,
+				Token:       token,
 				IsConfirmed: false,
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
 			up := confirm.Record{
 				Email:       rec.Email,
-				Token:       nil,
+				Token:       confirm.Token{},
 				IsConfirmed: true,
 			}
 
@@ -212,7 +209,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 			// Find the record by the _old_ token after the update.
 			{
-				_, err := repo.FindByToken(ctx, *rec.Token)
+				_, err := repo.FindByToken(ctx, rec.Token)
 				if err != confirm.ErrNotFound {
 					t.Error("Updated record found by the old token")
 				}

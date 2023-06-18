@@ -12,17 +12,15 @@ import (
 type Record struct {
 	Email       mail.Address
 	IsConfirmed bool
-	Token       *Token
-}
-
-// Pending represents a pending email confirmation.
-type Pending struct {
-	Email mail.Address
-	Token Token
+	Token       Token
 }
 
 // Token is a unique token for email confirmation.
 type Token xid.ID
+
+func (t Token) IsZero() bool {
+	return xid.ID(t).IsZero()
+}
 
 func (t Token) String() string {
 	return xid.ID(t).String()
