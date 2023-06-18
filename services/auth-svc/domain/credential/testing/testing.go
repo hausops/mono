@@ -9,7 +9,7 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
 )
 
-func generateTestCredentails(t *testing.T, count int) []credential.Credential {
+func generateTestCredentials(t *testing.T, count int) []credential.Credential {
 	t.Helper()
 	cc := make([]credential.Credential, count)
 	for i := 0; i < len(cc); i++ {

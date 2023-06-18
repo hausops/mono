@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit"
+	"github.com/google/go-cmp/cmp"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
 )
 
@@ -20,10 +21,10 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 
 	t.Run("FindByID", func(t *testing.T) {
 		repo := newRepo(t)
-		creds := generateTestCredentails(t, 3)
+		creds := generateTestCredentials(t, 3)
 		for i, cred := range creds {
 			if err := repo.Upsert(ctx, cred); err != nil {
-				t.Fatalf("Upsert credential[%d] failed: %v", i, err)
+				t.Fatalf("credential[%d]:Upsert failed: %v", i, err)
 			}
 		}
 
@@ -35,16 +36,13 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 		for i, cred := range creds {
 			found, err := repo.FindByEmail(ctx, cred.Email)
 			if err != nil {
-				t.Errorf("FindByEmail credential[%d] failed: %v", i, err)
+				t.Errorf("credential[%d]: FindByEmail failed: %v", i, err)
 			}
-			if found == nil {
-				t.Fatalf("FindByEmail credential[%d] returned nil credential", i)
-			}
-			if found.Email != cred.Email {
-				t.Errorf("FindByEmail credential[%d] returned incorrect email", i)
+			if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
+				t.Errorf("credential[%d]: FindByEmail returned incorrect email; (-want +got)\n%s", i, diff)
 			}
 			if !bytes.Equal(found.Password, cred.Password) {
-				t.Errorf("FindByEmail credential[%d] returned incorrect password", i)
+				t.Errorf("credential[%d]: FindByEmail returned incorrect password", i)
 			}
 		}
 	})
@@ -68,11 +66,8 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if found == nil {
-					t.Fatal("FindByEmail returned nil credential")
-				}
-				if found.Email != cred.Email {
-					t.Error("FindByEmail returned incorrect email")
+				if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
+					t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
 				}
 				if !bytes.Equal(found.Password, cred.Password) {
 					t.Error("FindByEmail returned incorrect password")
@@ -97,11 +92,8 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 			if err != nil {
 				t.Errorf("FindByEmail failed: %v", err)
 			}
-			if found == nil {
-				t.Fatal("FindByEmail returned nil credential")
-			}
-			if found.Email != cred.Email {
-				t.Error("FindByEmail returned incorrect email")
+			if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
+				t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
 			}
 			if !bytes.Equal(found.Password, cred.Password) {
 				t.Error("FindByEmail returned incorrect password")
@@ -131,11 +123,8 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if found == nil {
-					t.Fatal("FindByEmail returned nil credential")
-				}
-				if found.Email != up.Email {
-					t.Error("FindByEmail returned incorrect email")
+				if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
+					t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
 				}
 				if !bytes.Equal(found.Password, up.Password) {
 					t.Error("FindByEmail returned incorrect password")

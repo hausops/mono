@@ -20,21 +20,21 @@ func NewCredentialRepository(client *redis.Client) *credentialRepository {
 
 var _ credential.Repository = (*credentialRepository)(nil)
 
-func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Address) (*credential.Credential, error) {
+func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Address) (credential.Credential, error) {
 	k := r.key(email)
 	password, err := r.client.Get(ctx, k).Bytes()
 	switch {
 	case errors.Is(err, redis.Nil):
-		return nil, credential.ErrNotFound
+		return credential.Credential{}, credential.ErrNotFound
 	case err != nil:
-		return nil, fmt.Errorf("redis.Get(%s): %w", email.Address, err)
+		return credential.Credential{}, fmt.Errorf("redis.Get(%s): %w", email.Address, err)
 	}
 
 	cred := credential.Credential{
 		Email:    email,
 		Password: password,
 	}
-	return &cred, nil
+	return cred, nil
 }
 
 func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Credential) error {

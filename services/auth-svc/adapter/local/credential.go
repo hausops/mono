@@ -19,12 +19,12 @@ func NewCredentialRepository() *credentialRepository {
 
 var _ credential.Repository = (*credentialRepository)(nil)
 
-func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Address) (*credential.Credential, error) {
+func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Address) (credential.Credential, error) {
 	cred, ok := r.byEmail[email]
 	if !ok {
-		return nil, credential.ErrNotFound
+		return credential.Credential{}, credential.ErrNotFound
 	}
-	return &cred, nil
+	return cred, nil
 }
 
 func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Credential) error {

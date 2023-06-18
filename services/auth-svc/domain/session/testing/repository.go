@@ -2,11 +2,9 @@ package testing
 
 import (
 	"context"
-	"net/mail"
 	"testing"
 	"time"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
 )
@@ -27,7 +25,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 		// Delete a session that does not exist.
 		_, err := repo.DeleteByEmail(ctx, generateTestSession(t).Email)
 		if err != session.ErrNotFound {
-			t.Error("Deleted a session that does not exist")
+			t.Errorf("Deleted a session that does not exist; error = %v, want: ErrNotFound", err)
 		}
 
 		// Delete a session.
@@ -58,18 +56,18 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 
 			found, err := repo.FindByEmail(ctx, sess.Email)
 			if err != nil {
-				t.Errorf("FindByEmail sessions[%d] failed: %v", i, err)
+				t.Errorf("sessions[%d]: FindByEmail failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("FindByEmail sessions[%d] returned incorrect session; (-want +got)\n%s", i, diff)
+				t.Errorf("sessions[%d]: FindByEmail returned incorrect session; (-want +got)\n%s", i, diff)
 			}
 
 			found, err = repo.FindByAccessToken(ctx, sess.AccessToken)
 			if err != nil {
-				t.Errorf("FindByAccessToken sessions[%d] failed: %v", i, err)
+				t.Errorf("sessions[%d]: FindByAccessToken failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("FindByAccessToken sessions[%d] returned incorrect session; (-want +got)\n%s", i, diff)
+				t.Errorf("sessions[%d]: FindByAccessToken returned incorrect session; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
@@ -79,7 +77,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 		sessions := generateTestSessions(t, 3)
 		mustRepositoryUpsertMany(t, ctx, repo, sessions)
 
-		_, err := repo.FindByEmail(ctx, mail.Address{Address: gofakeit.Email()})
+		_, err := repo.FindByEmail(ctx, generateTestSession(t).Email)
 		if err != session.ErrNotFound {
 			t.Errorf("FindByEmail(randomEmail) error = %v, want: ErrNotFound", err)
 		}
@@ -87,10 +85,10 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 		for i, sess := range sessions {
 			found, err := repo.FindByEmail(ctx, sess.Email)
 			if err != nil {
-				t.Errorf("FindByEmail sessions[%d] failed: %v", i, err)
+				t.Errorf("sessions[%d]: FindByEmail failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("FindByEmail sessions[%d] returned incorrect session; (-want +got)\n%s", i, diff)
+				t.Errorf("sessions[%d]: FindByEmail returned incorrect session; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
@@ -108,10 +106,10 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 		for i, sess := range sessions {
 			found, err := repo.FindByAccessToken(ctx, sess.AccessToken)
 			if err != nil {
-				t.Errorf("FindByAccessToken sessions[%d] failed: %v", i, err)
+				t.Errorf("sessions[%d]: FindByAccessToken failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("FindByAccessToken sessions[%d] returned incorrect session; (-want +got)\n%s", i, diff)
+				t.Errorf("sessions[%d]: FindByAccessToken returned incorrect session; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
@@ -133,7 +131,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 					t.Errorf("FindByEmail failed: %v", err)
 				}
 				if diff := cmp.Diff(sess, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect session after insert; (-want +got)\n%s", diff)
+					t.Errorf("FindByEmail returned incorrect session; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -144,7 +142,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 					t.Errorf("FindByAccessToken failed: %v", err)
 				}
 				if diff := cmp.Diff(sess, found); diff != "" {
-					t.Errorf("FindByAccessToken returned incorrect session after insert; (-want +got)\n%s", diff)
+					t.Errorf("FindByAccessToken returned incorrect session; (-want +got)\n%s", diff)
 				}
 			}
 		})
@@ -186,7 +184,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 					t.Errorf("FindByEmail failed: %v", err)
 				}
 				if diff := cmp.Diff(up, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect session after update; (-want +got)\n%s", diff)
+					t.Errorf("FindByEmail returned incorrect session; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -197,7 +195,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 					t.Errorf("FindByAccessToken failed: %v", err)
 				}
 				if diff := cmp.Diff(up, found); diff != "" {
-					t.Errorf("FindByAccessToken returned incorrect session after update; (-want +got)\n%s", diff)
+					t.Errorf("FindByAccessToken returned incorrect session; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -233,7 +231,7 @@ func mustRepositoryUpsertMany(
 	t.Helper()
 	for i, sess := range sessions {
 		if err := repo.Upsert(ctx, sess); err != nil {
-			t.Fatalf("Upsert sessions[%d] failed: %v", i, err)
+			t.Fatalf("sessions[%d]: Upsert failed: %v", i, err)
 		}
 	}
 }
