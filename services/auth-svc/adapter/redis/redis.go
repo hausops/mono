@@ -18,6 +18,7 @@ func Conn(ctx context.Context, uri string) (*redis.Client, error) {
 		return nil, err
 	}
 
+	opt.MaxIdleConns = 5
 	opt.PoolSize = 16
 	opt.ReadTimeout = 1 * time.Second
 	opt.WriteTimeout = 2 * time.Second

@@ -21,7 +21,7 @@ func NewCredentialRepository(client *redis.Client) *credentialRepository {
 var _ credential.Repository = (*credentialRepository)(nil)
 
 func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Address) (*credential.Credential, error) {
-	k := r.withKeyPrefix(email.Address)
+	k := r.key(email)
 	password, err := r.client.Get(ctx, k).Bytes()
 	switch {
 	case errors.Is(err, redis.Nil):
@@ -38,11 +38,12 @@ func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Addre
 }
 
 func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Credential) error {
-	k := r.withKeyPrefix(cred.Email.Address)
+	k := r.key(cred.Email)
 	v := cred.Password
 	return r.client.Set(ctx, k, v, 0).Err()
 }
 
-func (r *credentialRepository) withKeyPrefix(key string) string {
-	return fmt.Sprintf("auth-svc.repos.credential.%s", key)
+// key formats the primary key for storing a credential value in redis.
+func (r *credentialRepository) key(email mail.Address) string {
+	return fmt.Sprintf("auth-svc:credential-repo:email:%s", email.Address)
 }
