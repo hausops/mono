@@ -27,11 +27,16 @@ func (r *sessionRepository) DeleteByEmail(ctx context.Context, email mail.Addres
 		return session.Session{}, err
 	}
 
-	pipe := r.client.Pipeline()
-	pipe.Del(ctx, r.primaryKey(sess.Email))
-	pipe.HDel(ctx, r.accessTokensKey(), sess.AccessToken.String())
+	primaryKey := r.primaryKey(email)
+	err = r.client.Watch(ctx, func(tx *redis.Tx) error {
+		pipe := tx.TxPipeline()
+		pipe.Del(ctx, primaryKey)
+		pipe.HDel(ctx, r.accessTokensKey(), sess.AccessToken.String())
 
-	_, err = pipe.Exec(ctx)
+		_, err = pipe.Exec(ctx)
+		return err
+	}, primaryKey)
+
 	if err != nil {
 		return session.Session{}, err
 	}
@@ -84,27 +89,28 @@ func (r *sessionRepository) FindByEmail(ctx context.Context, email mail.Address)
 
 func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) error {
 	primaryKey := r.primaryKey(sess.Email)
+	// Watch the primary key to detect changes by other clients
+	return r.client.Watch(ctx, func(tx *redis.Tx) error {
+		prevToken, err := tx.HGet(ctx, primaryKey, "accessToken").Result()
+		switch {
+		case errors.Is(err, redis.Nil):
+			// ok
+		case err != nil:
+			return fmt.Errorf("redis.HGet(%s, accessToken): %w", primaryKey, err)
+		}
 
-	// If updating, remove the previous access token index for the session.
-	prevToken, err := r.client.HGet(ctx, primaryKey, "accessToken").Result()
-	switch {
-	case errors.Is(err, redis.Nil):
-		// ok
-	case err != nil:
-		return fmt.Errorf("redis.HGet(%s, accessToken): %w", primaryKey, err)
-	}
+		pipe := tx.TxPipeline()
+		pipe.HSet(ctx, primaryKey, sessionRedis{
+			AccessToken: sess.AccessToken.String(),
+			ExpireAt:    sess.ExpireAt.UnixNano(),
+		})
 
-	pipe := r.client.Pipeline()
-	pipe.HSet(ctx, primaryKey, sessionRedis{
-		AccessToken: sess.AccessToken.String(),
-		ExpireAt:    sess.ExpireAt.UnixNano(),
-	})
+		pipe.HDel(ctx, r.accessTokensKey(), prevToken)
+		pipe.HSet(ctx, r.accessTokensKey(), sess.AccessToken.String(), sess.Email.Address)
 
-	pipe.HDel(ctx, r.accessTokensKey(), prevToken)
-	pipe.HSet(ctx, r.accessTokensKey(), sess.AccessToken.String(), sess.Email.Address)
-
-	_, err = pipe.Exec(ctx)
-	return err
+		_, err = pipe.Exec(ctx)
+		return err
+	}, primaryKey)
 }
 
 func (r *sessionRepository) primaryKey(email mail.Address) string {
