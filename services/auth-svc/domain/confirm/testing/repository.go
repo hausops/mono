@@ -2,6 +2,7 @@ package testing
 
 import (
 	"context"
+	"fmt"
 	"net/mail"
 	"testing"
 
@@ -20,7 +21,11 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 	t.Run("FindByEmail", func(t *testing.T) {
 		repo := newRepo(t)
-		records := generateTestRecords(t, 3)
+		records := []confirm.Record{
+			generateTestRecord(t, false),
+			generateTestRecord(t, true),
+			generateTestRecord(t, false),
+		}
 		mustRepositoryUpsertMany(t, ctx, repo, records)
 
 		_, err := repo.FindByEmail(ctx, mail.Address{Address: gofakeit.Email()})
@@ -33,15 +38,20 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			if err != nil {
 				t.Errorf("records[%d]: FindByEmail failed: %v", i, err)
 			}
-			if found != rec {
-				t.Errorf("records[%d]: FindByEmail returned incorrect record", i)
+			if diff := cmp.Diff(rec, found); diff != "" {
+				t.Errorf("records[%d]: FindByEmail returned incorrect record; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
 
 	t.Run("FindByToken", func(t *testing.T) {
 		repo := newRepo(t)
-		records := generateTestRecords(t, 3)
+		records := []confirm.Record{
+			generateTestRecord(t, false),
+			generateTestRecord(t, true),
+			generateTestRecord(t, false),
+			generateTestRecord(t, true),
+		}
 		mustRepositoryUpsertMany(t, ctx, repo, records)
 
 		_, err := repo.FindByToken(ctx, confirm.GenerateToken())
@@ -51,11 +61,23 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 		for i, rec := range records {
 			found, err := repo.FindByToken(ctx, rec.Token)
-			if err != nil {
-				t.Errorf("records[%d]: FindByToken failed: %v", i, err)
+
+			// Find confirmed records
+			if rec.IsConfirmed {
+				prefix := fmt.Sprintf("records[%d] (confirmed)", i)
+				if err != confirm.ErrNotFound {
+					t.Errorf("%s: FindByToken() error = %v, want: ErrNotFound", prefix, err)
+				}
+				continue
 			}
-			if found != rec {
-				t.Errorf("records[%d]: FindByToken returned incorrect record", i)
+
+			// Find unconfirmed records
+			prefix := fmt.Sprintf("records[%d] (unconfirmed)", i)
+			if err != nil {
+				t.Errorf("%s: FindByToken failed: %v", prefix, err)
+			}
+			if diff := cmp.Diff(rec, found); diff != "" {
+				t.Errorf("%s: FindByToken returned incorrect record; (-want +got)\n%s", prefix, diff)
 			}
 		}
 	})

@@ -49,7 +49,7 @@ func (r *sessionRepository) FindByAccessToken(ctx context.Context, token session
 
 	var sess session.Session
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		emailAddr, err := tx.Get(ctx, r.accessTokenKey(token)).Result()
+		emailAddr, err := tx.Get(ctx, accessTokenKey).Result()
 		switch {
 		case errors.Is(err, redis.Nil):
 			return session.ErrNotFound
