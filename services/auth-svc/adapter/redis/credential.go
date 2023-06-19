@@ -14,8 +14,8 @@ type credentialRepository struct {
 	client *redis.Client
 }
 
-func NewCredentialRepository(client *redis.Client) *credentialRepository {
-	return &credentialRepository{client: client}
+func NewCredentialRepository(c *redis.Client) *credentialRepository {
+	return &credentialRepository{client: c}
 }
 
 var _ credential.Repository = (*credentialRepository)(nil)
