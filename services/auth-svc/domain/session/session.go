@@ -37,8 +37,8 @@ func (at AccessToken) String() string {
 	return xid.ID(at).String()
 }
 
-func ParseAccessToken(b []byte) (AccessToken, error) {
-	id, err := xid.FromBytes(b)
+func ParseAccessToken(s string) (AccessToken, error) {
+	id, err := xid.FromString(s)
 	if err != nil {
 		return AccessToken{}, ErrInvalidToken
 	}
