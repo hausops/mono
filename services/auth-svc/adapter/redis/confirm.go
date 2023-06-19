@@ -120,11 +120,11 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 }
 
 func (r *confirmRepository) primaryKey(email mail.Address) string {
-	return fmt.Sprintf("auth-svc:confirm-repo:email:%s", email.Address)
+	return fmt.Sprintf("auth-svc:confirm:%s", email.Address)
 }
 
 func (r *confirmRepository) tokenKey(token confirm.Token) string {
-	return fmt.Sprintf("auth-svc:confirm-repo:token-idx:%s", token)
+	return fmt.Sprintf("auth-svc:confirm:token-idx:%s", token)
 }
 
 // confirmRecord represents stored record data for a given key in redis.

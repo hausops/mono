@@ -142,11 +142,11 @@ func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) er
 }
 
 func (r *sessionRepository) primaryKey(email mail.Address) string {
-	return fmt.Sprintf("auth-svc:session-repo:email:%s", email.Address)
+	return fmt.Sprintf("auth-svc:session:%s", email.Address)
 }
 
 func (r *sessionRepository) accessTokenKey(token session.AccessToken) string {
-	return fmt.Sprintf("auth-svc:session-repo:access-token-idx:%s", token)
+	return fmt.Sprintf("auth-svc:session:access-token-idx:%s", token)
 }
 
 // sessionRedis represents stored session data for a given key in redis.

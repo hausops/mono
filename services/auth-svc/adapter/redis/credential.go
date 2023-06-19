@@ -45,5 +45,5 @@ func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Crede
 
 // key formats the primary key for storing a credential value in redis.
 func (r *credentialRepository) key(email mail.Address) string {
-	return fmt.Sprintf("auth-svc:credential-repo:email:%s", email.Address)
+	return fmt.Sprintf("auth-svc:credential:%s", email.Address)
 }
