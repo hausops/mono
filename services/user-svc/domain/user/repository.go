@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/mail"
 
-	"github.com/google/uuid"
+	"github.com/rs/xid"
 )
 
 // Repository interface declares the behavior this package needs to perists and
@@ -12,11 +12,11 @@ import (
 type Repository interface {
 	// Delete removes the user with the given id and returns
 	// the deleted user, or an error if the user was not found.
-	Delete(ctx context.Context, id uuid.UUID) (User, error)
+	Delete(ctx context.Context, id xid.ID) (User, error)
 
 	// FindByID returns the user with the given id, or an error
 	// if the user was not found.
-	FindByID(ctx context.Context, id uuid.UUID) (User, error)
+	FindByID(ctx context.Context, id xid.ID) (User, error)
 
 	// FindByEmail returns the user with the given email, or an error
 	// if the user was not found.

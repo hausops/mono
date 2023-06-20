@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/domain/user"
+	"github.com/rs/xid"
 )
 
 func generateTestUsers(t *testing.T, count int) []user.User {
@@ -15,7 +15,7 @@ func generateTestUsers(t *testing.T, count int) []user.User {
 	uu := make([]user.User, count)
 	for i := 0; i < len(uu); i++ {
 		uu[i] = user.User{
-			ID:    uuid.New(),
+			ID:    xid.New(),
 			Email: mail.Address{Address: gofakeit.Email()},
 		}
 	}

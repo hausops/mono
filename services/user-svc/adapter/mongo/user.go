@@ -7,8 +7,8 @@ import (
 	"net/mail"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/domain/user"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -57,7 +57,7 @@ func createEmailIndex(ctx context.Context, userCollection *mongo.Collection) err
 // Ensure userRepository implements the user.Repository interface.
 var _ user.Repository = (*userRepository)(nil)
 
-func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) (user.User, error) {
+func (r *userRepository) Delete(ctx context.Context, id xid.ID) (user.User, error) {
 	var u userBSON
 	err := r.collection.FindOneAndDelete(ctx, bson.M{"_id": id}).Decode(&u)
 	if err != nil {
@@ -71,7 +71,7 @@ func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) (user.User, e
 	return u.toUser(), nil
 }
 
-func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (user.User, error) {
+func (r *userRepository) FindByID(ctx context.Context, id xid.ID) (user.User, error) {
 	var u userBSON
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&u)
 	if err != nil {
@@ -100,7 +100,7 @@ func (r *userRepository) FindByEmail(ctx context.Context, email mail.Address) (u
 }
 
 func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, error) {
-	if u.ID == (uuid.UUID{}) {
+	if u.ID == (xid.ID{}) {
 		return user.User{}, user.ErrMissingID
 	}
 
@@ -134,7 +134,7 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 }
 
 type userBSON struct {
-	ID          uuid.UUID    `bson:"_id"`
+	ID          xid.ID       `bson:"_id"`
 	Email       mail.Address `bson:"email"`
 	DateCreated time.Time    `bson:"date_created"`
 	DateUpdated time.Time    `bson:"date_updated"`

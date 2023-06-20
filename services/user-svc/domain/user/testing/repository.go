@@ -8,8 +8,8 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/domain/user"
+	"github.com/rs/xid"
 )
 
 // TestRepository is a suite of unit tests that ensure
@@ -29,7 +29,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		mustRepositoryUpsertMany(t, ctx, repo, uu)
 
 		// Delete a user that does not exist.
-		_, err := repo.Delete(ctx, uuid.New())
+		_, err := repo.Delete(ctx, xid.New())
 		if err != user.ErrNotFound {
 			t.Error("Deleted user that does not exist")
 		}
@@ -74,7 +74,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		uu := generateTestUsers(t, 3)
 		mustRepositoryUpsertMany(t, ctx, repo, uu)
 
-		_, err := repo.FindByID(ctx, uuid.New())
+		_, err := repo.FindByID(ctx, xid.New())
 		if err != user.ErrNotFound {
 			t.Errorf("FindByID(randomID) error = %v, want: ErrNotFound", err)
 		}
@@ -115,7 +115,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		t.Run("Insert a new user", func(t *testing.T) {
 			repo := newRepo(t)
 			u := user.User{
-				ID:    uuid.New(),
+				ID:    xid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
 
@@ -153,7 +153,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		t.Run("Update with the same user info", func(t *testing.T) {
 			repo := newRepo(t)
 			u := user.User{
-				ID:    uuid.New(),
+				ID:    xid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
 			mustRepositoryUpsert(t, ctx, repo, u)
@@ -170,13 +170,13 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		t.Run("Insert a new user with a duplicate email", func(t *testing.T) {
 			repo := newRepo(t)
 			u := user.User{
-				ID:    uuid.New(),
+				ID:    xid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
 			mustRepositoryUpsert(t, ctx, repo, u)
 
 			_, err := repo.Upsert(ctx, user.User{
-				ID:    uuid.New(),
+				ID:    xid.New(),
 				Email: u.Email,
 			})
 			if !errors.Is(err, user.ErrEmailTaken) {
@@ -205,7 +205,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 		t.Run("Update an existing user with a different email", func(t *testing.T) {
 			repo := newRepo(t)
 			u := user.User{
-				ID:    uuid.New(),
+				ID:    xid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
 			}
 			mustRepositoryUpsert(t, ctx, repo, u)

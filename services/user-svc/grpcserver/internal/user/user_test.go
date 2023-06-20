@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/adapter/local"
 	"github.com/hausops/mono/services/user-svc/grpcserver/internal/user"
 	"github.com/hausops/mono/services/user-svc/pb"
+	"github.com/rs/xid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -24,8 +24,8 @@ func TestCreate(t *testing.T) {
 		t.Errorf("Create(%s) error = %v", email, err)
 	}
 
-	if _, err := uuid.Parse(u.Id); err != nil {
-		t.Errorf("Id is not a uuid: %v", err)
+	if _, err := xid.FromString(u.Id); err != nil {
+		t.Errorf("Id is invalid: %v", err)
 	}
 
 	if u.Email != email {
