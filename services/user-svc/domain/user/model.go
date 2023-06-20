@@ -10,7 +10,6 @@ import (
 type User struct {
 	ID          uuid.UUID
 	Email       mail.Address
-	Verified    bool
 	DateCreated time.Time
 	DateUpdated time.Time
 }

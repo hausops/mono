@@ -33,7 +33,6 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 	u := user.User{
 		ID:          uuid.New(),
 		Email:       *email,
-		Verified:    false,
 		DateCreated: now,
 		DateUpdated: now,
 	}
@@ -71,7 +70,6 @@ func encodeUser(u user.User) *pb.User {
 	return &pb.User{
 		Id:          u.ID.String(),
 		Email:       u.Email.Address,
-		Verified:    u.Verified,
 		DateCreated: u.DateCreated.Format(time.RFC3339),
 		DateUpdated: u.DateUpdated.Format(time.RFC3339),
 	}

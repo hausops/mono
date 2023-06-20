@@ -49,6 +49,9 @@ func New(ctx context.Context, conf config.Config, logger *zap.Logger) (*server, 
 // If the server doesn't stop within the given timeout via ctx, it forcefully
 // stops the server.
 func (s *server) GracefulStop(ctx context.Context) {
+	// flushes logs at the end
+	defer s.logger.Sync()
+
 	stopped := make(chan struct{})
 	go func() {
 		s.Server.GracefulStop()
