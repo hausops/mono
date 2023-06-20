@@ -4,16 +4,16 @@ import (
 	"context"
 	"net/mail"
 
-	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/domain/user"
+	"github.com/rs/xid"
 )
 
 type userRepository struct {
 	// byID maps user ID to user.User.
-	byID map[uuid.UUID]user.User
+	byID map[xid.ID]user.User
 
 	// byEmail maps email address to user ID.
-	byEmail map[mail.Address]uuid.UUID
+	byEmail map[mail.Address]xid.ID
 }
 
 // NewUserRepository creates a new instance of the userRepository with
@@ -22,15 +22,15 @@ type userRepository struct {
 // The returned user repository can be used to store and retrieve user information.
 func NewUserRepository() *userRepository {
 	return &userRepository{
-		byID:    make(map[uuid.UUID]user.User),
-		byEmail: make(map[mail.Address]uuid.UUID),
+		byID:    make(map[xid.ID]user.User),
+		byEmail: make(map[mail.Address]xid.ID),
 	}
 }
 
 // Ensure userRepository implements the user.Repository interface.
 var _ user.Repository = (*userRepository)(nil)
 
-func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) (user.User, error) {
+func (r *userRepository) Delete(ctx context.Context, id xid.ID) (user.User, error) {
 	u, ok := r.byID[id]
 	if !ok {
 		return user.User{}, user.ErrNotFound
@@ -40,7 +40,7 @@ func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) (user.User, e
 	return u, nil
 }
 
-func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (user.User, error) {
+func (r *userRepository) FindByID(ctx context.Context, id xid.ID) (user.User, error) {
 	u, ok := r.byID[id]
 	if !ok {
 		return user.User{}, user.ErrNotFound

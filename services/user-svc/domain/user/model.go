@@ -4,11 +4,11 @@ import (
 	"net/mail"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/rs/xid"
 )
 
 type User struct {
-	ID          uuid.UUID
+	ID          xid.ID
 	Email       mail.Address
 	DateCreated time.Time
 	DateUpdated time.Time
