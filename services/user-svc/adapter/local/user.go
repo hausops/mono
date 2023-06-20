@@ -72,10 +72,7 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 
 	// If updating an existing user
 	if prev, ok := r.byID[u.ID]; ok {
-		// If the email address is changed, remove the old email mapping.
-		if u.Email.Address != prev.Email.Address {
-			delete(r.byEmail, prev.Email)
-		}
+		delete(r.byEmail, prev.Email)
 	}
 
 	r.byID[u.ID] = u

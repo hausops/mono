@@ -9,7 +9,7 @@ import (
 )
 
 func TestUserRepository(t *testing.T) {
-	usertesting.TestRepository(t, func() (user.Repository, func()) {
-		return local.NewUserRepository(), func() {}
+	usertesting.TestRepository(t, func(_ *testing.T) user.Repository {
+		return local.NewUserRepository()
 	})
 }

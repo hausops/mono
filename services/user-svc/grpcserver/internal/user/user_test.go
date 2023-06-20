@@ -29,11 +29,7 @@ func TestCreate(t *testing.T) {
 	}
 
 	if u.Email != email {
-		t.Errorf("Email does not match. Got: %s; want: %s", u.Email, email)
-	}
-
-	if u.Verified {
-		t.Error("User should be unverified")
+		t.Errorf("Email does not match; got %s, want %s", u.Email, email)
 	}
 
 	if u.DateCreated == "" {
@@ -48,19 +44,20 @@ func TestCreate(t *testing.T) {
 func TestCreate_InvalidEmail(t *testing.T) {
 	svc := user.NewServer(local.NewUserRepository())
 
-	email := "invalid-email"
-	req := &pb.EmailRequest{Email: email}
+	for _, email := range []string{"", "invalid-email"} {
+		req := &pb.EmailRequest{Email: email}
 
-	_, err := svc.Create(context.Background(), req)
-	if err == nil {
-		t.Errorf("Create(%s) got no error", email)
-	}
+		_, err := svc.Create(context.Background(), req)
+		if err == nil {
+			t.Errorf("Create(%s) got no error", email)
+		}
 
-	s, _ := status.FromError(err)
-	got := s.Code()
-	want := codes.InvalidArgument
-	if got != want {
-		t.Errorf("Create(%s) got %s error code; want %s", email, got, want)
+		s, _ := status.FromError(err)
+		got := s.Code()
+		want := codes.InvalidArgument
+		if got != want {
+			t.Errorf("Create(%s) got %s error code; want %s", email, got, want)
+		}
 	}
 }
 
@@ -97,7 +94,7 @@ func TestFindByEmail(t *testing.T) {
 	got := found.Email
 	want := u.Email
 	if got != want {
-		t.Errorf("Email does not match. Got: %s; want: %s", got, want)
+		t.Errorf("Email does not match; got %s, want %s", got, want)
 	}
 }
 

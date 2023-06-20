@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/hausops/mono/services/user-svc/domain/user"
 )
@@ -16,24 +17,16 @@ import (
 //
 // newRepo is a factory function that should return the concrete implementation
 // of user.Repository under test and teardown function.
-func TestRepository(t *testing.T,
-	newRepo func() (
-		user.Repository,
-		func(), // teardown
-	),
-) {
+//
+// t must is needed to be passed to each newRepo so the cleanup runs for
+// each subtest rather than once after the entire test suite finished.
+func TestRepository(t *testing.T, newRepo func(t *testing.T) user.Repository) {
 	ctx := context.Background()
 
 	t.Run("Delete", func(t *testing.T) {
-		repo, teardown := newRepo()
-		defer teardown()
-
+		repo := newRepo(t)
 		uu := generateTestUsers(t, 3)
-		for i, u := range uu {
-			if _, err := repo.Upsert(ctx, u); err != nil {
-				t.Fatalf("Upsert users[%d] failed: %v", i, err)
-			}
-		}
+		mustRepositoryUpsertMany(t, ctx, repo, uu)
 
 		// Delete a user that does not exist.
 		_, err := repo.Delete(ctx, uuid.New())
@@ -47,8 +40,8 @@ func TestRepository(t *testing.T,
 		if err != nil {
 			t.Errorf("Delete failed: %v", err)
 		}
-		if deleted != u {
-			t.Error("Delete returned incorrect user")
+		if diff := cmp.Diff(u, deleted); diff != "" {
+			t.Errorf("Delete returned incorrect user; (-want +got)\n%s", diff)
 		}
 
 		// The deleted user is no longer found by ID.
@@ -68,24 +61,18 @@ func TestRepository(t *testing.T,
 			u := uu[i]
 			found, err := repo.FindByID(ctx, u.ID)
 			if err != nil {
-				t.Errorf("FindByID users[%d] failed: %v", i, err)
+				t.Errorf("users[%d]: FindByID failed: %v", i, err)
 			}
-			if found != u {
-				t.Errorf("FindByID users[%d] returned incorrect user", i)
+			if diff := cmp.Diff(u, found); diff != "" {
+				t.Errorf("users[%d]: FindByID returned incorrect user; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
 
 	t.Run("FindByID", func(t *testing.T) {
-		repo, teardown := newRepo()
-		defer teardown()
-
+		repo := newRepo(t)
 		uu := generateTestUsers(t, 3)
-		for i, u := range uu {
-			if _, err := repo.Upsert(ctx, u); err != nil {
-				t.Fatalf("Upsert users[%d] failed: %v", i, err)
-			}
-		}
+		mustRepositoryUpsertMany(t, ctx, repo, uu)
 
 		_, err := repo.FindByID(ctx, uuid.New())
 		if err != user.ErrNotFound {
@@ -95,24 +82,18 @@ func TestRepository(t *testing.T,
 		for i, u := range uu {
 			found, err := repo.FindByID(ctx, u.ID)
 			if err != nil {
-				t.Errorf("FindByID users[%d] failed: %v", i, err)
+				t.Errorf("users[%d]: FindByID failed: %v", i, err)
 			}
-			if found != u {
-				t.Errorf("FindByID users[%d] returned incorrect user", i)
+			if diff := cmp.Diff(u, found); diff != "" {
+				t.Errorf("users[%d]: FindByID returned incorrect user; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
 
 	t.Run("FindByEmail", func(t *testing.T) {
-		repo, teardown := newRepo()
-		defer teardown()
-
+		repo := newRepo(t)
 		uu := generateTestUsers(t, 3)
-		for i, u := range uu {
-			if _, err := repo.Upsert(ctx, u); err != nil {
-				t.Fatalf("Upsert users[%d] failed: %v", i, err)
-			}
-		}
+		mustRepositoryUpsertMany(t, ctx, repo, uu)
 
 		_, err := repo.FindByEmail(ctx, mail.Address{Address: gofakeit.Email()})
 		if err != user.ErrNotFound {
@@ -122,19 +103,17 @@ func TestRepository(t *testing.T,
 		for i, u := range uu {
 			found, err := repo.FindByEmail(ctx, u.Email)
 			if err != nil {
-				t.Errorf("FindByEmail users[%d] failed: %v", i, err)
+				t.Errorf("users[%d]: FindByEmail failed: %v", i, err)
 			}
-			if found != u {
-				t.Errorf("FindByEmail users[%d] returned incorrect user", i)
+			if diff := cmp.Diff(u, found); diff != "" {
+				t.Errorf("users[%d]: FindByEmail returned incorrect user; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
 
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new user", func(t *testing.T) {
-			repo, teardown := newRepo()
-			defer teardown()
-
+			repo := newRepo(t)
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -144,8 +123,8 @@ func TestRepository(t *testing.T,
 			if err != nil {
 				t.Errorf("Upsert failed: %v", err)
 			}
-			if inserted != u {
-				t.Error("Upsert returned incorrect user")
+			if diff := cmp.Diff(u, inserted); diff != "" {
+				t.Errorf("Upsert returned incorrect user; (-want +got)\n%s", diff)
 			}
 
 			// Find the user by ID after the insert.
@@ -154,8 +133,8 @@ func TestRepository(t *testing.T,
 				if err != nil {
 					t.Errorf("FindByID failed: %v", err)
 				}
-				if found != inserted {
-					t.Error("FindByID returned incorrect user after insert")
+				if diff := cmp.Diff(inserted, found); diff != "" {
+					t.Errorf("FindByID returned incorrect user after insert; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -165,16 +144,14 @@ func TestRepository(t *testing.T,
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if found != inserted {
-					t.Error("FindByEmail returned incorrect user after insert")
+				if diff := cmp.Diff(inserted, found); diff != "" {
+					t.Errorf("FindByEmail returned incorrect user after insert; (-want +got)\n%s", diff)
 				}
 			}
 		})
 
 		t.Run("Update with the same user info", func(t *testing.T) {
-			repo, teardown := newRepo()
-			defer teardown()
-
+			repo := newRepo(t)
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -185,15 +162,13 @@ func TestRepository(t *testing.T,
 			if err != nil {
 				t.Errorf("Upsert failed: %v", err)
 			}
-			if updated != u {
-				t.Error("Upsert returned incorrect user")
+			if diff := cmp.Diff(u, updated); diff != "" {
+				t.Errorf("Upsert returned incorrect user; (-want +got)\n%s", diff)
 			}
 		})
 
 		t.Run("Insert a new user with a duplicate email", func(t *testing.T) {
-			repo, teardown := newRepo()
-			defer teardown()
-
+			repo := newRepo(t)
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -210,20 +185,12 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Update a user to use a duplicate email", func(t *testing.T) {
-			repo, teardown := newRepo()
-			defer teardown()
+			repo := newRepo(t)
+			uu := generateTestUsers(t, 3)
+			mustRepositoryUpsertMany(t, ctx, repo, uu)
 
-			u1 := user.User{
-				ID:    uuid.New(),
-				Email: mail.Address{Address: gofakeit.Email()},
-			}
-			mustRepositoryUpsert(t, ctx, repo, u1)
-
-			u2 := user.User{
-				ID:    uuid.New(),
-				Email: mail.Address{Address: gofakeit.Email()},
-			}
-			mustRepositoryUpsert(t, ctx, repo, u2)
+			u1 := uu[0]
+			u2 := uu[1]
 
 			// Update u2.Email to u1.Email
 			_, err := repo.Upsert(ctx, user.User{
@@ -236,9 +203,7 @@ func TestRepository(t *testing.T,
 		})
 
 		t.Run("Update an existing user with a different email", func(t *testing.T) {
-			repo, teardown := newRepo()
-			defer teardown()
-
+			repo := newRepo(t)
 			u := user.User{
 				ID:    uuid.New(),
 				Email: mail.Address{Address: gofakeit.Email()},
@@ -254,8 +219,8 @@ func TestRepository(t *testing.T,
 			if err != nil {
 				t.Errorf("Upsert failed: %v", err)
 			}
-			if updated != up {
-				t.Error("Upsert returned incorrect user")
+			if diff := cmp.Diff(updated, up); diff != "" {
+				t.Errorf("Upsert returned incorrect user; (-want +got)\n%s", diff)
 			}
 
 			// Find the user by ID after the update.
@@ -264,8 +229,8 @@ func TestRepository(t *testing.T,
 				if err != nil {
 					t.Errorf("FindByID failed: %v", err)
 				}
-				if found != updated {
-					t.Error("FindByID returned incorrect user after update")
+				if diff := cmp.Diff(updated, found); diff != "" {
+					t.Errorf("FindByID returned incorrect user after insert; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -275,8 +240,8 @@ func TestRepository(t *testing.T,
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if found != updated {
-					t.Error("FindByEmail returned incorrect user after update")
+				if diff := cmp.Diff(updated, found); diff != "" {
+					t.Errorf("FindByEmail returned incorrect user after insert; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -302,7 +267,25 @@ func mustRepositoryUpsert(
 	if err != nil {
 		t.Fatalf("Upsert failed: %v", err)
 	}
-	if inserted != u {
-		t.Fatal("Upsert returned incorrect user")
+	if diff := cmp.Diff(u, inserted); diff != "" {
+		t.Errorf("Upsert returned incorrect user; (-want +got)\n%s", diff)
+	}
+}
+
+func mustRepositoryUpsertMany(
+	t *testing.T,
+	ctx context.Context,
+	repo user.Repository,
+	uu []user.User,
+) {
+	t.Helper()
+	for i, u := range uu {
+		inserted, err := repo.Upsert(ctx, u)
+		if err != nil {
+			t.Fatalf("users[%d]: Upsert failed: %v", i, err)
+		}
+		if diff := cmp.Diff(u, inserted); diff != "" {
+			t.Errorf("users[%d]: Upsert returned incorrect user; (-want +got)\n%s", i, diff)
+		}
 	}
 }

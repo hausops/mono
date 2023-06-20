@@ -136,7 +136,6 @@ func (r *userRepository) Upsert(ctx context.Context, u user.User) (user.User, er
 type userBSON struct {
 	ID          uuid.UUID    `bson:"_id"`
 	Email       mail.Address `bson:"email"`
-	Verified    bool         `bson:"verified"`
 	DateCreated time.Time    `bson:"date_created"`
 	DateUpdated time.Time    `bson:"date_updated"`
 }
@@ -145,7 +144,6 @@ func (b *userBSON) toUser() user.User {
 	return user.User{
 		ID:          b.ID,
 		Email:       b.Email,
-		Verified:    b.Verified,
 		DateCreated: b.DateCreated,
 		DateUpdated: b.DateUpdated,
 	}
@@ -155,7 +153,6 @@ func toUserBSON(u user.User) userBSON {
 	return userBSON{
 		ID:          u.ID,
 		Email:       u.Email,
-		Verified:    u.Verified,
 		DateCreated: u.DateCreated,
 		DateUpdated: u.DateUpdated,
 	}

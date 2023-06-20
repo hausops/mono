@@ -35,7 +35,8 @@ func TestUserRepository(t *testing.T) {
 		t.Fatalf("new user repository (mongo): %v", err)
 	}
 
-	usertesting.TestRepository(t, func() (user.Repository, func()) {
-		return repo, func() { userCollection.Drop(ctx) }
+	usertesting.TestRepository(t, func(t *testing.T) user.Repository {
+		t.Cleanup(func() { userCollection.Drop(ctx) })
+		return repo
 	})
 }

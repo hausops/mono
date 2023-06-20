@@ -22,9 +22,7 @@ func newDependencies(ctx context.Context, conf config.Config) (*dependencies, er
 	var deps dependencies
 	switch t := conf.Datastore.(type) {
 	case config.LocalDatastore:
-		deps = dependencies{
-			userRepo: local.NewUserRepository(),
-		}
+		deps.userRepo = local.NewUserRepository()
 
 	case config.MongoDatastore:
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -45,9 +43,7 @@ func newDependencies(ctx context.Context, conf config.Config) (*dependencies, er
 			return nil, fmt.Errorf("new user repository (mongo): %w", err)
 		}
 
-		deps = dependencies{
-			userRepo: userRepo,
-		}
+		deps.userRepo = userRepo
 	}
 
 	if err := deps.validate(); err != nil {
