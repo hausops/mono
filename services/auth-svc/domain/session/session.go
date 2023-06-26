@@ -16,15 +16,17 @@ type Session struct {
 // New constructs a new Session with a new random access token
 // with the expiration based on expireAfter.
 func New(email mail.Address, expireAfter time.Duration) Session {
+	now := time.Now().UTC().Truncate(time.Second)
 	return Session{
 		AccessToken: NewAccessToken(),
 		Email:       email,
-		ExpireAt:    time.Now().UTC().Add(expireAfter),
+		ExpireAt:    now.Add(expireAfter.Truncate(time.Second)),
 	}
 }
 
 func (sess Session) IsExpired() bool {
-	return sess.ExpireAt.Before(time.Now().UTC())
+	now := time.Now().UTC().Truncate(time.Second)
+	return sess.ExpireAt.Before(now)
 }
 
 type AccessToken xid.ID

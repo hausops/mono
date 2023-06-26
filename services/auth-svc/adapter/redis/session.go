@@ -101,7 +101,7 @@ func (r *sessionRepository) FindByEmail(ctx context.Context, email mail.Address)
 		sess = session.Session{
 			AccessToken: token,
 			Email:       email,
-			ExpireAt:    time.Unix(0, saved.ExpireAt),
+			ExpireAt:    time.Unix(saved.ExpireAt, 0),
 		}
 		return nil
 	}, primaryKey)
@@ -122,7 +122,7 @@ func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) er
 		pipe := tx.TxPipeline()
 		pipe.HSet(ctx, primaryKey, sessionRedis{
 			AccessToken: sess.AccessToken.String(),
-			ExpireAt:    sess.ExpireAt.UnixNano(),
+			ExpireAt:    sess.ExpireAt.Unix(),
 		})
 
 		// If updating, remove the previous access token index for the session.
@@ -152,6 +152,6 @@ func (r *sessionRepository) accessTokenKey(token session.AccessToken) string {
 // sessionRedis represents stored session data for a given key in redis.
 type sessionRedis struct {
 	AccessToken string `redis:"accessToken"`
-	// ExpireAt is stored as UnixNano timestamp e.g. 1687146872522879000 in redis.
+	// ExpireAt is stored as Unix timestamp e.g. 1687146872 (seconds) in redis.
 	ExpireAt int64 `redis:"expireAt"`
 }
