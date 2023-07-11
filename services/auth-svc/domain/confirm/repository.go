@@ -10,7 +10,7 @@ type Repository interface {
 	// FindByToken retrieves a record based on the given token.
 	FindByToken(context.Context, Token) (Record, error)
 
-	// FindByToken retrieves a record for the given user ID.
+	// FindByUserID retrieves a record for the given user ID.
 	FindByUserID(ctx context.Context, userID string) (Record, error)
 
 	// Upsert inserts or updates an email confirmation record.

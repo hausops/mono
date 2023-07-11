@@ -3,12 +3,11 @@ package testing
 import (
 	"context"
 	"fmt"
-	"net/mail"
 	"testing"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
+	"github.com/rs/xid"
 )
 
 // TestRepository is a suite of unit tests that ensure
@@ -18,31 +17,6 @@ import (
 // of confirm.Repository under test.
 func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository) {
 	ctx := context.Background()
-
-	t.Run("FindByEmail", func(t *testing.T) {
-		repo := newRepo(t)
-		records := []confirm.Record{
-			generateTestRecord(t, false),
-			generateTestRecord(t, true),
-			generateTestRecord(t, false),
-		}
-		mustRepositoryUpsertMany(t, ctx, repo, records)
-
-		_, err := repo.FindByEmail(ctx, mail.Address{Address: gofakeit.Email()})
-		if err != confirm.ErrNotFound {
-			t.Errorf("FindByEmail(randomEmail) error = %v, want: ErrNotFound", err)
-		}
-
-		for i, rec := range records {
-			found, err := repo.FindByEmail(ctx, rec.Email)
-			if err != nil {
-				t.Errorf("records[%d]: FindByEmail failed: %v", i, err)
-			}
-			if diff := cmp.Diff(rec, found); diff != "" {
-				t.Errorf("records[%d]: FindByEmail returned incorrect record; (-want +got)\n%s", i, diff)
-			}
-		}
-	})
 
 	t.Run("FindByToken", func(t *testing.T) {
 		repo := newRepo(t)
@@ -82,14 +56,39 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 		}
 	})
 
+	t.Run("FindByUserID", func(t *testing.T) {
+		repo := newRepo(t)
+		records := []confirm.Record{
+			generateTestRecord(t, false),
+			generateTestRecord(t, true),
+			generateTestRecord(t, false),
+		}
+		mustRepositoryUpsertMany(t, ctx, repo, records)
+
+		_, err := repo.FindByUserID(ctx, xid.New().String())
+		if err != confirm.ErrNotFound {
+			t.Errorf("FindByUserID(randomUserID) error = %v, want: ErrNotFound", err)
+		}
+
+		for i, rec := range records {
+			found, err := repo.FindByUserID(ctx, rec.UserID)
+			if err != nil {
+				t.Errorf("records[%d]: FindByUserID failed: %v", i, err)
+			}
+			if diff := cmp.Diff(rec, found); diff != "" {
+				t.Errorf("records[%d]: FindByUserID returned incorrect record; (-want +got)\n%s", i, diff)
+			}
+		}
+	})
+
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new record", func(t *testing.T) {
 			repo := newRepo(t)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
-				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       token,
 				IsConfirmed: false,
+				Token:       token,
+				UserID:      xid.New().String(),
 			}
 
 			err := repo.Upsert(ctx, rec)
@@ -97,14 +96,14 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			// Find the record by email after the insert.
+			// Find the record by user ID after the insert.
 			{
-				found, err := repo.FindByEmail(ctx, rec.Email)
+				found, err := repo.FindByUserID(ctx, rec.UserID)
 				if err != nil {
-					t.Errorf("FindByEmail failed: %v", err)
+					t.Errorf("FindByUserID failed: %v", err)
 				}
 				if diff := cmp.Diff(rec, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect record; (-want +got)\n%s", diff)
+					t.Errorf("FindByUserID returned incorrect record; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -124,9 +123,9 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			repo := newRepo(t)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
-				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       token,
 				IsConfirmed: false,
+				Token:       token,
+				UserID:      xid.New().String(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
@@ -135,12 +134,12 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			found, err := repo.FindByEmail(ctx, rec.Email)
+			found, err := repo.FindByUserID(ctx, rec.UserID)
 			if err != nil {
-				t.Errorf("FindByEmail failed: %v", err)
+				t.Errorf("FindByUserID failed: %v", err)
 			}
 			if diff := cmp.Diff(rec, found); diff != "" {
-				t.Errorf("FindByEmail returned incorrect record; (-want +got)\n%s", diff)
+				t.Errorf("FindByUserID returned incorrect record; (-want +got)\n%s", diff)
 			}
 		})
 
@@ -148,17 +147,17 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			repo := newRepo(t)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
-				Email:       mail.Address{Address: gofakeit.Email()},
 				Token:       token,
 				IsConfirmed: false,
+				UserID:      xid.New().String(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
 			newToken := confirm.GenerateToken()
 			up := confirm.Record{
-				Email:       rec.Email,
-				Token:       newToken,
 				IsConfirmed: rec.IsConfirmed,
+				Token:       newToken,
+				UserID:      rec.UserID,
 			}
 
 			err := repo.Upsert(ctx, up)
@@ -166,14 +165,14 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			// Find the record by email after the update.
+			// Find the record by user ID after the update.
 			{
-				found, err := repo.FindByEmail(ctx, up.Email)
+				found, err := repo.FindByUserID(ctx, up.UserID)
 				if err != nil {
-					t.Errorf("FindByEmail failed: %v", err)
+					t.Errorf("FindByUserID failed: %v", err)
 				}
 				if diff := cmp.Diff(up, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect record; (-want +got)\n%s", diff)
+					t.Errorf("FindByUserID returned incorrect record; (-want +got)\n%s", diff)
 				}
 			}
 
@@ -201,16 +200,16 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			repo := newRepo(t)
 			token := confirm.GenerateToken()
 			rec := confirm.Record{
-				Email:       mail.Address{Address: gofakeit.Email()},
-				Token:       token,
 				IsConfirmed: false,
+				Token:       token,
+				UserID:      xid.New().String(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
 			up := confirm.Record{
-				Email:       rec.Email,
 				Token:       confirm.Token{},
 				IsConfirmed: true,
+				UserID:      rec.UserID,
 			}
 
 			err := repo.Upsert(ctx, up)
@@ -218,14 +217,14 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			// Find the record by email after the update.
+			// Find the record by user ID after the update.
 			{
-				found, err := repo.FindByEmail(ctx, up.Email)
+				found, err := repo.FindByUserID(ctx, up.UserID)
 				if err != nil {
-					t.Errorf("FindByEmail failed: %v", err)
+					t.Errorf("FindByUserID failed: %v", err)
 				}
 				if diff := cmp.Diff(up, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect record; (-want +got)\n%s", diff)
+					t.Errorf("FindByUserID returned incorrect record; (-want +got)\n%s", diff)
 				}
 			}
 

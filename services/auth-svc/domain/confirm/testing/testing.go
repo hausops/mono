@@ -2,27 +2,24 @@
 package testing
 
 import (
-	"net/mail"
 	"testing"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
+	"github.com/rs/xid"
 )
 
 func generateTestRecord(t *testing.T, confirmed bool) confirm.Record {
-	email := mail.Address{Address: gofakeit.Email()}
-
 	if confirmed {
 		return confirm.Record{
-			Email:       email,
 			IsConfirmed: true,
+			UserID:      xid.New().String(),
 		}
 	}
 
 	token := confirm.GenerateToken()
 	return confirm.Record{
-		Email:       email,
-		Token:       token,
 		IsConfirmed: false,
+		Token:       token,
+		UserID:      xid.New().String(),
 	}
 }
