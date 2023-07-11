@@ -57,7 +57,7 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 		return fmt.Errorf("hash password: %w", err)
 	}
 
-	_, err = s.user.Create(ctx, &userpb.EmailRequest{Email: email.Address})
+	usr, err := s.user.Create(ctx, &userpb.EmailRequest{Email: email.Address})
 	if err != nil {
 		switch st := status.Convert(err); st.Code() {
 		case codes.AlreadyExists:
@@ -67,82 +67,106 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 		}
 	}
 
-	cred := credential.Credential{
+	userID := usr.GetId()
+	err = s.repos.Credential.Upsert(ctx, credential.Credential{
 		Email:    email,
 		Password: hashedPassword,
-	}
-
-	err = s.repos.Credential.Upsert(ctx, cred)
+		UserID:   userID,
+	})
 	if err != nil {
 		return fmt.Errorf("credential.Upsert(%s): %w", email.Address, err)
 	}
 
-	err = s.sendConfirmEmail(ctx, email)
+	token := confirm.GenerateToken()
+	err = s.sendConfirmEmail(ctx, email, token)
 	if err != nil {
 		return fmt.Errorf("sendConfirmEmail(%s): %w", email.Address, err)
 	}
 
+	err = s.repos.Confirm.Upsert(ctx, confirm.Record{
+		IsConfirmed: false,
+		Token:       token,
+		UserID:      userID,
+	})
+	if err != nil {
+		return fmt.Errorf("confirm.Upsert(%s): %w", userID, err)
+	}
 	return nil
 }
 
 func (s *Service) ResendConfirmationEmail(ctx context.Context, email mail.Address) error {
-	if _, err := s.repos.Credential.FindByEmail(ctx, email); err != nil {
+	cred, err := s.repos.Credential.FindByEmail(ctx, email)
+	switch {
+	case errors.Is(err, credential.ErrNotFound):
 		return err
+	case err != nil:
+		return fmt.Errorf("credential.FindByEmail(%s): %w", email.Address, err)
 	}
 
-	rec, err := s.repos.Confirm.FindByEmail(ctx, email)
-	if err != nil {
+	rec, err := s.repos.Confirm.FindByUserID(ctx, cred.UserID)
+	switch {
+	case errors.Is(err, confirm.ErrNotFound):
 		return err
+	case err != nil:
+		return fmt.Errorf("confirm.FindByUserID(%s): %w", cred.UserID, err)
 	}
 
 	if rec.IsConfirmed {
 		return confirm.ErrAlreadyConfirmed
 	}
 
-	err = s.sendConfirmEmail(ctx, email)
+	token := confirm.GenerateToken()
+	err = s.sendConfirmEmail(ctx, email, token)
 	if err != nil {
 		return fmt.Errorf("sendConfirmEmail(%s): %w", email.Address, err)
 	}
 
+	err = s.repos.Confirm.Upsert(ctx, confirm.Record{
+		IsConfirmed: false,
+		Token:       token,
+		UserID:      rec.UserID,
+	})
+	if err != nil {
+		return fmt.Errorf("confirm.Upsert(%s): %w", rec.UserID, err)
+	}
 	return nil
 }
 
 func (s *Service) ConfirmEmail(ctx context.Context, token confirm.Token) (*session.Session, error) {
 	rec, err := s.repos.Confirm.FindByToken(ctx, token)
-	if err != nil {
+	switch {
+	case errors.Is(err, confirm.ErrNotFound):
 		return nil, err
+	case err != nil:
+		return nil, fmt.Errorf("confirm.FindByToken(%s): %w", token, err)
 	}
 
 	if rec.IsConfirmed {
 		return nil, confirm.ErrAlreadyConfirmed
 	}
 
-	confirmed := confirm.Record{
-		Email:       rec.Email,
+	err = s.repos.Confirm.Upsert(ctx, confirm.Record{
 		IsConfirmed: true,
-		Token:       confirm.Token{},
-	}
-
-	err = s.repos.Confirm.Upsert(ctx, confirmed)
+		UserID:      rec.UserID,
+	})
 	if err != nil {
-		return nil, fmt.Errorf("confirmRepo.Upsert(%s): %w", rec.Email.Address, err)
+		return nil, fmt.Errorf("confirm.Upsert(%s): %w", rec.UserID, err)
 	}
 
-	sess := session.New(confirmed.Email, 24*time.Hour)
+	sess := session.New(rec.UserID, 24*time.Hour)
 	err = s.repos.Session.Upsert(ctx, sess)
 	if err != nil {
-		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
+		return nil, fmt.Errorf("session.Upsert(%s): %w", rec.UserID, err)
 	}
-
 	return &sess, nil
 }
 
 func (s *Service) Login(ctx context.Context, email mail.Address, password []byte) (*session.Session, error) {
 	cred, err := s.repos.Credential.FindByEmail(ctx, email)
-	if err != nil {
-		if errors.Is(err, credential.ErrNotFound) {
-			return nil, err
-		}
+	switch {
+	case errors.Is(err, credential.ErrNotFound):
+		return nil, err
+	case err != nil:
 		return nil, fmt.Errorf("credential.FindByEmail(%s): %w", email.Address, err)
 	}
 
@@ -151,40 +175,41 @@ func (s *Service) Login(ctx context.Context, email mail.Address, password []byte
 		return nil, credential.ErrInvalidPassword
 	}
 
-	sess := session.New(cred.Email, 24*time.Hour)
+	sess := session.New(cred.UserID, 24*time.Hour)
 	err = s.repos.Session.Upsert(ctx, sess)
 	if err != nil {
-		return nil, fmt.Errorf("save session for %s: %w", sess.Email.Address, err)
+		return nil, fmt.Errorf("session.Upsert(%s): %w", cred.UserID, err)
 	}
 
 	return &sess, nil
 }
 
 func (s *Service) Logout(ctx context.Context, token session.AccessToken) error {
-	sess, err := s.repos.Session.FindByAccessToken(ctx, token)
-	if err != nil {
-		return fmt.Errorf("find session by access token (%s): %w", token, err)
-	}
-
-	_, err = s.repos.Session.DeleteByEmail(ctx, sess.Email)
-	if err != nil {
-		return fmt.Errorf("delete session by email (%s): %w", sess.Email.Address, err)
+	err := s.repos.Session.DeleteByAccessToken(ctx, token)
+	switch {
+	case errors.Is(err, session.ErrNotFound):
+		return err
+	case err != nil:
+		return fmt.Errorf("session.DeleteByAccessToken(%s): %w", token, err)
 	}
 	return nil
 }
 
 func (s *Service) CheckSession(ctx context.Context, token session.AccessToken) (*session.Session, error) {
 	sess, err := s.repos.Session.FindByAccessToken(ctx, token)
-	if err != nil {
+	switch {
+	case errors.Is(err, session.ErrNotFound):
 		return nil, err
+	case err != nil:
+		return nil, fmt.Errorf("session.FindByAccessToken(%s): %w", token, err)
 	}
 
 	if sess.IsExpired() {
 		go func() {
-			_, err := s.repos.Session.DeleteByEmail(ctx, sess.Email)
+			err := s.repos.Session.DeleteByAccessToken(ctx, token)
 			if err != nil {
-				s.log.Error("Failed to delete expired session by email",
-					zap.String("email", sess.Email.Address),
+				s.log.Error("Failed to delete expired session by access token",
+					zap.String("accessToken", token.String()),
 					zap.Error(err),
 				)
 			}
@@ -195,36 +220,25 @@ func (s *Service) CheckSession(ctx context.Context, token session.AccessToken) (
 	return &sess, nil
 }
 
-// sendConfirmEmail generates a new confirm record and sends an email to
-// the specified `to` address to confirm the email address.
-func (s *Service) sendConfirmEmail(ctx context.Context, to mail.Address) error {
-	token := confirm.GenerateToken()
-
-	{
-		delivery := email.Delivery{
-			To:      to,
-			From:    mail.Address{Name: "HausOps", Address: "no-reply@hausops.com"},
-			Subject: "Confirm your email address to start using HausOps",
-		}
-
-		msg := email.Message{
-			PlainText: fmt.Sprintf(
-				"Confirm your email address: https://auth.hausops.com/confirm?t=%s",
-				token,
-			),
-		}
-
-		err := s.email.Send(ctx, delivery, msg)
-		if err != nil {
-			return err
-		}
+// sendConfirmEmail sends an email to the specified `to` address
+// to confirm the email address.
+func (s *Service) sendConfirmEmail(
+	ctx context.Context,
+	to mail.Address,
+	token confirm.Token,
+) error {
+	delivery := email.Delivery{
+		To:      to,
+		From:    mail.Address{Name: "HausOps", Address: "no-reply@hausops.com"},
+		Subject: "Confirm your email address to start using HausOps",
 	}
 
-	rec := confirm.Record{
-		Email:       to,
-		Token:       token,
-		IsConfirmed: false,
+	msg := email.Message{
+		PlainText: fmt.Sprintf(
+			"Confirm your email address: https://auth.hausops.com/confirm?t=%s",
+			token,
+		),
 	}
 
-	return s.repos.Confirm.Upsert(ctx, rec)
+	return s.email.Send(ctx, delivery, msg)
 }

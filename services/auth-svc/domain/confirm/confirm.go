@@ -3,16 +3,14 @@
 package confirm
 
 import (
-	"net/mail"
-
 	"github.com/rs/xid"
 )
 
 // Record represents whether an email is confirmed.
 type Record struct {
-	Email       mail.Address
 	IsConfirmed bool
 	Token       Token
+	UserID      string
 }
 
 // Token is a unique token for email confirmation.
