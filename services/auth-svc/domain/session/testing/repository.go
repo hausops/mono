@@ -17,78 +17,54 @@ import (
 func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository) {
 	ctx := context.Background()
 
-	t.Run("DeleteByEmail", func(t *testing.T) {
+	t.Run("DeleteByAccessToken", func(t *testing.T) {
 		repo := newRepo(t)
 		sessions := generateTestSessions(t, 3)
 		mustRepositoryUpsertMany(t, ctx, repo, sessions)
 
 		// Delete a session that does not exist.
-		_, err := repo.DeleteByEmail(ctx, generateTestSession(t).Email)
+		err := repo.DeleteByAccessToken(ctx, generateTestSession(t).AccessToken)
 		if err != session.ErrNotFound {
 			t.Errorf("Deleted a session that does not exist; error = %v, want: ErrNotFound", err)
 		}
 
 		// Delete a session.
 		sess := sessions[1]
-		deleted, err := repo.DeleteByEmail(ctx, sess.Email)
+		err = repo.DeleteByAccessToken(ctx, sess.AccessToken)
 		if err != nil {
 			t.Errorf("Delete failed: %v", err)
 		}
-		if diff := cmp.Diff(sess, deleted); diff != "" {
-			t.Errorf("Delete returned incorrect session; (-want +got)\n%s", diff)
-		}
-
-		// The deleted session is no longer found by email.
-		_, err = repo.FindByEmail(ctx, deleted.Email)
-		if err != session.ErrNotFound {
-			t.Error("Deleted session found by email")
-		}
 
 		// The deleted session is no longer found by access token.
-		_, err = repo.FindByAccessToken(ctx, deleted.AccessToken)
+		_, err = repo.FindByAccessToken(ctx, sess.AccessToken)
 		if err != session.ErrNotFound {
 			t.Error("Deleted session found by access token")
+		}
+
+		// The deleted session is no longer found by user ID.
+		_, err = repo.FindByUserID(ctx, sess.UserID)
+		if err != session.ErrNotFound {
+			t.Error("Deleted session found by user ID")
 		}
 
 		// The other sessions still exist in the repository.
 		for _, i := range []int{0, 2} {
 			sess := sessions[i]
 
-			found, err := repo.FindByEmail(ctx, sess.Email)
-			if err != nil {
-				t.Errorf("sessions[%d]: FindByEmail failed: %v", i, err)
-			}
-			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("sessions[%d]: FindByEmail returned incorrect session; (-want +got)\n%s", i, diff)
-			}
-
-			found, err = repo.FindByAccessToken(ctx, sess.AccessToken)
+			found, err := repo.FindByAccessToken(ctx, sess.AccessToken)
 			if err != nil {
 				t.Errorf("sessions[%d]: FindByAccessToken failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
 				t.Errorf("sessions[%d]: FindByAccessToken returned incorrect session; (-want +got)\n%s", i, diff)
 			}
-		}
-	})
 
-	t.Run("FindByEmail", func(t *testing.T) {
-		repo := newRepo(t)
-		sessions := generateTestSessions(t, 3)
-		mustRepositoryUpsertMany(t, ctx, repo, sessions)
-
-		_, err := repo.FindByEmail(ctx, generateTestSession(t).Email)
-		if err != session.ErrNotFound {
-			t.Errorf("FindByEmail(randomEmail) error = %v, want: ErrNotFound", err)
-		}
-
-		for i, sess := range sessions {
-			found, err := repo.FindByEmail(ctx, sess.Email)
+			found, err = repo.FindByUserID(ctx, sess.UserID)
 			if err != nil {
-				t.Errorf("sessions[%d]: FindByEmail failed: %v", i, err)
+				t.Errorf("sessions[%d]: FindByUserID failed: %v", i, err)
 			}
 			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("sessions[%d]: FindByEmail returned incorrect session; (-want +got)\n%s", i, diff)
+				t.Errorf("sessions[%d]: FindByUserID returned incorrect session; (-want +got)\n%s", i, diff)
 			}
 		}
 	})
@@ -114,6 +90,27 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 		}
 	})
 
+	t.Run("FindByUserID", func(t *testing.T) {
+		repo := newRepo(t)
+		sessions := generateTestSessions(t, 3)
+		mustRepositoryUpsertMany(t, ctx, repo, sessions)
+
+		_, err := repo.FindByUserID(ctx, generateTestSession(t).UserID)
+		if err != session.ErrNotFound {
+			t.Errorf("FindByUserID(randomUserID) error = %v, want: ErrNotFound", err)
+		}
+
+		for i, sess := range sessions {
+			found, err := repo.FindByUserID(ctx, sess.UserID)
+			if err != nil {
+				t.Errorf("sessions[%d]: FindByUserID failed: %v", i, err)
+			}
+			if diff := cmp.Diff(sess, found); diff != "" {
+				t.Errorf("sessions[%d]: FindByUserID returned incorrect session; (-want +got)\n%s", i, diff)
+			}
+		}
+	})
+
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new session", func(t *testing.T) {
 			repo := newRepo(t)
@@ -124,17 +121,6 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			// Find the session by email after the insert.
-			{
-				found, err := repo.FindByEmail(ctx, sess.Email)
-				if err != nil {
-					t.Errorf("FindByEmail failed: %v", err)
-				}
-				if diff := cmp.Diff(sess, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect session; (-want +got)\n%s", diff)
-				}
-			}
-
 			// Find the session by access token after the insert.
 			{
 				found, err := repo.FindByAccessToken(ctx, sess.AccessToken)
@@ -143,6 +129,17 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 				}
 				if diff := cmp.Diff(sess, found); diff != "" {
 					t.Errorf("FindByAccessToken returned incorrect session; (-want +got)\n%s", diff)
+				}
+			}
+
+			// Find the session by user ID after the insert.
+			{
+				found, err := repo.FindByUserID(ctx, sess.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(sess, found); diff != "" {
+					t.Errorf("FindByUserID returned incorrect session; (-want +got)\n%s", diff)
 				}
 			}
 		})
@@ -157,35 +154,39 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			found, err := repo.FindByEmail(ctx, sess.Email)
-			if err != nil {
-				t.Errorf("FindByEmail failed: %v", err)
+			// Find the session by access token after the insert.
+			{
+				found, err := repo.FindByAccessToken(ctx, sess.AccessToken)
+				if err != nil {
+					t.Errorf("FindByAccessToken failed: %v", err)
+				}
+				if diff := cmp.Diff(sess, found); diff != "" {
+					t.Errorf("FindByAccessToken returned incorrect session; (-want +got)\n%s", diff)
+				}
 			}
-			if diff := cmp.Diff(sess, found); diff != "" {
-				t.Errorf("FindByEmail returned incorrect session; (-want +got)\n%s", diff)
+
+			// Find the session by user ID after the insert.
+			{
+				found, err := repo.FindByUserID(ctx, sess.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(sess, found); diff != "" {
+					t.Errorf("FindByUserID returned incorrect session; (-want +got)\n%s", diff)
+				}
 			}
 		})
 
+		// Same user ID, different access token i.e. generating a new session
 		t.Run("Update an existing session with a different access token", func(t *testing.T) {
 			repo := newRepo(t)
 			sess := generateTestSession(t)
 			mustRepositoryUpsert(t, ctx, repo, sess)
 
-			up := session.New(sess.Email, 30*time.Minute)
+			up := session.New(sess.UserID, 30*time.Minute)
 			err := repo.Upsert(ctx, up)
 			if err != nil {
 				t.Errorf("Upsert failed: %v", err)
-			}
-
-			// Find the session by email after the update.
-			{
-				found, err := repo.FindByEmail(ctx, sess.Email)
-				if err != nil {
-					t.Errorf("FindByEmail failed: %v", err)
-				}
-				if diff := cmp.Diff(up, found); diff != "" {
-					t.Errorf("FindByEmail returned incorrect session; (-want +got)\n%s", diff)
-				}
 			}
 
 			// Find the session by token after the update.
@@ -199,11 +200,71 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) session.Repository)
 				}
 			}
 
+			// Find the session by user ID after the update.
+			{
+				found, err := repo.FindByUserID(ctx, up.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found); diff != "" {
+					t.Errorf("FindByUserID returned incorrect session; (-want +got)\n%s", diff)
+				}
+			}
+
 			// Find the session by the _old_ token after the update.
 			{
 				_, err := repo.FindByAccessToken(ctx, sess.AccessToken)
 				if err != session.ErrNotFound {
 					t.Error("Updated session found by the old token")
+				}
+			}
+		})
+
+		// This handles an edge case that is unlikely to occur in normal operation.
+		// However, we still handle it to ensure proper index updating and maintain
+		// the desired data invariant.
+		t.Run("Updating with the same access token but different user ID", func(t *testing.T) {
+			repo := newRepo(t)
+			sess := generateTestSession(t)
+			mustRepositoryUpsert(t, ctx, repo, sess)
+
+			up := session.Session{
+				AccessToken: sess.AccessToken,
+				ExpireAt:    sess.ExpireAt,
+				UserID:      generateTestSession(t).UserID,
+			}
+			err := repo.Upsert(ctx, up)
+			if err != nil {
+				t.Errorf("Upsert failed: %v", err)
+			}
+
+			// Find the session by token after the update.
+			{
+				found, err := repo.FindByAccessToken(ctx, up.AccessToken)
+				if err != nil {
+					t.Errorf("FindByAccessToken failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found); diff != "" {
+					t.Errorf("FindByAccessToken returned incorrect session; (-want +got)\n%s", diff)
+				}
+			}
+
+			// Find the session by user ID after the update.
+			{
+				found, err := repo.FindByUserID(ctx, up.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found); diff != "" {
+					t.Errorf("FindByUserID returned incorrect session; (-want +got)\n%s", diff)
+				}
+			}
+
+			// Find the session by the _old_ user ID after the update.
+			{
+				_, err := repo.FindByUserID(ctx, sess.UserID)
+				if err != session.ErrNotFound {
+					t.Error("Updated session found by the old user ID")
 				}
 			}
 		})

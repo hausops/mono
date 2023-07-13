@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/mail"
 	"time"
 
 	"github.com/hausops/mono/services/auth-svc/domain/session"
@@ -21,59 +20,26 @@ func NewSessionRepository(c *redis.Client) *sessionRepository {
 
 var _ session.Repository = (*sessionRepository)(nil)
 
-func (r *sessionRepository) DeleteByEmail(ctx context.Context, email mail.Address) (session.Session, error) {
-	sess, err := r.FindByEmail(ctx, email)
+func (r *sessionRepository) DeleteByAccessToken(ctx context.Context, token session.AccessToken) error {
+	sess, err := r.FindByAccessToken(ctx, token)
 	if err != nil {
-		return session.Session{}, err
+		return err
 	}
 
-	primaryKey := r.primaryKey(email)
-	accessTokenKey := r.accessTokenKey(sess.AccessToken)
-	err = r.client.Watch(ctx, func(tx *redis.Tx) error {
+	primaryKey := r.primaryKey(token)
+	userIDKey := r.userIDKey(sess.UserID)
+	return r.client.Watch(ctx, func(tx *redis.Tx) error {
 		pipe := tx.TxPipeline()
 		pipe.Del(ctx, primaryKey)
-		pipe.Del(ctx, accessTokenKey)
+		pipe.Del(ctx, userIDKey)
 
 		_, err = pipe.Exec(ctx)
 		return err
-	}, primaryKey, accessTokenKey)
-
-	if err != nil {
-		return session.Session{}, err
-	}
-	return sess, nil
+	}, primaryKey, userIDKey)
 }
 
 func (r *sessionRepository) FindByAccessToken(ctx context.Context, token session.AccessToken) (session.Session, error) {
-	accessTokenKey := r.accessTokenKey(token)
-
-	var sess session.Session
-	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		emailAddr, err := tx.Get(ctx, accessTokenKey).Result()
-		switch {
-		case errors.Is(err, redis.Nil):
-			return session.ErrNotFound
-		case err != nil:
-			return fmt.Errorf("get email from access token %s: %w", token, err)
-		}
-
-		email, err := mail.ParseAddress(emailAddr)
-		if err != nil {
-			return fmt.Errorf("parse email address: %w", err)
-		}
-
-		sess, err = r.FindByEmail(ctx, *email)
-		if err != nil {
-			return fmt.Errorf("FindByEmail(%s): %w", email.Address, err)
-		}
-		return nil
-	}, accessTokenKey)
-
-	return sess, err
-}
-
-func (r *sessionRepository) FindByEmail(ctx context.Context, email mail.Address) (session.Session, error) {
-	primaryKey := r.primaryKey(email)
+	primaryKey := r.primaryKey(token)
 
 	var sess session.Session
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
@@ -93,15 +59,10 @@ func (r *sessionRepository) FindByEmail(ctx context.Context, email mail.Address)
 			return fmt.Errorf("redis.HGetAll(%s): %w", primaryKey, err)
 		}
 
-		token, err := session.ParseAccessToken(saved.AccessToken)
-		if err != nil {
-			return err
-		}
-
 		sess = session.Session{
 			AccessToken: token,
-			Email:       email,
 			ExpireAt:    time.Unix(saved.ExpireAt, 0),
+			UserID:      saved.UserID,
 		}
 		return nil
 	}, primaryKey)
@@ -109,49 +70,92 @@ func (r *sessionRepository) FindByEmail(ctx context.Context, email mail.Address)
 	return sess, err
 }
 
+func (r *sessionRepository) FindByUserID(ctx context.Context, userID string) (session.Session, error) {
+	userIDKey := r.userIDKey(userID)
+
+	var sess session.Session
+	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
+		accessTokenStr, err := tx.Get(ctx, userIDKey).Result()
+		switch {
+		case errors.Is(err, redis.Nil):
+			return session.ErrNotFound
+		case err != nil:
+			return fmt.Errorf("get email from user ID %s: %w", userID, err)
+		}
+
+		token, err := session.ParseAccessToken(accessTokenStr)
+		if err != nil {
+			return fmt.Errorf("parse access token: %w", err)
+		}
+
+		sess, err = r.FindByAccessToken(ctx, token)
+		if err != nil {
+			return fmt.Errorf("FindByEmail(%s): %w", token, err)
+		}
+		return nil
+	}, userIDKey)
+
+	return sess, err
+}
+
 func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) error {
-	primaryKey := r.primaryKey(sess.Email)
-	// Watch the primary key to detect changes by other clients
+	primaryKey := r.primaryKey(sess.AccessToken)
+	userIDKey := r.userIDKey(sess.UserID)
+	// Watch the primary key and user ID key to detect changes by other clients.
 	return r.client.Watch(ctx, func(tx *redis.Tx) error {
-		// Get the current access token or empty string
-		prevTokenStr, err := tx.HGet(ctx, primaryKey, "accessToken").Result()
+
+		// Get the current access token string for a given user ID
+		// or an empty string.
+		prevTokenStr, err := tx.Get(ctx, userIDKey).Result()
 		if err != nil && !errors.Is(err, redis.Nil) {
-			return fmt.Errorf("redis.HGet(%s, accessToken): %w", primaryKey, err)
+			return fmt.Errorf("redis.Get(%s): %w", userIDKey, err)
+		}
+
+		// Get the current user ID or empty string.
+		prevUserID, err := tx.HGet(ctx, primaryKey, "userID").Result()
+		if err != nil && !errors.Is(err, redis.Nil) {
+			return fmt.Errorf("redis.HGet(%s, userID): %w", primaryKey, err)
 		}
 
 		pipe := tx.TxPipeline()
-		pipe.HSet(ctx, primaryKey, sessionRedis{
-			AccessToken: sess.AccessToken.String(),
-			ExpireAt:    sess.ExpireAt.Unix(),
-		})
 
-		// If updating, remove the previous access token index for the session.
+		// If a token already exists for the user, delete the old session
+		// to ensure one active token per user.
 		if prevTokenStr != "" {
 			prevToken, err := session.ParseAccessToken(prevTokenStr)
 			if err != nil {
-				return fmt.Errorf("parse previously stored access token: %w", err)
+				return fmt.Errorf("session.ParseAccessToken(prevToken: %s): %w", prevTokenStr, err)
 			}
-			pipe.Del(ctx, r.accessTokenKey(prevToken))
+			pipe.Del(ctx, r.primaryKey(prevToken))
 		}
 
-		pipe.Set(ctx, r.accessTokenKey(sess.AccessToken), sess.Email.Address, 0)
+		// If updating, remove the previous user ID index for the session.
+		if prevUserID != "" {
+			pipe.Del(ctx, r.userIDKey(prevUserID))
+		}
+
+		pipe.HSet(ctx, primaryKey, sessionRedis{
+			ExpireAt: sess.ExpireAt.Unix(),
+			UserID:   sess.UserID,
+		})
+		pipe.Set(ctx, userIDKey, sess.AccessToken.String(), 0)
 
 		_, err = pipe.Exec(ctx)
 		return err
-	}, primaryKey)
+	}, primaryKey, userIDKey)
 }
 
-func (r *sessionRepository) primaryKey(email mail.Address) string {
-	return fmt.Sprintf("auth-svc:session:%s", email.Address)
+func (r *sessionRepository) primaryKey(token session.AccessToken) string {
+	return fmt.Sprintf("auth-svc:session:%s", token)
 }
 
-func (r *sessionRepository) accessTokenKey(token session.AccessToken) string {
-	return fmt.Sprintf("auth-svc:session:access-token-idx:%s", token)
+func (r *sessionRepository) userIDKey(userID string) string {
+	return fmt.Sprintf("auth-svc:session:user-id-idx:%s", userID)
 }
 
 // sessionRedis represents stored session data for a given key in redis.
 type sessionRedis struct {
-	AccessToken string `redis:"accessToken"`
 	// ExpireAt is stored as Unix timestamp e.g. 1687146872 (seconds) in redis.
-	ExpireAt int64 `redis:"expireAt"`
+	ExpireAt int64  `redis:"expireAt"`
+	UserID   string `redis:"userID"`
 }
