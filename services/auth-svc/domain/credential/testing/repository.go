@@ -19,7 +19,7 @@ import (
 func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Repository) {
 	ctx := context.Background()
 
-	t.Run("FindByID", func(t *testing.T) {
+	t.Run("FindByEmail", func(t *testing.T) {
 		repo := newRepo(t)
 		creds := generateTestCredentials(t, 3)
 		for i, cred := range creds {
@@ -38,8 +38,8 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 			if err != nil {
 				t.Errorf("credential[%d]: FindByEmail failed: %v", i, err)
 			}
-			if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
-				t.Errorf("credential[%d]: FindByEmail returned incorrect email; (-want +got)\n%s", i, diff)
+			if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+				t.Errorf("credential[%d]: FindByEmail returned incorrect credential; (-want +got)\n%s", i, diff)
 			}
 			if !bytes.Equal(found.Password, cred.Password) {
 				t.Errorf("credential[%d]: FindByEmail returned incorrect password", i)
@@ -47,13 +47,38 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 		}
 	})
 
+	t.Run("FindByUserID", func(t *testing.T) {
+		repo := newRepo(t)
+		creds := generateTestCredentials(t, 3)
+		for i, cred := range creds {
+			if err := repo.Upsert(ctx, cred); err != nil {
+				t.Fatalf("credential[%d]:Upsert failed: %v", i, err)
+			}
+		}
+
+		_, err := repo.FindByUserID(ctx, generateTestCredential(t).UserID)
+		if err != credential.ErrNotFound {
+			t.Errorf("FindByUserID(randomUserID) error = %v, want: ErrNotFound", err)
+		}
+
+		for i, cred := range creds {
+			found, err := repo.FindByUserID(ctx, cred.UserID)
+			if err != nil {
+				t.Errorf("credential[%d]: FindByUserID failed: %v", i, err)
+			}
+			if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+				t.Errorf("credential[%d]: FindByUserID returned incorrect credential; (-want +got)\n%s", i, diff)
+			}
+			if !bytes.Equal(found.Password, cred.Password) {
+				t.Errorf("credential[%d]: FindByUserID returned incorrect password", i)
+			}
+		}
+	})
+
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new credential", func(t *testing.T) {
 			repo := newRepo(t)
-			cred := credential.Credential{
-				Email:    mail.Address{Address: gofakeit.Email()},
-				Password: generateTestPassword(t),
-			}
+			cred := generateTestCredential(t)
 
 			err := repo.Upsert(ctx, cred)
 			if err != nil {
@@ -66,21 +91,32 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
-					t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
+				if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+					t.Errorf("FindByEmail returned incorrect credential; (-want +got)\n%s", diff)
 				}
 				if !bytes.Equal(found.Password, cred.Password) {
 					t.Error("FindByEmail returned incorrect password")
+				}
+			}
+
+			// Find the credential by user ID after the insert.
+			{
+				found, err := repo.FindByUserID(ctx, cred.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+					t.Errorf("FindByUserID returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, cred.Password) {
+					t.Error("FindByUserID returned incorrect password")
 				}
 			}
 		})
 
 		t.Run("Update with the same credential", func(t *testing.T) {
 			repo := newRepo(t)
-			cred := credential.Credential{
-				Email:    mail.Address{Address: gofakeit.Email()},
-				Password: generateTestPassword(t),
-			}
+			cred := generateTestCredential(t)
 			mustRepositoryUpsert(t, ctx, repo, cred)
 
 			err := repo.Upsert(ctx, cred)
@@ -88,29 +124,44 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 				t.Errorf("Upsert failed: %v", err)
 			}
 
-			found, err := repo.FindByEmail(ctx, cred.Email)
-			if err != nil {
-				t.Errorf("FindByEmail failed: %v", err)
+			// Find the credential by email after the insert.
+			{
+				found, err := repo.FindByEmail(ctx, cred.Email)
+				if err != nil {
+					t.Errorf("FindByEmail failed: %v", err)
+				}
+				if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+					t.Errorf("FindByEmail returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, cred.Password) {
+					t.Error("FindByEmail returned incorrect password")
+				}
 			}
-			if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
-				t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
-			}
-			if !bytes.Equal(found.Password, cred.Password) {
-				t.Error("FindByEmail returned incorrect password")
+
+			// Find the credential by user ID after the insert.
+			{
+				found, err := repo.FindByUserID(ctx, cred.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(cred, found, ignorePassword); diff != "" {
+					t.Errorf("FindByUserID returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, cred.Password) {
+					t.Error("FindByUserID returned incorrect password")
+				}
 			}
 		})
 
 		t.Run("Update an existing credential with a different password", func(t *testing.T) {
 			repo := newRepo(t)
-			cred := credential.Credential{
-				Email:    mail.Address{Address: gofakeit.Email()},
-				Password: generateTestPassword(t),
-			}
+			cred := generateTestCredential(t)
 			mustRepositoryUpsert(t, ctx, repo, cred)
 
 			up := credential.Credential{
 				Email:    cred.Email,
-				Password: generateTestPassword(t),
+				Password: generateTestCredential(t).Password,
+				UserID:   cred.UserID,
 			}
 			err := repo.Upsert(ctx, up)
 			if err != nil {
@@ -119,20 +170,92 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) credential.Reposito
 
 			// Find the credential by email after the update.
 			{
-				found, err := repo.FindByEmail(ctx, cred.Email)
+				found, err := repo.FindByEmail(ctx, up.Email)
 				if err != nil {
 					t.Errorf("FindByEmail failed: %v", err)
 				}
-				if diff := cmp.Diff(cred.Email, found.Email); diff != "" {
-					t.Errorf("FindByEmail returned incorrect email; (-want +got)\n%s", diff)
+				if diff := cmp.Diff(up, found, ignorePassword); diff != "" {
+					t.Errorf("FindByEmail returned incorrect credential; (-want +got)\n%s", diff)
 				}
 				if !bytes.Equal(found.Password, up.Password) {
 					t.Error("FindByEmail returned incorrect password")
 				}
 			}
+
+			// Find the credential by user ID after the update.
+			{
+				found, err := repo.FindByUserID(ctx, up.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found, ignorePassword); diff != "" {
+					t.Errorf("FindByUserID returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, up.Password) {
+					t.Error("FindByUserID returned incorrect password")
+				}
+			}
+		})
+
+		t.Run("Update an existing credential with a different email", func(t *testing.T) {
+			repo := newRepo(t)
+			cred := generateTestCredential(t)
+			mustRepositoryUpsert(t, ctx, repo, cred)
+
+			up := credential.Credential{
+				Email:    generateTestCredential(t).Email,
+				Password: cred.Password,
+				UserID:   cred.UserID,
+			}
+			err := repo.Upsert(ctx, up)
+			if err != nil {
+				t.Errorf("Upsert failed: %v", err)
+			}
+
+			// Find the credential by email after the update.
+			{
+				found, err := repo.FindByEmail(ctx, up.Email)
+				if err != nil {
+					t.Errorf("FindByEmail failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found, ignorePassword); diff != "" {
+					t.Errorf("FindByEmail returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, up.Password) {
+					t.Error("FindByEmail returned incorrect password")
+				}
+			}
+
+			// Find the credential by user ID after the update.
+			{
+				found, err := repo.FindByUserID(ctx, up.UserID)
+				if err != nil {
+					t.Errorf("FindByUserID failed: %v", err)
+				}
+				if diff := cmp.Diff(up, found, ignorePassword); diff != "" {
+					t.Errorf("FindByUserID returned incorrect credential; (-want +got)\n%s", diff)
+				}
+				if !bytes.Equal(found.Password, up.Password) {
+					t.Error("FindByUserID returned incorrect password")
+				}
+			}
+
+			// Find the credential by the _old_ email after the update.
+			{
+				_, err := repo.FindByEmail(ctx, cred.Email)
+				if err != credential.ErrNotFound {
+					t.Error("Updated session found by the old user ID")
+				}
+			}
 		})
 	})
 }
+
+// cmp.Option to ignore the Password field when comparing the output
+// using cmp.Diff()
+var ignorePassword = cmp.FilterPath(func(p cmp.Path) bool {
+	return p.String() == "Password"
+}, cmp.Ignore())
 
 func mustRepositoryUpsert(
 	t *testing.T,

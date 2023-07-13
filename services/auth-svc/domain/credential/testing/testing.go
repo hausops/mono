@@ -7,18 +7,25 @@ import (
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
+	"github.com/rs/xid"
 )
 
 func generateTestCredentials(t *testing.T, count int) []credential.Credential {
 	t.Helper()
 	cc := make([]credential.Credential, count)
 	for i := 0; i < len(cc); i++ {
-		cc[i] = credential.Credential{
-			Email:    mail.Address{Address: gofakeit.Email()},
-			Password: generateTestPassword(t),
-		}
+		cc[i] = generateTestCredential(t)
 	}
 	return cc
+}
+
+func generateTestCredential(t *testing.T) credential.Credential {
+	t.Helper()
+	return credential.Credential{
+		Email:    mail.Address{Address: gofakeit.Email()},
+		Password: generateTestPassword(t),
+		UserID:   xid.New().String(),
+	}
 }
 
 func generateTestPassword(t *testing.T) []byte {
