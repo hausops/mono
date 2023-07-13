@@ -100,12 +100,12 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 			pipe.Del(ctx, r.tokenKey(prevToken))
 		}
 
-		pipe.HSet(ctx, primaryKey, confirmRecord{
-			Confirmed: rec.IsConfirmed,
-			Token:     rec.Token.String(),
-		})
+		pipe.HSet(ctx, primaryKey, "confirmed", rec.IsConfirmed)
 
-		if !rec.Token.IsZero() {
+		if rec.Token.IsZero() {
+			pipe.HDel(ctx, primaryKey, "token")
+		} else {
+			pipe.HSet(ctx, primaryKey, "token", rec.Token.String())
 			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID, 0)
 		}
 
