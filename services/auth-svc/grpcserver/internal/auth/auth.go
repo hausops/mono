@@ -84,8 +84,8 @@ func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*
 	}
 
 	res := &pb.Session{
-		Email:       sess.Email.Address,
 		AccessToken: sess.AccessToken.String(),
+		UserID:      sess.UserID,
 	}
 	return res, nil
 }
@@ -111,8 +111,8 @@ func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, er
 	}
 
 	res := &pb.Session{
-		Email:       sess.Email.Address,
 		AccessToken: sess.AccessToken.String(),
+		UserID:      sess.UserID,
 	}
 	return res, nil
 }
@@ -147,8 +147,8 @@ func (s *server) CheckSession(ctx context.Context, r *pb.CheckSessionRequest) (*
 	}
 
 	res := &pb.CheckSessionResponse{
-		Valid: true,
-		Email: sess.Email.Address,
+		Valid:  true,
+		UserID: sess.UserID,
 	}
 	return res, nil
 }
