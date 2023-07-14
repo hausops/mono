@@ -9,7 +9,6 @@ import (
 
 	"github.com/hausops/mono/services/user-svc/domain/user"
 	"github.com/hausops/mono/services/user-svc/pb"
-	"github.com/rs/xid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -31,7 +30,7 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 
 	now := time.Now().UTC()
 	u := user.User{
-		ID:          xid.New(),
+		ID:          user.NewID(),
 		Email:       *email,
 		DateCreated: now,
 		DateUpdated: now,
