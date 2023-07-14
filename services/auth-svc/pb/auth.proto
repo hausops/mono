@@ -24,9 +24,11 @@ service Auth {
 message EmailRequest { string email = 1; }
 
 message Session {
-  // string user_id = 1;
-  string email = 2;
-  string access_token = 3;
+  string AccessToken = 1;
+  string UserID = 2;
+
+  reserved 3;
+  reserved "email";
 }
 
 message SignUpRequest {
@@ -46,9 +48,11 @@ message LogoutRequest { string access_token = 1; }
 message CheckSessionRequest { string access_token = 1; }
 
 message CheckSessionResponse {
-  bool valid = 1;
-  // string user_id = 2;
-  string email = 3;
+  bool Valid = 1;
+  string UserID = 2;
+
+  reserved 3;
+  reserved "email";
 }
 
 // message AccountStatus {

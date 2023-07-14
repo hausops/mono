@@ -2,53 +2,52 @@ package local
 
 import (
 	"context"
-	"net/mail"
 
 	"github.com/hausops/mono/services/auth-svc/domain/session"
 )
 
 type sessionRepository struct {
-	// Email is the primary key.
-	byEmail map[mail.Address]session.Session
-	// AcccessToken is an index.
-	byAccessToken map[session.AccessToken]mail.Address
+	// AcccessToken is the primary key.
+	byAccessToken map[session.AccessToken]session.Session
+	// UserID is an index.
+	byUserID map[string]session.AccessToken
 }
 
 func NewSessionRepository() *sessionRepository {
 	return &sessionRepository{
-		byEmail:       make(map[mail.Address]session.Session),
-		byAccessToken: make(map[session.AccessToken]mail.Address),
+		byAccessToken: make(map[session.AccessToken]session.Session),
+		byUserID:      make(map[string]session.AccessToken),
 	}
 }
 
 var _ session.Repository = (*sessionRepository)(nil)
 
-func (r *sessionRepository) DeleteByEmail(_ context.Context, email mail.Address) (session.Session, error) {
-	sess, ok := r.byEmail[email]
+func (r *sessionRepository) DeleteByAccessToken(_ context.Context, token session.AccessToken) error {
+	sess, ok := r.byAccessToken[token]
 	if !ok {
-		return session.Session{}, session.ErrNotFound
+		return session.ErrNotFound
 	}
 
-	delete(r.byEmail, email)
-	delete(r.byAccessToken, sess.AccessToken)
-	return sess, nil
+	delete(r.byAccessToken, token)
+	delete(r.byUserID, sess.UserID)
+	return nil
 }
 
 func (r *sessionRepository) FindByAccessToken(_ context.Context, token session.AccessToken) (session.Session, error) {
-	email, ok := r.byAccessToken[token]
-	if !ok {
-		return session.Session{}, session.ErrNotFound
-	}
-
-	sess, ok := r.byEmail[email]
+	sess, ok := r.byAccessToken[token]
 	if !ok {
 		return session.Session{}, session.ErrNotFound
 	}
 	return sess, nil
 }
 
-func (r *sessionRepository) FindByEmail(_ context.Context, email mail.Address) (session.Session, error) {
-	sess, ok := r.byEmail[email]
+func (r *sessionRepository) FindByUserID(_ context.Context, userID string) (session.Session, error) {
+	token, ok := r.byUserID[userID]
+	if !ok {
+		return session.Session{}, session.ErrNotFound
+	}
+
+	sess, ok := r.byAccessToken[token]
 	if !ok {
 		return session.Session{}, session.ErrNotFound
 	}
@@ -56,14 +55,20 @@ func (r *sessionRepository) FindByEmail(_ context.Context, email mail.Address) (
 }
 
 func (r *sessionRepository) Upsert(_ context.Context, sess session.Session) error {
-	email := sess.Email
+	token := sess.AccessToken
 
-	// If updating, remove the previous access token index for the session.
-	if prev, ok := r.byEmail[email]; ok {
-		delete(r.byAccessToken, prev.AccessToken)
+	// If updating, remove the previous user ID index for the session.
+	if prev, ok := r.byAccessToken[token]; ok {
+		delete(r.byUserID, prev.UserID)
 	}
 
-	r.byEmail[email] = sess
-	r.byAccessToken[sess.AccessToken] = email
+	// If a token already exists for the user, delete the old session
+	// to ensure one active token per user.
+	if prevToken, ok := r.byUserID[sess.UserID]; ok {
+		delete(r.byAccessToken, prevToken)
+	}
+
+	r.byAccessToken[token] = sess
+	r.byUserID[sess.UserID] = token
 	return nil
 }

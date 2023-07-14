@@ -12,6 +12,7 @@ import (
 type Credential struct {
 	Email    mail.Address
 	Password []byte
+	UserID   string
 }
 
 const minPasswordEntropy = 50

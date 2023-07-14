@@ -2,12 +2,11 @@
 package testing
 
 import (
-	"net/mail"
 	"testing"
 	"time"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
+	"github.com/rs/xid"
 )
 
 func generateTestSessions(t *testing.T, count int) []session.Session {
@@ -20,6 +19,5 @@ func generateTestSessions(t *testing.T, count int) []session.Session {
 }
 
 func generateTestSession(t *testing.T) session.Session {
-	email := mail.Address{Address: gofakeit.Email()}
-	return session.New(email, 15*time.Minute)
+	return session.New(xid.New().String(), 15*time.Minute)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/mail"
 
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
 	"github.com/redis/go-redis/v9"
@@ -20,49 +19,12 @@ func NewConfirmRepository(c *redis.Client) *confirmRepository {
 
 var _ confirm.Repository = (*confirmRepository)(nil)
 
-func (r *confirmRepository) FindByEmail(ctx context.Context, email mail.Address) (confirm.Record, error) {
-	primaryKey := r.primaryKey(email)
-
-	var rec confirm.Record
-	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		// We need to check with Exists before calling HGetAll because,
-		// when the key doesn't exist HGetAll returns nil error, instead of redis.Nil.
-		// https://github.com/redis/go-redis/issues/1668
-		n, err := tx.Exists(ctx, primaryKey).Result()
-		if err != nil {
-			return fmt.Errorf("redis.Exists(%s): %w", primaryKey, err)
-		} else if n == 0 {
-			return confirm.ErrNotFound
-		}
-
-		var saved confirmRecord
-		err = tx.HGetAll(ctx, primaryKey).Scan(&saved)
-		if err != nil {
-			return fmt.Errorf("redis.HGetAll(%s): %w", primaryKey, err)
-		}
-
-		token, err := confirm.ParseToken(saved.Token)
-		if err != nil {
-			return err
-		}
-
-		rec = confirm.Record{
-			Email:       email,
-			IsConfirmed: saved.Confirmed,
-			Token:       token,
-		}
-		return nil
-	}, primaryKey)
-
-	return rec, err
-}
-
 func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token) (confirm.Record, error) {
 	tokenKey := r.tokenKey(token)
 
 	var rec confirm.Record
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		emailAddr, err := tx.Get(ctx, tokenKey).Result()
+		userID, err := tx.Get(ctx, tokenKey).Result()
 		switch {
 		case errors.Is(err, redis.Nil):
 			return confirm.ErrNotFound
@@ -70,14 +32,9 @@ func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token
 			return fmt.Errorf("get email from token %s: %w", token, err)
 		}
 
-		email, err := mail.ParseAddress(emailAddr)
+		rec, err = r.FindByUserID(ctx, userID)
 		if err != nil {
-			return fmt.Errorf("parse email address: %w", err)
-		}
-
-		rec, err = r.FindByEmail(ctx, *email)
-		if err != nil {
-			return fmt.Errorf("FindByEmail(%s): %w", email.Address, err)
+			return fmt.Errorf("FindByUserID(%s): %w", userID, err)
 		}
 		return nil
 	}, tokenKey)
@@ -85,8 +42,46 @@ func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token
 	return rec, err
 }
 
+func (r *confirmRepository) FindByUserID(ctx context.Context, userID string) (confirm.Record, error) {
+	primaryKey := r.primaryKey(userID)
+
+	var rec confirm.Record
+	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
+		confirmed, err := tx.HGet(ctx, primaryKey, "confirmed").Bool()
+		switch {
+		case errors.Is(err, redis.Nil):
+			return confirm.ErrNotFound
+		case err != nil:
+			return fmt.Errorf("redis.HGet(%s, confirmed): %w", primaryKey, err)
+		}
+
+		tokenStr, err := tx.HGet(ctx, primaryKey, "token").Result()
+		if err != nil && !errors.Is(err, redis.Nil) {
+			return fmt.Errorf("redis.HGet(%s, token): %w", primaryKey, err)
+		}
+
+		var token confirm.Token
+		if tokenStr != "" {
+			token, err = confirm.ParseToken(tokenStr)
+			if err != nil {
+				return fmt.Errorf("confirm.ParseToken(%s): %w", tokenStr, err)
+			}
+		}
+
+		rec = confirm.Record{
+			IsConfirmed: confirmed,
+			Token:       token,
+			UserID:      userID,
+		}
+
+		return nil
+	}, primaryKey)
+
+	return rec, err
+}
+
 func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) error {
-	primaryKey := r.primaryKey(rec.Email)
+	primaryKey := r.primaryKey(rec.UserID)
 	// Watch the primary key to detect changes by other clients
 	return r.client.Watch(ctx, func(tx *redis.Tx) error {
 		// Get the current token or empty string
@@ -96,10 +91,6 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 		}
 
 		pipe := tx.Pipeline()
-		pipe.HSet(ctx, primaryKey, confirmRecord{
-			Confirmed: rec.IsConfirmed,
-			Token:     rec.Token.String(),
-		})
 
 		// Remove the previous token index
 		if prevTokenStr != "" {
@@ -110,8 +101,13 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 			pipe.Del(ctx, r.tokenKey(prevToken))
 		}
 
-		if !rec.Token.IsZero() {
-			pipe.Set(ctx, r.tokenKey(rec.Token), rec.Email.Address, 0)
+		pipe.HSet(ctx, primaryKey, "confirmed", rec.IsConfirmed)
+
+		if rec.Token.IsZero() {
+			pipe.HDel(ctx, primaryKey, "token")
+		} else {
+			pipe.HSet(ctx, primaryKey, "token", rec.Token.String())
+			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID, 0)
 		}
 
 		_, err = pipe.Exec(ctx)
@@ -119,16 +115,10 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 	}, primaryKey)
 }
 
-func (r *confirmRepository) primaryKey(email mail.Address) string {
-	return fmt.Sprintf("auth-svc:confirm:%s", email.Address)
+func (r *confirmRepository) primaryKey(userID string) string {
+	return fmt.Sprintf("auth-svc:confirm:%s", userID)
 }
 
 func (r *confirmRepository) tokenKey(token confirm.Token) string {
 	return fmt.Sprintf("auth-svc:confirm:token-idx:%s", token)
-}
-
-// confirmRecord represents stored record data for a given key in redis.
-type confirmRecord struct {
-	Confirmed bool   `redis:"confirmed"`
-	Token     string `redis:"token"`
 }

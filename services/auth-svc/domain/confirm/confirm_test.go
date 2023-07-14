@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
+	"github.com/rs/xid"
 )
 
 func TestParseToken(t *testing.T) {
@@ -27,4 +28,44 @@ func TestParseToken(t *testing.T) {
 			t.Error("Parsed access tokens from the same string are not equal")
 		}
 	})
+}
+
+func TestToken_IsZero(t *testing.T) {
+	var empty confirm.Token
+	if !empty.IsZero() {
+		t.Error("emptyToken.IsZero() = false, want true")
+	}
+
+	token := confirm.GenerateToken()
+	if token.IsZero() {
+		t.Errorf("Token{%s}.IsZero() = true, want false", token)
+	}
+}
+
+func TestToken_String(t *testing.T) {
+	// empty token
+	{
+		var empty confirm.Token
+		got := empty.String()
+		want := "00000000000000000000"
+		if got != want {
+			t.Errorf("emptyToken.String() = %s, want %s", got, want)
+		}
+	}
+
+	// non-empty token
+	{
+		tokenStr := "cio035jjtoj2i2fbtpq0"
+		id, err := xid.FromString(tokenStr)
+		if err != nil {
+			t.Fatalf("xid.FromString(%s) err = %v", tokenStr, err)
+		}
+		token := confirm.Token(id)
+
+		got := token.String()
+		want := tokenStr
+		if got != want {
+			t.Errorf("token.String() = %s, want %s", got, want)
+		}
+	}
 }
