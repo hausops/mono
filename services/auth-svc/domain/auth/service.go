@@ -11,6 +11,7 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
 	"github.com/hausops/mono/services/auth-svc/domain/email"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	userpb "github.com/hausops/mono/services/user-svc/pb"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -67,11 +68,15 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 		}
 	}
 
-	userID := usr.GetId()
+	uid, err := user.ParseID(usr.GetId())
+	if err != nil {
+		return fmt.Errorf("user.ParseID(%s): %w", usr.GetId(), err)
+	}
+
 	err = s.repos.Credential.Upsert(ctx, credential.Credential{
 		Email:    email,
 		Password: hashedPassword,
-		UserID:   userID,
+		UserID:   uid,
 	})
 	if err != nil {
 		return fmt.Errorf("credential.Upsert(%s): %w", email.Address, err)
@@ -86,10 +91,10 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 	err = s.repos.Confirm.Upsert(ctx, confirm.Record{
 		IsConfirmed: false,
 		Token:       token,
-		UserID:      userID,
+		UserID:      uid,
 	})
 	if err != nil {
-		return fmt.Errorf("confirm.Upsert(%s): %w", userID, err)
+		return fmt.Errorf("confirm.Upsert(%s): %w", uid, err)
 	}
 	return nil
 }

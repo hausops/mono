@@ -10,6 +10,7 @@ import (
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
 	"github.com/hausops/mono/services/auth-svc/pb"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -37,6 +38,8 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 		return nil, status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, credential.ErrInvalidPassword):
 		return nil, status.Error(codes.InvalidArgument, "invalid password")
+	case errors.Is(err, user.ErrInvalidID):
+		return nil, status.Error(codes.Internal, err.Error())
 	case err != nil:
 		return nil, err
 	}
@@ -84,7 +87,7 @@ func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*
 
 	res := &pb.Session{
 		AccessToken: sess.AccessToken.String(),
-		UserID:      sess.UserID,
+		UserID:      sess.UserID.String(),
 	}
 	return res, nil
 }
@@ -110,7 +113,7 @@ func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, er
 
 	res := &pb.Session{
 		AccessToken: sess.AccessToken.String(),
-		UserID:      sess.UserID,
+		UserID:      sess.UserID.String(),
 	}
 	return res, nil
 }
@@ -151,7 +154,7 @@ func (s *server) CheckSession(ctx context.Context, r *pb.CheckSessionRequest) (*
 
 	res := &pb.CheckSessionResponse{
 		Valid:  true,
-		UserID: sess.UserID,
+		UserID: sess.UserID.String(),
 	}
 	return res, nil
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
-	"github.com/rs/xid"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 // TestRepository is a suite of unit tests that ensure
@@ -65,7 +65,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 		}
 		mustRepositoryUpsertMany(t, ctx, repo, records)
 
-		_, err := repo.FindByUserID(ctx, xid.New().String())
+		_, err := repo.FindByUserID(ctx, user.NewID())
 		if err != confirm.ErrNotFound {
 			t.Errorf("FindByUserID(randomUserID) error = %v, want: ErrNotFound", err)
 		}
@@ -88,7 +88,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,
-				UserID:      xid.New().String(),
+				UserID:      user.NewID(),
 			}
 
 			err := repo.Upsert(ctx, rec)
@@ -125,7 +125,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,
-				UserID:      xid.New().String(),
+				UserID:      user.NewID(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
@@ -149,7 +149,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			rec := confirm.Record{
 				Token:       token,
 				IsConfirmed: false,
-				UserID:      xid.New().String(),
+				UserID:      user.NewID(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
@@ -202,7 +202,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,
-				UserID:      xid.New().String(),
+				UserID:      user.NewID(),
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 

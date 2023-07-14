@@ -4,19 +4,20 @@ import (
 	"context"
 
 	"github.com/hausops/mono/services/auth-svc/domain/session"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 type sessionRepository struct {
 	// AcccessToken is the primary key.
 	byAccessToken map[session.AccessToken]session.Session
 	// UserID is an index.
-	byUserID map[string]session.AccessToken
+	byUserID map[user.ID]session.AccessToken
 }
 
 func NewSessionRepository() *sessionRepository {
 	return &sessionRepository{
 		byAccessToken: make(map[session.AccessToken]session.Session),
-		byUserID:      make(map[string]session.AccessToken),
+		byUserID:      make(map[user.ID]session.AccessToken),
 	}
 }
 
@@ -41,8 +42,8 @@ func (r *sessionRepository) FindByAccessToken(_ context.Context, token session.A
 	return sess, nil
 }
 
-func (r *sessionRepository) FindByUserID(_ context.Context, userID string) (session.Session, error) {
-	token, ok := r.byUserID[userID]
+func (r *sessionRepository) FindByUserID(_ context.Context, uid user.ID) (session.Session, error) {
+	token, ok := r.byUserID[uid]
 	if !ok {
 		return session.Session{}, session.ErrNotFound
 	}

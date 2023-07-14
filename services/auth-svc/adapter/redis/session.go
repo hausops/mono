@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hausops/mono/services/auth-svc/domain/session"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -59,10 +60,15 @@ func (r *sessionRepository) FindByAccessToken(ctx context.Context, token session
 			return fmt.Errorf("redis.HGetAll(%s): %w", primaryKey, err)
 		}
 
+		uid, err := user.ParseID(saved.UserID)
+		if err != nil {
+			return fmt.Errorf("user.ParseID(%s): %w", saved.UserID, err)
+		}
+
 		sess = session.Session{
 			AccessToken: token,
 			ExpireAt:    time.Unix(saved.ExpireAt, 0),
-			UserID:      saved.UserID,
+			UserID:      uid,
 		}
 		return nil
 	}, primaryKey)
@@ -70,8 +76,8 @@ func (r *sessionRepository) FindByAccessToken(ctx context.Context, token session
 	return sess, err
 }
 
-func (r *sessionRepository) FindByUserID(ctx context.Context, userID string) (session.Session, error) {
-	userIDKey := r.userIDKey(userID)
+func (r *sessionRepository) FindByUserID(ctx context.Context, uid user.ID) (session.Session, error) {
+	userIDKey := r.userIDKey(uid)
 
 	var sess session.Session
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
@@ -80,7 +86,7 @@ func (r *sessionRepository) FindByUserID(ctx context.Context, userID string) (se
 		case errors.Is(err, redis.Nil):
 			return session.ErrNotFound
 		case err != nil:
-			return fmt.Errorf("get email from user ID %s: %w", userID, err)
+			return fmt.Errorf("get email from user ID %s: %w", uid, err)
 		}
 
 		token, err := session.ParseAccessToken(accessTokenStr)
@@ -112,7 +118,7 @@ func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) er
 		}
 
 		// Get the current user ID or empty string.
-		prevUserID, err := tx.HGet(ctx, primaryKey, "userID").Result()
+		prevUserIDStr, err := tx.HGet(ctx, primaryKey, "userID").Result()
 		if err != nil && !errors.Is(err, redis.Nil) {
 			return fmt.Errorf("redis.HGet(%s, userID): %w", primaryKey, err)
 		}
@@ -130,13 +136,17 @@ func (r *sessionRepository) Upsert(ctx context.Context, sess session.Session) er
 		}
 
 		// If updating, remove the previous user ID index for the session.
-		if prevUserID != "" {
+		if prevUserIDStr != "" {
+			prevUserID, err := user.ParseID(prevUserIDStr)
+			if err != nil {
+				return fmt.Errorf("user.ParseID(prevUserID: %s): %w", prevUserIDStr, err)
+			}
 			pipe.Del(ctx, r.userIDKey(prevUserID))
 		}
 
 		pipe.HSet(ctx, primaryKey, sessionRedis{
 			ExpireAt: sess.ExpireAt.Unix(),
-			UserID:   sess.UserID,
+			UserID:   sess.UserID.String(),
 		})
 		pipe.Set(ctx, userIDKey, sess.AccessToken.String(), 0)
 
@@ -149,8 +159,8 @@ func (r *sessionRepository) primaryKey(token session.AccessToken) string {
 	return fmt.Sprintf("auth-svc:session:%s", token)
 }
 
-func (r *sessionRepository) userIDKey(userID string) string {
-	return fmt.Sprintf("auth-svc:session:user-id-idx:%s", userID)
+func (r *sessionRepository) userIDKey(uid user.ID) string {
+	return fmt.Sprintf("auth-svc:session:user-id-idx:%s", uid)
 }
 
 // sessionRedis represents stored session data for a given key in redis.
