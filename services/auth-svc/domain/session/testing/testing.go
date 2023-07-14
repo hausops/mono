@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/hausops/mono/services/auth-svc/domain/session"
-	"github.com/rs/xid"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 func generateTestSessions(t *testing.T, count int) []session.Session {
@@ -19,5 +19,5 @@ func generateTestSessions(t *testing.T, count int) []session.Session {
 }
 
 func generateTestSession(t *testing.T) session.Session {
-	return session.New(xid.New().String(), 15*time.Minute)
+	return session.New(user.NewID(), 15*time.Minute)
 }

@@ -7,7 +7,7 @@ require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/google/go-cmp v0.5.9
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
-	github.com/hausops/mono/services/user-svc v0.0.0-20230529135640-7edd4954033f
+	github.com/hausops/mono/services/user-svc v0.0.0-20230714135341-e32d1493e904
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/xid v1.5.0
 	github.com/wagslane/go-password-validator v0.3.0

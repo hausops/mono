@@ -7,7 +7,7 @@ import (
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
-	"github.com/rs/xid"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 func generateTestCredentials(t *testing.T, count int) []credential.Credential {
@@ -24,7 +24,7 @@ func generateTestCredential(t *testing.T) credential.Credential {
 	return credential.Credential{
 		Email:    mail.Address{Address: gofakeit.Email()},
 		Password: generateTestPassword(t),
-		UserID:   xid.New().String(),
+		UserID:   user.NewID(),
 	}
 }
 
