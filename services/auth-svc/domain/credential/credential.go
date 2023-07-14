@@ -4,6 +4,7 @@ package credential
 import (
 	"net/mail"
 
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -12,7 +13,7 @@ import (
 type Credential struct {
 	Email    mail.Address
 	Password []byte
-	UserID   string
+	UserID   user.ID
 }
 
 const minPasswordEntropy = 50

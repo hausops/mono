@@ -3,6 +3,7 @@
 package confirm
 
 import (
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	"github.com/rs/xid"
 )
 
@@ -10,7 +11,7 @@ import (
 type Record struct {
 	IsConfirmed bool
 	Token       Token
-	UserID      string
+	UserID      user.ID
 }
 
 // Token is a unique token for email confirmation.

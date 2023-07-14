@@ -3,6 +3,8 @@ package credential
 import (
 	"context"
 	"net/mail"
+
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 // Repository interface declares the behavior this package needs to perists and
@@ -14,7 +16,7 @@ type Repository interface {
 
 	// FindByUserID returns the credential with the given user ID, or an error
 	// if the credential was not found.
-	FindByUserID(ctx context.Context, userID string) (Credential, error)
+	FindByUserID(context.Context, user.ID) (Credential, error)
 
 	// Upsert adds cred to the repository if it does not exist, or replaces
 	// the stored credential with the same email (without merging).

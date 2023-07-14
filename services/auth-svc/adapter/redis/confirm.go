@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -24,7 +25,7 @@ func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token
 
 	var rec confirm.Record
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		userID, err := tx.Get(ctx, tokenKey).Result()
+		uidStr, err := tx.Get(ctx, tokenKey).Result()
 		switch {
 		case errors.Is(err, redis.Nil):
 			return confirm.ErrNotFound
@@ -32,9 +33,14 @@ func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token
 			return fmt.Errorf("get email from token %s: %w", token, err)
 		}
 
-		rec, err = r.FindByUserID(ctx, userID)
+		uid, err := user.ParseID(uidStr)
 		if err != nil {
-			return fmt.Errorf("FindByUserID(%s): %w", userID, err)
+			return fmt.Errorf("user.ParseID(%s): %w", uidStr, err)
+		}
+
+		rec, err = r.FindByUserID(ctx, uid)
+		if err != nil {
+			return fmt.Errorf("FindByUserID(%s): %w", uid, err)
 		}
 		return nil
 	}, tokenKey)
@@ -42,8 +48,8 @@ func (r *confirmRepository) FindByToken(ctx context.Context, token confirm.Token
 	return rec, err
 }
 
-func (r *confirmRepository) FindByUserID(ctx context.Context, userID string) (confirm.Record, error) {
-	primaryKey := r.primaryKey(userID)
+func (r *confirmRepository) FindByUserID(ctx context.Context, uid user.ID) (confirm.Record, error) {
+	primaryKey := r.primaryKey(uid)
 
 	var rec confirm.Record
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
@@ -71,7 +77,7 @@ func (r *confirmRepository) FindByUserID(ctx context.Context, userID string) (co
 		rec = confirm.Record{
 			IsConfirmed: confirmed,
 			Token:       token,
-			UserID:      userID,
+			UserID:      uid,
 		}
 
 		return nil
@@ -107,7 +113,7 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 			pipe.HDel(ctx, primaryKey, "token")
 		} else {
 			pipe.HSet(ctx, primaryKey, "token", rec.Token.String())
-			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID, 0)
+			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID.String(), 0)
 		}
 
 		_, err = pipe.Exec(ctx)
@@ -115,8 +121,8 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 	}, primaryKey)
 }
 
-func (r *confirmRepository) primaryKey(userID string) string {
-	return fmt.Sprintf("auth-svc:confirm:%s", userID)
+func (r *confirmRepository) primaryKey(uid user.ID) string {
+	return fmt.Sprintf("auth-svc:confirm:%s", uid)
 }
 
 func (r *confirmRepository) tokenKey(token confirm.Token) string {

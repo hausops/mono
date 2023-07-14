@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/hausops/mono/services/auth-svc/domain/confirm"
-	"github.com/rs/xid"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
 func generateTestRecord(t *testing.T, confirmed bool) confirm.Record {
 	if confirmed {
 		return confirm.Record{
 			IsConfirmed: true,
-			UserID:      xid.New().String(),
+			UserID:      user.NewID(),
 		}
 	}
 
@@ -20,6 +20,6 @@ func generateTestRecord(t *testing.T, confirmed bool) confirm.Record {
 	return confirm.Record{
 		IsConfirmed: false,
 		Token:       token,
-		UserID:      xid.New().String(),
+		UserID:      user.NewID(),
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"net/mail"
 
 	"github.com/hausops/mono/services/auth-svc/domain/credential"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -25,7 +26,7 @@ func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Addre
 
 	var cred credential.Credential
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		userID, err := tx.Get(ctx, emailKey).Result()
+		uidStr, err := tx.Get(ctx, emailKey).Result()
 		switch {
 		case errors.Is(err, redis.Nil):
 			return credential.ErrNotFound
@@ -33,9 +34,14 @@ func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Addre
 			return fmt.Errorf("get user ID from email %s: %w", email.Address, err)
 		}
 
-		cred, err = r.FindByUserID(ctx, userID)
+		uid, err := user.ParseID(uidStr)
 		if err != nil {
-			return fmt.Errorf("FindByUserID(%s): %w", userID, err)
+			return fmt.Errorf("user.ParseID(%s): %w", uidStr, err)
+		}
+
+		cred, err = r.FindByUserID(ctx, uid)
+		if err != nil {
+			return fmt.Errorf("FindByUserID(%s): %w", uid, err)
 		}
 		return nil
 	}, emailKey)
@@ -43,8 +49,8 @@ func (r *credentialRepository) FindByEmail(ctx context.Context, email mail.Addre
 	return cred, err
 }
 
-func (r *credentialRepository) FindByUserID(ctx context.Context, userID string) (credential.Credential, error) {
-	primaryKey := r.primaryKey(userID)
+func (r *credentialRepository) FindByUserID(ctx context.Context, uid user.ID) (credential.Credential, error) {
+	primaryKey := r.primaryKey(uid)
 
 	var cred credential.Credential
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
@@ -72,7 +78,7 @@ func (r *credentialRepository) FindByUserID(ctx context.Context, userID string) 
 		cred = credential.Credential{
 			Email:    *email,
 			Password: saved.Password,
-			UserID:   userID,
+			UserID:   uid,
 		}
 		return nil
 	}, primaryKey)
@@ -106,7 +112,7 @@ func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Crede
 			Password: cred.Password,
 		})
 
-		pipe.Set(ctx, r.emailKey(cred.Email), cred.UserID, 0)
+		pipe.Set(ctx, r.emailKey(cred.Email), cred.UserID.String(), 0)
 
 		_, err = pipe.Exec(ctx)
 		return err
@@ -114,8 +120,8 @@ func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Crede
 }
 
 // key formats the primary key for storing a credential value in redis.
-func (r *credentialRepository) primaryKey(userID string) string {
-	return fmt.Sprintf("auth-svc:credential:%s", userID)
+func (r *credentialRepository) primaryKey(uid user.ID) string {
+	return fmt.Sprintf("auth-svc:credential:%s", uid)
 }
 
 func (r *credentialRepository) emailKey(email mail.Address) string {
