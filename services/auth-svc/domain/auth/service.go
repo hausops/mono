@@ -97,6 +97,10 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 func (s *Service) ResendConfirmationEmail(ctx context.Context, email mail.Address) error {
 	cred, err := s.repos.Credential.FindByEmail(ctx, email)
 	switch {
+	// Although it may seem repetitive and verbose to explicitly match errors,
+	// and simply pass them, it makes the method to be self-documenting.
+	// By listing all "known" errors here, callers can easily review the list
+	// and determine how to handle each case.
 	case errors.Is(err, credential.ErrNotFound):
 		return err
 	case err != nil:

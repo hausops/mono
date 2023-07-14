@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"net/mail"
 
 	"github.com/hausops/mono/services/auth-svc/domain/auth"
@@ -31,13 +32,12 @@ func (s *server) SignUp(ctx context.Context, r *pb.SignUpRequest) (*emptypb.Empt
 
 	err = s.auth.SignUp(ctx, *email, r.GetPassword())
 
-	if err != nil {
-		switch err {
-		case credential.ErrAlreadyExists:
-			return nil, status.Error(codes.AlreadyExists, err.Error())
-		case credential.ErrInvalidPassword:
-			return nil, status.Error(codes.InvalidArgument, "invalid password")
-		}
+	switch {
+	case errors.Is(err, credential.ErrAlreadyExists):
+		return nil, status.Error(codes.AlreadyExists, err.Error())
+	case errors.Is(err, credential.ErrInvalidPassword):
+		return nil, status.Error(codes.InvalidArgument, "invalid password")
+	case err != nil:
 		return nil, err
 	}
 
@@ -52,13 +52,13 @@ func (s *server) ResendConfirmationEmail(ctx context.Context, r *pb.EmailRequest
 
 	err = s.auth.ResendConfirmationEmail(ctx, *email)
 
-	if err != nil {
-		switch err {
-		case credential.ErrNotFound, confirm.ErrNotFound:
-			return nil, status.Error(codes.NotFound, err.Error())
-		case confirm.ErrAlreadyConfirmed:
-			return nil, status.Error(codes.FailedPrecondition, err.Error())
-		}
+	switch {
+	case errors.Is(err, confirm.ErrNotFound),
+		errors.Is(err, credential.ErrNotFound):
+		return nil, status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, confirm.ErrAlreadyConfirmed):
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	case err != nil:
 		return nil, err
 	}
 
@@ -73,13 +73,12 @@ func (s *server) ConfirmEmail(ctx context.Context, r *pb.ConfirmEmailRequest) (*
 
 	sess, err := s.auth.ConfirmEmail(ctx, token)
 
-	if err != nil {
-		switch err {
-		case confirm.ErrNotFound:
-			return nil, status.Error(codes.InvalidArgument, "invalid token")
-		case confirm.ErrAlreadyConfirmed:
-			return nil, status.Error(codes.FailedPrecondition, err.Error())
-		}
+	switch {
+	case errors.Is(err, confirm.ErrNotFound):
+		return nil, status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, confirm.ErrAlreadyConfirmed):
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	case err != nil:
 		return nil, err
 	}
 
@@ -98,15 +97,14 @@ func (s *server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.Session, er
 
 	sess, err := s.auth.Login(ctx, *email, r.GetPassword())
 
-	if err != nil {
-		switch err {
-		case credential.ErrNotFound:
-			// Return as "not found" from service back-end.
-			// It will be turned to permission denied: invalid credential in auth-api.
-			return nil, status.Error(codes.NotFound, err.Error())
-		case credential.ErrInvalidPassword:
-			return nil, status.Error(codes.PermissionDenied, err.Error())
-		}
+	switch {
+	case errors.Is(err, credential.ErrNotFound):
+		// Return as "not found" from service back-end.
+		// It will be turned to permission denied: invalid credential in auth-api.
+		return nil, status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, credential.ErrInvalidPassword):
+		return nil, status.Error(codes.PermissionDenied, err.Error())
+	case err != nil:
 		return nil, err
 	}
 
@@ -124,9 +122,14 @@ func (s *server) Logout(ctx context.Context, r *pb.LogoutRequest) (*emptypb.Empt
 	}
 
 	err = s.auth.Logout(ctx, accessToken)
-	if err != nil {
+
+	switch {
+	case errors.Is(err, session.ErrNotFound):
+		return nil, status.Error(codes.NotFound, err.Error())
+	case err != nil:
 		return nil, err
 	}
+
 	return new(emptypb.Empty), nil
 }
 
@@ -138,11 +141,11 @@ func (s *server) CheckSession(ctx context.Context, r *pb.CheckSessionRequest) (*
 
 	sess, err := s.auth.CheckSession(ctx, accessToken)
 
-	if err != nil {
-		switch err {
-		case session.ErrExpired, session.ErrNotFound:
-			return &pb.CheckSessionResponse{Valid: false}, nil
-		}
+	switch {
+	case errors.Is(err, session.ErrExpired),
+		errors.Is(err, session.ErrNotFound):
+		return &pb.CheckSessionResponse{Valid: false}, nil
+	case err != nil:
 		return nil, err
 	}
 
