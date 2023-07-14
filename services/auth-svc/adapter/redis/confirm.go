@@ -113,7 +113,7 @@ func (r *confirmRepository) Upsert(ctx context.Context, rec confirm.Record) erro
 			pipe.HDel(ctx, primaryKey, "token")
 		} else {
 			pipe.HSet(ctx, primaryKey, "token", rec.Token.String())
-			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID, 0)
+			pipe.Set(ctx, r.tokenKey(rec.Token), rec.UserID.String(), 0)
 		}
 
 		_, err = pipe.Exec(ctx)
