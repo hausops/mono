@@ -112,7 +112,7 @@ func (r *credentialRepository) Upsert(ctx context.Context, cred credential.Crede
 			Password: cred.Password,
 		})
 
-		pipe.Set(ctx, r.emailKey(cred.Email), cred.UserID, 0)
+		pipe.Set(ctx, r.emailKey(cred.Email), cred.UserID.String(), 0)
 
 		_, err = pipe.Exec(ctx)
 		return err
