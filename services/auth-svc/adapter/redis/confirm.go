@@ -47,32 +47,33 @@ func (r *confirmRepository) FindByUserID(ctx context.Context, userID string) (co
 
 	var rec confirm.Record
 	err := r.client.Watch(ctx, func(tx *redis.Tx) error {
-		// We need to check with Exists before calling HGetAll because,
-		// when the key doesn't exist HGetAll returns nil error, instead of redis.Nil.
-		// https://github.com/redis/go-redis/issues/1668
-		n, err := tx.Exists(ctx, primaryKey).Result()
-		if err != nil {
-			return fmt.Errorf("redis.Exists(%s): %w", primaryKey, err)
-		} else if n == 0 {
+		confirmed, err := tx.HGet(ctx, primaryKey, "confirmed").Bool()
+		switch {
+		case errors.Is(err, redis.Nil):
 			return confirm.ErrNotFound
+		case err != nil:
+			return fmt.Errorf("redis.HGet(%s, confirmed): %w", primaryKey, err)
 		}
 
-		var saved confirmRecord
-		err = tx.HGetAll(ctx, primaryKey).Scan(&saved)
-		if err != nil {
-			return fmt.Errorf("redis.HGetAll(%s): %w", primaryKey, err)
+		tokenStr, err := tx.HGet(ctx, primaryKey, "token").Result()
+		if err != nil && !errors.Is(err, redis.Nil) {
+			return fmt.Errorf("redis.HGet(%s, token): %w", primaryKey, err)
 		}
 
-		token, err := confirm.ParseToken(saved.Token)
-		if err != nil {
-			return err
+		var token confirm.Token
+		if tokenStr != "" {
+			token, err = confirm.ParseToken(tokenStr)
+			if err != nil {
+				return fmt.Errorf("confirm.ParseToken(%s): %w", tokenStr, err)
+			}
 		}
 
 		rec = confirm.Record{
-			IsConfirmed: saved.Confirmed,
+			IsConfirmed: confirmed,
 			Token:       token,
 			UserID:      userID,
 		}
+
 		return nil
 	}, primaryKey)
 
@@ -120,10 +121,4 @@ func (r *confirmRepository) primaryKey(userID string) string {
 
 func (r *confirmRepository) tokenKey(token confirm.Token) string {
 	return fmt.Sprintf("auth-svc:confirm:token-idx:%s", token)
-}
-
-// confirmRecord represents stored record data for a given key in redis.
-type confirmRecord struct {
-	Confirmed bool   `redis:"confirmed"`
-	Token     string `redis:"token"`
 }
