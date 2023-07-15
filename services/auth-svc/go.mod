@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/alicebob/miniredis/v2 v2.30.4
-	github.com/benbjohnson/clock v1.1.0
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/google/go-cmp v0.5.9
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
