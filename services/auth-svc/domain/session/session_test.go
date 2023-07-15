@@ -2,29 +2,30 @@ package session_test
 
 import (
 	"testing"
+	"time"
 
+	"github.com/benbjohnson/clock"
 	"github.com/hausops/mono/services/auth-svc/domain/session"
+	"github.com/hausops/mono/services/user-svc/domain/user"
 )
 
-func TestParseToken(t *testing.T) {
-	t.Run("Invalid token", func(t *testing.T) {
-		for _, tokenStr := range []string{"", "ci6qsgrvq9l872j5bc8"} {
-			_, err := session.ParseAccessToken(tokenStr)
-			if err != session.ErrInvalidToken {
-				t.Errorf("session.ParseAccessToken(%q) error = %v, want: ErrInvalidToken",
-					tokenStr, err)
-			}
-		}
-	})
+func TestSession_IsExpired(t *testing.T) {
+	mockClock := clock.NewMock()
 
-	t.Run("Valid token", func(t *testing.T) {
-		token, err := session.ParseAccessToken("ci6qsgrvq9l872j5bc80")
-		if err != nil {
-			t.Errorf("session.ParseAccessToken(validToken) error = %v, want no error", err)
-		}
-		token2, _ := session.ParseAccessToken(token.String())
-		if token != token2 {
-			t.Error("Parsed access tokens from the same string are not equal")
-		}
-	})
+	expireAfter := 5 * time.Second
+	sess := session.New(user.NewID(), expireAfter, session.WithClock(mockClock))
+
+	if sess.IsExpired() {
+		t.Error("sess.IsExpired() = true, immediately after creation")
+	}
+
+	mockClock.Add(expireAfter)
+	if sess.IsExpired() {
+		t.Error("sess.IsExpired() = true, before the elapsed time exceeds expireAfter")
+	}
+
+	mockClock.Add(time.Second)
+	if !sess.IsExpired() {
+		t.Error("sess.IsExpired() = false, after the elapsed time exceeds expireAfter")
+	}
 }
