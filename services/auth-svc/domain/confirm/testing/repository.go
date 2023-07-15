@@ -28,7 +28,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 		}
 		mustRepositoryUpsertMany(t, ctx, repo, records)
 
-		_, err := repo.FindByToken(ctx, confirm.GenerateToken())
+		_, err := repo.FindByToken(ctx, confirm.NewToken())
 		if err != confirm.ErrNotFound {
 			t.Errorf("FindByToken(randomToken) error = %v, want: ErrNotFound", err)
 		}
@@ -84,7 +84,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 	t.Run("Upsert", func(t *testing.T) {
 		t.Run("Insert a new record", func(t *testing.T) {
 			repo := newRepo(t)
-			token := confirm.GenerateToken()
+			token := confirm.NewToken()
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,
@@ -121,7 +121,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 		t.Run("Update with the same record", func(t *testing.T) {
 			repo := newRepo(t)
-			token := confirm.GenerateToken()
+			token := confirm.NewToken()
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,
@@ -145,7 +145,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 		t.Run("Update an existing record with a different token", func(t *testing.T) {
 			repo := newRepo(t)
-			token := confirm.GenerateToken()
+			token := confirm.NewToken()
 			rec := confirm.Record{
 				Token:       token,
 				IsConfirmed: false,
@@ -153,7 +153,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 			}
 			mustRepositoryUpsert(t, ctx, repo, rec)
 
-			newToken := confirm.GenerateToken()
+			newToken := confirm.NewToken()
 			up := confirm.Record{
 				IsConfirmed: rec.IsConfirmed,
 				Token:       newToken,
@@ -198,7 +198,7 @@ func TestRepository(t *testing.T, newRepo func(t *testing.T) confirm.Repository)
 
 		t.Run("Update an existing record to be confirmed", func(t *testing.T) {
 			repo := newRepo(t)
-			token := confirm.GenerateToken()
+			token := confirm.NewToken()
 			rec := confirm.Record{
 				IsConfirmed: false,
 				Token:       token,

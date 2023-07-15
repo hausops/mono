@@ -16,7 +16,7 @@ func generateTestRecord(t *testing.T, confirmed bool) confirm.Record {
 		}
 	}
 
-	token := confirm.GenerateToken()
+	token := confirm.NewToken()
 	return confirm.Record{
 		IsConfirmed: false,
 		Token:       token,

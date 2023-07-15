@@ -82,7 +82,7 @@ func (s *Service) SignUp(ctx context.Context, email mail.Address, password []byt
 		return fmt.Errorf("credential.Upsert(%s): %w", email.Address, err)
 	}
 
-	token := confirm.GenerateToken()
+	token := confirm.NewToken()
 	err = s.sendConfirmEmail(ctx, email, token)
 	if err != nil {
 		return fmt.Errorf("sendConfirmEmail(%s): %w", email.Address, err)
@@ -124,7 +124,7 @@ func (s *Service) ResendConfirmationEmail(ctx context.Context, email mail.Addres
 		return confirm.ErrAlreadyConfirmed
 	}
 
-	token := confirm.GenerateToken()
+	token := confirm.NewToken()
 	err = s.sendConfirmEmail(ctx, email, token)
 	if err != nil {
 		return fmt.Errorf("sendConfirmEmail(%s): %w", email.Address, err)
