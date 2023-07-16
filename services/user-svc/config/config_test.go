@@ -59,7 +59,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "valid configuration",
 			config: config.Config{
 				Mode:      config.ModeProd,
-				Datastore: config.LocalDatastore{},
+				Datastore: config.MockDatastore{},
 			},
 			wantErr: false,
 		},
@@ -67,7 +67,7 @@ func TestConfig_Validate(t *testing.T) {
 			name: "invalid mode",
 			config: config.Config{
 				Mode:      "invalid",
-				Datastore: config.LocalDatastore{},
+				Datastore: config.MockDatastore{},
 			},
 			wantErr: true,
 		},

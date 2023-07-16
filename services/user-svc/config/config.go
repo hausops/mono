@@ -29,8 +29,8 @@ func (c *Config) UnmarshalYAML(node *yaml.Node) error {
 
 	// Set datastore
 	switch kind := conf.Datastore["kind"].Value; kind {
-	case "local":
-		c.Datastore = LocalDatastore{}
+	case "mock":
+		c.Datastore = MockDatastore{}
 	case "mongo":
 		var mongo MongoDatastore
 		spec := conf.Datastore["spec"]
@@ -57,7 +57,7 @@ func (c *Config) Validate() error {
 	}
 
 	switch t := c.Datastore.(type) {
-	case LocalDatastore:
+	case MockDatastore:
 	case MongoDatastore:
 		if t.URI == "" {
 			return errors.New("mongo datastore missing URI field")
@@ -106,9 +106,9 @@ type datastore interface {
 	isDatastore()
 }
 
-type LocalDatastore struct{}
+type MockDatastore struct{}
 
-func (d LocalDatastore) isDatastore() {}
+func (d MockDatastore) isDatastore() {}
 
 type MongoDatastore struct {
 	// URI is the mongo connection URI.
