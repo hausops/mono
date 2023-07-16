@@ -1,4 +1,4 @@
-package user
+package grpcserver
 
 import (
 	"context"
@@ -13,16 +13,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type server struct {
+type userServer struct {
 	pb.UnimplementedUserServiceServer
 	repo user.Repository
 }
 
-func NewServer(repo user.Repository) *server {
-	return &server{repo: repo}
+func NewUserServer(repo user.Repository) *userServer {
+	return &userServer{repo: repo}
 }
 
-func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
+func (s *userServer) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
 	email, err := mail.ParseAddress(in.Email)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
@@ -48,7 +48,7 @@ func (s *server) Create(ctx context.Context, in *pb.EmailRequest) (*pb.User, err
 	return encodeUser(created), nil
 }
 
-func (s *server) FindByEmail(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
+func (s *userServer) FindByEmail(ctx context.Context, in *pb.EmailRequest) (*pb.User, error) {
 	email, err := mail.ParseAddress(in.Email)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid email address")
