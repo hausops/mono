@@ -91,7 +91,7 @@ func TestID_String(t *testing.T) {
 		idStr := "cio035jjtoj2i2fbtpq0"
 		id, err := user.ParseID(idStr)
 		if err != nil {
-			t.Fatalf("xid.FromString(%s) err = %v", idStr, err)
+			t.Fatalf("user.ParseID(%s) err = %v", idStr, err)
 		}
 
 		got := id.String()

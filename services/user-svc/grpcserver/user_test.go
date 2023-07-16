@@ -1,20 +1,20 @@
-package user_test
+package grpcserver_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/hausops/mono/services/user-svc/adapter/local"
+	"github.com/hausops/mono/services/user-svc/adapter/mock"
 	"github.com/hausops/mono/services/user-svc/domain/user"
-	usergrpc "github.com/hausops/mono/services/user-svc/grpcserver/internal/user"
+	"github.com/hausops/mono/services/user-svc/grpcserver"
 	"github.com/hausops/mono/services/user-svc/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func TestCreate(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 
 	email := gofakeit.Email()
 	req := &pb.EmailRequest{Email: email}
@@ -42,7 +42,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCreate_InvalidEmail(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 
 	for _, email := range []string{"", "invalid-email"} {
 		req := &pb.EmailRequest{Email: email}
@@ -62,7 +62,7 @@ func TestCreate_InvalidEmail(t *testing.T) {
 }
 
 func TestCreate_EmailTaken(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 	u := mustCreateUser(t, svc)
 
 	req := &pb.EmailRequest{Email: u.Email}
@@ -81,7 +81,7 @@ func TestCreate_EmailTaken(t *testing.T) {
 }
 
 func TestFindByEmail(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 	u := mustCreateUser(t, svc)
 
 	req := &pb.EmailRequest{Email: u.Email}
@@ -99,7 +99,7 @@ func TestFindByEmail(t *testing.T) {
 }
 
 func TestFindByEmail_InvalidEmail(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 	mustCreateUser(t, svc)
 
 	email := "invalid-email"
@@ -116,7 +116,7 @@ func TestFindByEmail_InvalidEmail(t *testing.T) {
 }
 
 func TestFindByEmail_NotFound(t *testing.T) {
-	svc := usergrpc.NewServer(local.NewUserRepository())
+	svc := grpcserver.NewUserServer(mock.NewUserRepository())
 	mustCreateUser(t, svc)
 
 	email := "non-existing-email@hausops.com"

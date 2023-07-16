@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hausops/mono/services/user-svc/adapter/local"
+	"github.com/hausops/mono/services/user-svc/adapter/mock"
 	"github.com/hausops/mono/services/user-svc/adapter/mongo"
 	"github.com/hausops/mono/services/user-svc/config"
 	"github.com/hausops/mono/services/user-svc/domain/user"
@@ -21,8 +21,8 @@ type dependencies struct {
 func newDependencies(ctx context.Context, conf config.Config) (*dependencies, error) {
 	var deps dependencies
 	switch t := conf.Datastore.(type) {
-	case config.LocalDatastore:
-		deps.userRepo = local.NewUserRepository()
+	case config.MockDatastore:
+		deps.userRepo = mock.NewUserRepository()
 
 	case config.MongoDatastore:
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
