@@ -49,7 +49,7 @@ export function Select({
 }
 
 export function toOption<T extends number | string>(
-  value: T
+  value: T,
 ): {label: string; value: T} {
   return {label: `${value}`, value};
 }

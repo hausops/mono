@@ -15,7 +15,7 @@ export function RecentPayments({payments}: RecentPaymentsProps) {
         currency: 'USD',
         maximumSignificantDigits: 2,
       }),
-    []
+    [],
   );
 
   return (

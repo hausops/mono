@@ -3,7 +3,7 @@ import {LeaseService} from './LeaseService';
 
 export class LocalLeaseService implements LeaseService {
   private readonly byUnitId = new Map<string, LeaseModel>(
-    DEMO_LEASES.map((lease) => [lease.unitId, lease])
+    DEMO_LEASES.map((lease) => [lease.unitId, lease]),
   );
 
   async getByUnitId(unitId: string) {

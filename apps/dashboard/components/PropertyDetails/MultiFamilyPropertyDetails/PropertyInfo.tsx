@@ -23,7 +23,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
     async () => {
       const p = await propertySvc.getById(props.property.id);
       return p?.type === 'multi-family' ? p : undefined;
-    }
+    },
   );
   const property = data ?? props.property;
 
@@ -113,7 +113,7 @@ function Editing({
 }
 
 function toPropertyModel(
-  address: AddressFormState['fields']
+  address: AddressFormState['fields'],
 ): Partial<MultiFamily.Property> {
   return {address};
 }

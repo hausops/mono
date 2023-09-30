@@ -4,7 +4,7 @@ import {PropertyNotFoundErr, PropertyService} from './PropertyService';
 
 export class LocalPropertyService implements PropertyService {
   private readonly properties: Map<string, PropertyModel> = new Map(
-    DEMO_PROPERTIES.map((p) => [p.id, p])
+    DEMO_PROPERTIES.map((p) => [p.id, p]),
   );
 
   async getAll(): Promise<PropertyModel[]> {
@@ -27,7 +27,7 @@ export class LocalPropertyService implements PropertyService {
 
   async update<T extends PropertyModel>(
     id: string,
-    updateProperty: Partial<T>
+    updateProperty: Partial<T>,
   ): Promise<T> {
     const previous = this.properties.get(id);
 
@@ -37,7 +37,7 @@ export class LocalPropertyService implements PropertyService {
 
     if (updateProperty.type && updateProperty.type !== previous.type) {
       throw new Error(
-        `Mismatched property type: was=${previous.type}, got=${updateProperty.type}.`
+        `Mismatched property type: was=${previous.type}, got=${updateProperty.type}.`,
       );
     }
 

@@ -20,7 +20,7 @@ export function UpcomingRent({
         currency: 'USD',
         maximumSignificantDigits: 2,
       }),
-    []
+    [],
   );
 
   return (

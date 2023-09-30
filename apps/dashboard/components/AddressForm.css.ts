@@ -7,7 +7,7 @@ export const layout = styleVariants({
     gap: unit(4),
   },
 
-  foutColumns: {
+  fourColumns: {
     display: 'grid',
     gap: unit(4),
 

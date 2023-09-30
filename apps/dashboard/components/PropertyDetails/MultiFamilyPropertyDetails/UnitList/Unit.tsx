@@ -72,7 +72,7 @@ function Rented(props: RentedProps) {
   const {pastPayments, upcomingRent} = lease;
   const overdue = useMemo(
     () => pastPayments.find((p) => p.status === 'overdue'),
-    [pastPayments]
+    [pastPayments],
   );
   return (
     <>

@@ -14,7 +14,7 @@ export interface PropertyService {
   // If a property with the id is not found, it will reject with an error.
   update<T extends PropertyModel>(
     id: string,
-    updateProperty: Partial<T>
+    updateProperty: Partial<T>,
   ): Promise<T>;
 
   // deletes the property matching id.

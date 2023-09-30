@@ -15,5 +15,5 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         ref={ref}
       />
     );
-  }
+  },
 );

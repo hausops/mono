@@ -50,6 +50,6 @@ export function Tooltip(props: TooltipProps) {
     >
       {children}
     </div>,
-    portalsContainer
+    portalsContainer,
   );
 }

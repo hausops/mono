@@ -27,7 +27,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
     async () => {
       const p = await propertySvc.getById(props.property.id);
       return p?.type === 'single-family' ? p : undefined;
-    }
+    },
   );
   const property = data ?? props.property;
 
@@ -176,7 +176,7 @@ function Editing({
 
 function toPropertyModel(
   address: AddressFormState['fields'],
-  unit: UnitFields
+  unit: UnitFields,
 ): Partial<SingleFamily.Property> {
   return {
     address,

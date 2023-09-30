@@ -53,5 +53,5 @@ export const LivenessBadgeStatus = styleVariants(
       height: unit(2),
       width: unit(2),
     },
-  })
+  }),
 );

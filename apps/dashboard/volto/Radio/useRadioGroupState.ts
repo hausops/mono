@@ -17,7 +17,7 @@ export type RadioGroupState<T> = {
 };
 
 export function useRadioGroupState<T extends string>(
-  props: RadioGroupProps<T> = {}
+  props: RadioGroupProps<T> = {},
 ): RadioGroupState<T> {
   const {initialValue, isReadOnly = false, isDisabled = false} = props;
   const [selectedValue, setSelected] = useState<T | null>(initialValue ?? null);
