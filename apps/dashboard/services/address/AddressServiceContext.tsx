@@ -1,5 +1,5 @@
-import {createContext, PropsWithChildren, useContext} from 'react';
-import {AddressService} from './AddressService';
+import {createContext, useContext, type PropsWithChildren} from 'react';
+import type {AddressService} from './AddressService';
 
 export function AddressServiceProvider({
   service,

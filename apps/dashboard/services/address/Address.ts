@@ -1,4 +1,4 @@
-import {AddressModel} from './AddressModel';
+import type {AddressModel} from './AddressModel';
 
 export class Address {
   static from(model: AddressModel): Address {

@@ -1,5 +1,5 @@
-import {createContext, PropsWithChildren, useContext} from 'react';
-import {PropertyService} from './PropertyService';
+import {createContext, useContext, type PropsWithChildren} from 'react';
+import type {PropertyService} from './PropertyService';
 
 export function PropertyServiceProvider({
   service,

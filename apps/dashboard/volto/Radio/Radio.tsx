@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {ComponentPropsWithRef, forwardRef} from 'react';
+import {forwardRef, type ComponentPropsWithRef} from 'react';
 import * as s from './Radio.css';
 
 type RadioProps = ComponentPropsWithRef<'input'>;

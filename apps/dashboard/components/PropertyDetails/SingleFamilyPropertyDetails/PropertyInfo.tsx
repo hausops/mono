@@ -1,17 +1,17 @@
 import {
   AddressForm,
-  AddressFormState,
   useAddressFormState,
+  type AddressFormState,
 } from '@/components/AddressForm';
 import {Attribute, AttributeList} from '@/components/AttributeList';
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address} from '@/services/address';
-import {SingleFamily, usePropertyService} from '@/services/property';
+import {usePropertyService, type SingleFamily} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
-import {CloseIcon, EditFilledIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
 import {TextField} from '@/volto/TextField';
+import {CloseIcon, EditFilledIcon} from '@/volto/icons';
 import {useState} from 'react';
 import useSWR from 'swr';
 import * as s from './PropertyInfo.css';

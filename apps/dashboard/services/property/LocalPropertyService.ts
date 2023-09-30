@@ -1,6 +1,6 @@
 import {nanoid} from 'nanoid';
-import {NewPropertyData, PropertyModel} from './PropertyModel';
-import {PropertyNotFoundErr, PropertyService} from './PropertyService';
+import type {NewPropertyData, PropertyModel} from './PropertyModel';
+import {PropertyNotFoundErr, type PropertyService} from './PropertyService';
 
 export class LocalPropertyService implements PropertyService {
   private readonly properties: Map<string, PropertyModel> = new Map(

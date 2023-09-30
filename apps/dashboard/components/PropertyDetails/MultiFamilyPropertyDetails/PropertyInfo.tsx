@@ -1,13 +1,13 @@
 import {
   AddressForm,
-  AddressFormState,
   useAddressFormState,
+  type AddressFormState,
 } from '@/components/AddressForm';
 import {Address} from '@/services/address';
-import {MultiFamily, usePropertyService} from '@/services/property';
+import {usePropertyService, type MultiFamily} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
-import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {Section} from '@/volto/Section';
+import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {useState} from 'react';
 import useSWR from 'swr';
 import * as s from './PropertyInfo.css';

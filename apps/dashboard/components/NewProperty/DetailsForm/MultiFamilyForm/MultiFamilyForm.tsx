@@ -1,7 +1,7 @@
 import {Button} from '@/volto/Button';
 import {useReducer} from 'react';
 import * as s from './MultiFamilyForm.css';
-import {RentalUnit} from './RentalUnit';
+import type {RentalUnit} from './RentalUnit';
 import {UnitEntry} from './UnitEntry';
 
 export type MultiFamilyFormState = {

@@ -1,5 +1,5 @@
 import {LeaseServiceProvider, LocalLeaseService} from '@/services/lease';
-import {PropertyModel} from '@/services/property';
+import type {PropertyModel} from '@/services/property';
 import {MultiFamilyPropertyDetails} from './MultiFamilyPropertyDetails';
 import {SingleFamilyPropertyDetails} from './SingleFamilyPropertyDetails/SingleFamilyPropertyDetails';
 

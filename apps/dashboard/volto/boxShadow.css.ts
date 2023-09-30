@@ -1,4 +1,4 @@
-import {border, BorderWidthKey} from './border.css';
+import {border, type BorderWidthKey} from './border.css';
 
 export const boxShadow = {
   asBorder,

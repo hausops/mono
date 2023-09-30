@@ -1,4 +1,4 @@
-import {AddressModel} from '@/services/address';
+import type {AddressModel} from '@/services/address';
 
 export type PropertyType = 'single-family' | 'multi-family';
 export type PropertyModel = SingleFamily.Property | MultiFamily.Property;

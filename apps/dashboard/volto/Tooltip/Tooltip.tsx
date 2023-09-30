@@ -1,5 +1,5 @@
-import {AriaPositionProps, useOverlayPosition} from '@react-aria/overlays';
-import {PropsWithChildren, useEffect, useRef} from 'react';
+import {useOverlayPosition, type AriaPositionProps} from '@react-aria/overlays';
+import {useEffect, useRef, type PropsWithChildren} from 'react';
 import {createPortal} from 'react-dom';
 import * as s from './Tooltip.css';
 import {useTooltipsManager} from './TooltipsManager';

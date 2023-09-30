@@ -1,4 +1,4 @@
-import {ElementType, PropsWithChildren, ReactNode} from 'react';
+import type {ElementType, PropsWithChildren, ReactNode} from 'react';
 import * as s from './Card.css';
 
 type CardProps = PropsWithChildren<{

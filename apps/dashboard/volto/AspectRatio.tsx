@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {ElementType, PropsWithChildren, ReactNode} from 'react';
+import type {ElementType, PropsWithChildren, ReactNode} from 'react';
 import * as s from './AspectRatio.css';
 
 type AspectRatioProps = PropsWithChildren<{

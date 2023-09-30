@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {ElementType, PropsWithChildren} from 'react';
+import type {ElementType, PropsWithChildren} from 'react';
 import * as s from './Stack.css';
 
 type StackProps = PropsWithChildren<{

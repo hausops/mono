@@ -1,4 +1,4 @@
-import {LeaseModel} from './LeaseModel';
+import type {LeaseModel} from './LeaseModel';
 
 export interface LeaseService {
   getByUnitId(unitId: string): Promise<LeaseModel | undefined>;

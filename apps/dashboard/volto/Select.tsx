@@ -1,6 +1,6 @@
 import {ExpandMoreIcon} from '@/volto/icons';
 import clsx from 'clsx';
-import {SelectHTMLAttributes, useId} from 'react';
+import {useId, type SelectHTMLAttributes} from 'react';
 import * as s from './Select.css';
 
 type Option = {

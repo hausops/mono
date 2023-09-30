@@ -1,6 +1,6 @@
-import {PropsWithChildren} from 'react';
+import type {PropsWithChildren} from 'react';
 
-export function SvgIcon({children}: PropsWithChildren<{}>) {
+export function SvgIcon({children}: PropsWithChildren) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

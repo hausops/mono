@@ -1,5 +1,5 @@
 import {Attribute, AttributeList} from '@/components/AttributeList';
-import {RentPayment} from '@/services/lease';
+import type {RentPayment} from '@/services/lease';
 import {Badge} from '@/volto/Badge';
 import {useMemo} from 'react';
 import * as s from './UpcomingRent.css';

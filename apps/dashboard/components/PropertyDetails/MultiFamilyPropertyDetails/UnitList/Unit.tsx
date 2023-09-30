@@ -1,9 +1,9 @@
-import {LeaseModel} from '@/services/lease';
-import {MultiFamily} from '@/services/property';
+import type {LeaseModel} from '@/services/lease';
+import type {MultiFamily} from '@/services/property';
 import {Badge, LivenessBadge} from '@/volto/Badge';
 import {IconButton} from '@/volto/Button';
-import {MoreHIcon} from '@/volto/icons';
 import {TextSkeleton} from '@/volto/Skeleton';
+import {MoreHIcon} from '@/volto/icons';
 import Link from 'next/link';
 import {useMemo} from 'react';
 import * as s from './Unit.css';

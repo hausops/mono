@@ -1,5 +1,5 @@
-import {LeaseModel} from './LeaseModel';
-import {LeaseService} from './LeaseService';
+import type {LeaseModel} from './LeaseModel';
+import type {LeaseService} from './LeaseService';
 
 export class LocalLeaseService implements LeaseService {
   private readonly byUnitId = new Map<string, LeaseModel>(

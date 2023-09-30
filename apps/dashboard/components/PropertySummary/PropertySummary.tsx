@@ -1,10 +1,10 @@
 import {Address} from '@/services/address';
-import {PropertyModel} from '@/services/property';
+import type {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {IconButton} from '@/volto/Button';
 import {Card} from '@/volto/Card';
-import {MoreHIcon} from '@/volto/icons';
 import {TextSkeleton} from '@/volto/Skeleton';
+import {MoreHIcon} from '@/volto/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as s from './PropertySummary.css';

@@ -1,8 +1,8 @@
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {MiniTextButton} from '@/volto/Button';
-import {CloseIcon, CopyIcon} from '@/volto/icons';
 import {TextField} from '@/volto/TextField';
-import {RentalUnit} from './RentalUnit';
+import {CloseIcon, CopyIcon} from '@/volto/icons';
+import type {RentalUnit} from './RentalUnit';
 import * as s from './UnitEntry.css';
 
 type UnitEntryProps = {
