@@ -1,18 +1,18 @@
-import {PropertyType} from '@/services/property';
-import {RadioGroupState, useRadioGroupState} from '@/volto/Radio';
+import type {PropertyType} from '@/services/property';
+import {useRadioGroupState, type RadioGroupState} from '@/volto/Radio';
 import {Section} from '@/volto/Section';
 import {PropertyTypeSelector} from './PropertyTypeSelector';
 
 import {
   SingleFamilyForm,
-  SingleFamilyFormState,
   useSingleFamilyFormState,
+  type SingleFamilyFormState,
 } from './SingleFamilyForm';
 
 import {
   MultiFamilyForm,
-  MultiFamilyFormState,
   useMultiFamilyFormState,
+  type MultiFamilyFormState,
 } from './MultiFamilyForm/MultiFamilyForm';
 
 export type DetailsFormState = {

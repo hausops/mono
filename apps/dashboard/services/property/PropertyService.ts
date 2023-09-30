@@ -1,4 +1,4 @@
-import {NewPropertyData, PropertyModel} from './PropertyModel';
+import type {NewPropertyData, PropertyModel} from './PropertyModel';
 
 export interface PropertyService {
   getAll(): Promise<PropertyModel[]>;

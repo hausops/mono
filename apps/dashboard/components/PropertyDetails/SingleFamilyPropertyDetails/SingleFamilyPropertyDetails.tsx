@@ -1,4 +1,4 @@
-import {SingleFamily} from '@/services/property';
+import type {SingleFamily} from '@/services/property';
 import {PropertyImages} from '../PropertyImages';
 import {PropertyInfo} from './PropertyInfo';
 import {RentInfo} from './RentInfo';

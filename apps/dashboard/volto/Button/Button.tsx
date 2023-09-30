@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {
+import type {
   ComponentPropsWithoutRef,
   ElementType,
   PropsWithChildren,

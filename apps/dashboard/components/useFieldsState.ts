@@ -1,4 +1,4 @@
-import {Reducer, useCallback, useReducer} from 'react';
+import {useCallback, useReducer, type Reducer} from 'react';
 
 export type FieldsState<T> = {
   readonly fields: T;

@@ -1,10 +1,10 @@
 import {
   createContext,
   forwardRef,
-  PropsWithChildren,
   useContext,
   useRef,
   useState,
+  type PropsWithChildren,
 } from 'react';
 import * as s from './TooltipsManager.css';
 
@@ -17,9 +17,7 @@ type TooltipsManager = {
   visibility: VisibilityManager;
 };
 
-type TooltipsManagerProviderProps = PropsWithChildren<{}>;
-
-export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
+export function TooltipsManagerProvider(props: PropsWithChildren) {
   const {children} = props;
   // Cannot use useRef here because it does not cause a re-render
   // thus the context is not updated after the container mounted.

@@ -1,5 +1,5 @@
 import {Address} from '@/services/address';
-import {PropertyModel} from '@/services/property';
+import type {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {Section} from '@/volto/Section';
 import Image from 'next/image';

@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import * as s from './Page.css';
 
 export function PageLayout({children}: {children: ReactNode}) {

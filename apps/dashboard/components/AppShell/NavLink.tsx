@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {ComponentType} from 'react';
+import type {ComponentType} from 'react';
 import * as s from './NavLink.css';
 
 export type NavLinkProps = {

@@ -1,5 +1,5 @@
 import {useId} from 'react';
-import {TooltipState, useTooltipState} from './useTooltipState';
+import {useTooltipState, type TooltipState} from './useTooltipState';
 
 type TriggerProps = {
   'aria-describedby'?: string;

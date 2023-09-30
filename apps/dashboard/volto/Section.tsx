@@ -1,5 +1,5 @@
 import {Card} from '@/volto/Card';
-import {CSSProperties, PropsWithChildren, ReactNode} from 'react';
+import type {CSSProperties, PropsWithChildren, ReactNode} from 'react';
 import * as s from './Section.css';
 import {Skeleton} from './Skeleton';
 

@@ -1,8 +1,8 @@
-import {PropsWithChildren} from 'react';
+import type {PropsWithChildren} from 'react';
 import * as s from './AppShell.css';
 import {MainNav} from './MainNav';
 
-export function AppShell({children}: PropsWithChildren<{}>) {
+export function AppShell({children}: PropsWithChildren) {
   return (
     <div className={s.AppShell}>
       <MainNav />

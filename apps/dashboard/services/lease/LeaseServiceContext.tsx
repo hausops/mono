@@ -1,5 +1,5 @@
-import {createContext, PropsWithChildren, useContext} from 'react';
-import {LeaseService} from './LeaseService';
+import {createContext, useContext, type PropsWithChildren} from 'react';
+import type {LeaseService} from './LeaseService';
 
 export function LeaseServiceProvider({
   service,

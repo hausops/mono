@@ -1,5 +1,5 @@
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
-import {FieldsState, useFieldsState} from '@/components/useFieldsState';
+import {useFieldsState, type FieldsState} from '@/components/useFieldsState';
 import {TextField} from '@/volto/TextField';
 import * as s from './SingleFamilyForm.css';
 

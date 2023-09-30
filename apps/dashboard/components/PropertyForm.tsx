@@ -1,5 +1,5 @@
 import {Select, toOption} from '@/volto/Select';
-import {ComponentPropsWithoutRef, useMemo} from 'react';
+import {useMemo, type ComponentPropsWithoutRef} from 'react';
 
 type Props = {
   onChange: (selection: number | undefined) => void;

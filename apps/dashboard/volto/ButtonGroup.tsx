@@ -1,5 +1,5 @@
 import {Button} from '@/volto/Button';
-import {ComponentPropsWithoutRef, ReactElement} from 'react';
+import type {ComponentPropsWithoutRef, ReactElement} from 'react';
 import * as s from './ButtonGroup.css';
 
 type ButtonGroupProps = {

@@ -1,5 +1,5 @@
 import {PropertyImages} from '@/components/PropertyDetails/PropertyImages';
-import {MultiFamily} from '@/services/property';
+import type {MultiFamily} from '@/services/property';
 import {Section} from '@/volto/Section';
 import * as s from './MultiFamilyPropertyDetails.css';
 import {PropertyInfo} from './PropertyInfo';

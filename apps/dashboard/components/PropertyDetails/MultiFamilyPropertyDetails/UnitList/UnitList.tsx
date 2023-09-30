@@ -1,5 +1,5 @@
 import {useLeaseService} from '@/services/lease';
-import {MultiFamily} from '@/services/property';
+import type {MultiFamily} from '@/services/property';
 import useSWR from 'swr';
 import {Unit, UnitSkeleton} from './Unit';
 

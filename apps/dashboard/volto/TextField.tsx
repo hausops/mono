@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import {InputHTMLAttributes, useId} from 'react';
+import {useId, type InputHTMLAttributes} from 'react';
 import * as s from './TextField.css';
 
 type OwnTextFieldProps = {

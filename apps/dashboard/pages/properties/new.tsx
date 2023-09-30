@@ -1,16 +1,16 @@
 import {
   AddressForm,
-  AddressFormState,
   useAddressFormState,
+  type AddressFormState,
 } from '@/components/AddressForm';
 import {
   DetailsForm,
-  DetailsFormState,
   useDetailsFormState,
+  type DetailsFormState,
 } from '@/components/NewProperty';
 import {PageLayout} from '@/layouts/Page';
 import {PageHeader} from '@/layouts/PageHeader';
-import {NewPropertyData, usePropertyService} from '@/services/property';
+import {usePropertyService, type NewPropertyData} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import Head from 'next/head';

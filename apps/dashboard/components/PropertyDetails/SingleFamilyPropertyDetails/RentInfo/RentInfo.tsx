@@ -1,9 +1,9 @@
-import {LeaseModel, useLeaseService} from '@/services/lease';
-import {SingleFamily} from '@/services/property';
+import {useLeaseService, type LeaseModel} from '@/services/lease';
+import type {SingleFamily} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
-import {HomeIcon} from '@/volto/icons';
 import {Section, SectionSkeleton} from '@/volto/Section';
+import {HomeIcon} from '@/volto/icons';
 import Link from 'next/link';
 import useSWR from 'swr';
 import {RecentPayments} from './RecentPayments';

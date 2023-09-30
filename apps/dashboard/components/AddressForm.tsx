@@ -1,5 +1,5 @@
-import {FieldsState, useFieldsState} from '@/components/useFieldsState';
-import {AddressModel, useAddressService} from '@/services/address';
+import {useFieldsState, type FieldsState} from '@/components/useFieldsState';
+import {useAddressService, type AddressModel} from '@/services/address';
 import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import {useMemo} from 'react';

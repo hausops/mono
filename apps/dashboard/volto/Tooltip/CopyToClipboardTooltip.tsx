@@ -7,8 +7,8 @@ import {Card} from '@/volto/Card';
 import {CheckIcon} from '@/volto/icons';
 import {useEffect, useState} from 'react';
 import * as s from './CopyToClipboardTooltip.css';
-import {Tooltip, TooltipProps} from './Tooltip';
-import {TooltipState} from './useTooltipState';
+import {Tooltip, type TooltipProps} from './Tooltip';
+import type {TooltipState} from './useTooltipState';
 
 type CopyToClipboardTooltipProps = {
   isCopied: boolean;

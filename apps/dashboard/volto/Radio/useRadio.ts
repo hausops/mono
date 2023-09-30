@@ -1,5 +1,5 @@
-import {ChangeEvent, RefObject} from 'react';
-import {RadioGroupState} from './useRadioGroupState';
+import type {ChangeEvent, RefObject} from 'react';
+import type {RadioGroupState} from './useRadioGroupState';
 
 type RadioProps<T> = {
   name: string;

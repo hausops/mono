@@ -8,9 +8,9 @@ import {
   SettingsIcon,
   SpaceDashboardIcon,
 } from '@/volto/icons';
-import {PropsWithChildren} from 'react';
+import type {PropsWithChildren} from 'react';
 import * as s from './MainNav.css';
-import {NavLink, NavLinkProps} from './NavLink';
+import {NavLink, type NavLinkProps} from './NavLink';
 
 export function MainNav() {
   return (
