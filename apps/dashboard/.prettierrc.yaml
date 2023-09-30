@@ -1,2 +1,4 @@
 bracketSpacing: false
 singleQuote: true
+# Backward compatible with prettier v2
+trailingComma: es5
