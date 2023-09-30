@@ -111,6 +111,9 @@ type LocalDatastore struct{}
 func (d LocalDatastore) isDatastore() {}
 
 type RedisDatastore struct {
+	// KeyPrefix provides namespacing behavior in an multi-tenant environment
+	// i.e. sharing a redis database with other services.
+	KeyPrefix string `yaml:"keyPrefix`
 	// URI is the redis connection URI.
 	URI string `yaml:"uri"`
 }
