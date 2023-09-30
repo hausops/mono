@@ -71,11 +71,10 @@ class VisibilityManager {
   }
 }
 
-const PortalsContainer = forwardRef<HTMLDivElement>(function PortalsContainer(
-  _,
-  ref
-) {
-  return (
-    <div id="tooltips-container" className={s.PortalsContainer} ref={ref} />
-  );
-});
+const PortalsContainer = forwardRef<HTMLDivElement>(
+  function PortalsContainer(_, ref) {
+    return (
+      <div id="tooltips-container" className={s.PortalsContainer} ref={ref} />
+    );
+  }
+);

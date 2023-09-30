@@ -14,26 +14,26 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@react-aria/focus": "3.11.0",
-    "@react-aria/overlays": "3.13.0",
-    "@types/node": "18.14.3",
-    "@types/react": "18.0.28",
-    "@types/react-dom": "18.0.11",
-    "@vanilla-extract/css": "1.9.5",
-    "clsx": "1.2.1",
-    "eslint": "8.35.0",
-    "eslint-config-next": "13.2.3",
-    "nanoid": "4.0.1",
-    "next": "13.2.3",
+    "@react-aria/focus": "3.14.1",
+    "@react-aria/overlays": "3.17.0",
+    "@types/node": "18.18.1",
+    "@types/react": "18.2.23",
+    "@types/react-dom": "18.2.8",
+    "@vanilla-extract/css": "1.13.0",
+    "clsx": "2.0.0",
+    "eslint": "8.50.0",
+    "eslint-config-next": "13.5.3",
+    "nanoid": "5.0.1",
+    "next": "13.5.3",
     "normalize.css": "8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "2.0.4",
-    "typescript": "4.9.5"
+    "swr": "2.2.4",
+    "typescript": "5.2.2"
   },
   "devDependencies": {
-    "@vanilla-extract/next-plugin": "2.1.1",
-    "prettier": "2.8.4",
-    "prettier-plugin-organize-imports": "3.2.2"
+    "@vanilla-extract/next-plugin": "2.3.1",
+    "prettier": "3.0.3",
+    "prettier-plugin-organize-imports": "3.2.3"
   }
 }
