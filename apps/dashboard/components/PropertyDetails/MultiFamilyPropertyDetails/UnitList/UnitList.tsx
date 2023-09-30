@@ -17,7 +17,7 @@ export function UnitList(props: UnitListProps) {
       const unitIds = property.units.map((u) => u.id).sort();
       const leases = await leaseSvc.getManyByUnitIds(unitIds);
       return new Map(leases.map((lease) => [lease.unitId, lease]));
-    }
+    },
   );
 
   if (isLoading) {

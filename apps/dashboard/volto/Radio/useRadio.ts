@@ -27,7 +27,7 @@ type Radio<T> = {
 export function useRadio<T extends string>(
   props: RadioProps<T>,
   state: RadioGroupState<T>,
-  ref: RefObject<HTMLInputElement>
+  ref: RefObject<HTMLInputElement>,
 ): Radio<T> {
   const {name, value, isDisabled = state.isDisabled} = props;
   const isSelected = state.selectedValue === value;

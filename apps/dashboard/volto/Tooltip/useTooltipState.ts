@@ -10,7 +10,7 @@ export type TooltipState = {
 export function useTooltipState(
   // id is used to identify the tooltip with the TooltipsManager
   id: string,
-  initialOpen: boolean = false
+  initialOpen: boolean = false,
 ): TooltipState {
   const [isOpen, setOpen] = useState(initialOpen);
   const {visibility} = useTooltipsManager();
@@ -30,7 +30,7 @@ export function useTooltipState(
     () => () => {
       visibility.deregisterCloseTooltip(id);
     },
-    [id, visibility]
+    [id, visibility],
   );
 
   return {

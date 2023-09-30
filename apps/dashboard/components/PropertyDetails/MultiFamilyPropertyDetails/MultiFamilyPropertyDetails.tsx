@@ -10,7 +10,7 @@ type MultiFamilyPropertyDetailsProps = {
 };
 
 export function MultiFamilyPropertyDetails(
-  props: MultiFamilyPropertyDetailsProps
+  props: MultiFamilyPropertyDetailsProps,
 ) {
   const {property} = props;
   return (

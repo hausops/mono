@@ -8,7 +8,7 @@ type Props = {
 export function BedroomsSelect({value, onChange}: Props) {
   const options = useMemo(
     () => [{label: 'Studio', value: 0}, ...[1, 2, 3, 4, 5].map(toOption)],
-    []
+    [],
   );
 
   return (
@@ -30,7 +30,7 @@ export function BathroomsSelect({value, onChange}: Props) {
       {label: 'None', value: 0},
       ...[1, 1.5, 2, 2.5, 3, 3.5, 4].map(toOption),
     ],
-    []
+    [],
   );
   return (
     <Select

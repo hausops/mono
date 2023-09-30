@@ -22,7 +22,7 @@ export default function Page() {
     `/api/properties/${propertyId}`,
     () =>
       // this is undefined during SSR
-      typeof propertyId === 'string' ? propertySvc.getById(propertyId) : null
+      typeof propertyId === 'string' ? propertySvc.getById(propertyId) : null,
   );
 
   if (isLoading) {

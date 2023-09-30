@@ -8,7 +8,7 @@ export type FieldsState<T> = {
 export function useFieldsState<T>(initialFields: T): FieldsState<T> {
   const [fields, dispatch] = useReducer<Reducer<T, Action<T>>>(
     fieldsReducer,
-    initialFields
+    initialFields,
   );
 
   return {

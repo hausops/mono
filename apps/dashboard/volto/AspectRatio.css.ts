@@ -13,5 +13,5 @@ export const ratio = styleVariants(
     '4:3': '4 / 3',
     '16:9': '16 / 9',
   },
-  (r) => [root, {aspectRatio: r}]
+  (r) => [root, {aspectRatio: r}],
 );

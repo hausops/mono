@@ -24,7 +24,7 @@ export function TooltipsManagerProvider(props: TooltipsManagerProviderProps) {
   // Cannot use useRef here because it does not cause a re-render
   // thus the context is not updated after the container mounted.
   const [portalsContainer, setPortalsContainer] = useState<HTMLElement | null>(
-    null
+    null,
   );
 
   const {current: visibility} = useRef(new VisibilityManager());
@@ -76,5 +76,5 @@ const PortalsContainer = forwardRef<HTMLDivElement>(
     return (
       <div id="tooltips-container" className={s.PortalsContainer} ref={ref} />
     );
-  }
+  },
 );

@@ -19,7 +19,7 @@ export function RentInfo({property}: RentInfoProps) {
   const leaseSvc = useLeaseService();
   const unitId = property.unit.id;
   const {isLoading, data} = useSWR(`lease.unit-${unitId}`, () =>
-    leaseSvc.getByUnitId(unitId)
+    leaseSvc.getByUnitId(unitId),
   );
 
   if (isLoading) {

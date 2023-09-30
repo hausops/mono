@@ -28,7 +28,7 @@ export function AddressForm({
   const cs =
     layout === 'full-width'
       ? {
-          root: s.layout.foutColumns,
+          root: s.layout.fourColumns,
           line1: s.gridColumnSpan[2],
           line2: s.gridColumnSpan[2],
           city: s.gridColumnSpan[2],
@@ -69,7 +69,7 @@ export function AddressForm({
         name={`${namePrefix}AddressState`}
         options={useMemo(
           () => addressSvc.getAllStates().map((s) => toOption(s.code)),
-          [addressSvc]
+          [addressSvc],
         )}
         value={fields.state}
         onChange={(e) => updateField('state', e.target.value)}
@@ -86,7 +86,7 @@ export function AddressForm({
 }
 
 export function useAddressFormState(
-  initialState?: AddressModel
+  initialState?: AddressModel,
 ): AddressFormState {
   return useFieldsState({
     line1: '',

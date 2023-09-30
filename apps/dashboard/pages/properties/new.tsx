@@ -78,7 +78,7 @@ export default function Page() {
 
 function toNewPropertyData(
   address: AddressFormState['fields'],
-  details: DetailsFormState
+  details: DetailsFormState,
 ): NewPropertyData {
   // TODO: validate required
   const propertyType = details.propertyType.selectedValue ?? 'single-family';

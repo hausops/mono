@@ -56,7 +56,7 @@ function PropertyTypeOption({state, ...props}: PropertyTypeOptionProps) {
   const {clickableZoneProps, inputProps, isSelected} = useRadio(
     props,
     state,
-    ref
+    ref,
   );
   const {isFocusVisible, focusProps} = useFocusRing();
 

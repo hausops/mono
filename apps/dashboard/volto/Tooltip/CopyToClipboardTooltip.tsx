@@ -66,7 +66,7 @@ type CopyState = {
 
 export function useCopyToClipboardState(
   content: string,
-  tooltipState: TooltipState
+  tooltipState: TooltipState,
 ): CopyState {
   const [isCopied, setCopied] = useState(false);
   return {
