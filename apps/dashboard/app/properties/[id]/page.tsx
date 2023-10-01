@@ -1,4 +1,7 @@
-import {PropertyDetails} from '@/components/PropertyDetails';
+import {
+  MultiFamilyPropertyDetails,
+  SingleFamilyPropertyDetails,
+} from '@/components/PropertyDetails';
 import {PageHeader} from '@/layouts/PageHeader';
 import {Address} from '@/services/address';
 import {propertySvc} from '@/services/property';
@@ -31,7 +34,11 @@ export default async function PropertyDetailsPage({params}: {params: Params}) {
   return (
     <>
       <PageHeader title={streetAddr} />
-      <PropertyDetails property={property} />
+      {property.type === 'single-family' ? (
+        <SingleFamilyPropertyDetails property={property} />
+      ) : (
+        <MultiFamilyPropertyDetails property={property} />
+      )}
     </>
   );
 }

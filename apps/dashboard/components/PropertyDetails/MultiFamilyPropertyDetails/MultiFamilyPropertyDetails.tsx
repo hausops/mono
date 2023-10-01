@@ -1,20 +1,20 @@
+'use client';
+
 import {PropertyImages} from '@/components/PropertyDetails/PropertyImages';
 import type {MultiFamily} from '@/services/property';
 import {Section} from '@/volto/Section';
+import {TooltipsManagerProvider} from '@/volto/Tooltip';
 import * as s from './MultiFamilyPropertyDetails.css';
 import {PropertyInfo} from './PropertyInfo';
 import {UnitList} from './UnitList';
 
-type MultiFamilyPropertyDetailsProps = {
+export function MultiFamilyPropertyDetails({
+  property,
+}: {
   property: MultiFamily.Property;
-};
-
-export function MultiFamilyPropertyDetails(
-  props: MultiFamilyPropertyDetailsProps,
-) {
-  const {property} = props;
+}) {
   return (
-    <>
+    <TooltipsManagerProvider>
       <section className={s.TwoColumnsLayout}>
         <article className={s.Column}>
           <PropertyInfo property={property} />
@@ -27,6 +27,6 @@ export function MultiFamilyPropertyDetails(
       <Section title="Units">
         <UnitList property={property} />
       </Section>
-    </>
+    </TooltipsManagerProvider>
   );
 }

@@ -1,4 +1,4 @@
-import {useLeaseService, type LeaseModel} from '@/services/lease';
+import {leaseSvc, type LeaseModel} from '@/services/lease';
 import type {SingleFamily} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {EmptyState} from '@/volto/EmptyState';
@@ -16,7 +16,6 @@ type RentInfoProps = {
 };
 
 export function RentInfo({property}: RentInfoProps) {
-  const leaseSvc = useLeaseService();
   const unitId = property.unit.id;
   const {isLoading, data} = useSWR(`lease.unit-${unitId}`, () =>
     leaseSvc.getByUnitId(unitId),
