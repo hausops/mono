@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import type {PropsWithChildren} from 'react';
-import {AppShell} from './AppShell';
+import {AppShell} from './_internal/AppShell';
 import './globals.css';
 
 export const metadata = {
