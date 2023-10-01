@@ -5,17 +5,17 @@ import {
   useAddressFormState,
   type AddressFormState,
 } from '@/components/AddressForm';
-import {
-  DetailsForm,
-  useDetailsFormState,
-  type DetailsFormState,
-} from '@/components/NewProperty';
 import {propertySvc, type NewPropertyData} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import useSWRMutation from 'swr/mutation';
+import {
+  DetailsForm,
+  useDetailsFormState,
+  type DetailsFormState,
+} from './_internal/DetailsForm';
 import * as s from './page.css';
 
 export default function NewPropertyPage() {
