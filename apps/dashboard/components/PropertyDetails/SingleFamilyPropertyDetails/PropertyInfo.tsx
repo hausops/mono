@@ -7,7 +7,7 @@ import {Attribute, AttributeList} from '@/components/AttributeList';
 import {BathroomsSelect, BedroomsSelect} from '@/components/PropertyForm';
 import {useFieldsState} from '@/components/useFieldsState';
 import {Address} from '@/services/address';
-import {usePropertyService, type SingleFamily} from '@/services/property';
+import {propertySvc, type SingleFamily} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import {TextField} from '@/volto/TextField';
@@ -21,7 +21,6 @@ type PropertyInfoProps = {
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
-  const propertySvc = usePropertyService();
   const {data, mutate: mutateProperty} = useSWR(
     `/api/property/${props.property.id}`,
     async () => {
@@ -103,7 +102,6 @@ function Editing({
   onUpdateSettled: () => void;
   onUpdateSuccess: (updatedProperty: SingleFamily.Property) => void;
 }) {
-  const propertySvc = usePropertyService();
   const address = useAddressFormState(property.address);
   const unit = useFieldsState<UnitFields>({
     ...property.unit,

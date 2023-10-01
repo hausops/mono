@@ -3,7 +3,7 @@ import {Card} from '@/volto/Card';
 import {TextSkeleton} from '@/volto/Skeleton';
 import * as s from './_internal/PropertySummary.css';
 
-export default function LoadingPropertyList() {
+export default function LoadingProperties() {
   return Array.from({length: 8}).map((_, i) => (
     <li key={i}>
       <PropertySummarySkeleton />

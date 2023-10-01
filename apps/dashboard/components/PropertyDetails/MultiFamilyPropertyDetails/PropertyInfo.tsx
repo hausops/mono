@@ -4,7 +4,7 @@ import {
   type AddressFormState,
 } from '@/components/AddressForm';
 import {Address} from '@/services/address';
-import {usePropertyService, type MultiFamily} from '@/services/property';
+import {propertySvc, type MultiFamily} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
@@ -17,7 +17,6 @@ type PropertyInfoProps = {
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
-  const propertySvc = usePropertyService();
   const {data, mutate: mutateProperty} = useSWR(
     `/api/property/${props.property.id}`,
     async () => {
@@ -81,7 +80,6 @@ function Editing({
   onUpdateSettled: () => void;
   onUpdateSuccess: (updatedProperty: MultiFamily.Property) => void;
 }) {
-  const propertySvc = usePropertyService();
   const address = useAddressFormState(property.address);
   return (
     <>
