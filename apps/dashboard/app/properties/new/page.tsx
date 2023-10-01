@@ -1,3 +1,5 @@
+'use client';
+
 import {
   AddressForm,
   useAddressFormState,
@@ -8,20 +10,16 @@ import {
   useDetailsFormState,
   type DetailsFormState,
 } from '@/components/NewProperty';
-import {PageLayout} from '@/layouts/Page';
-import {PageHeader} from '@/layouts/PageHeader';
-import {usePropertyService, type NewPropertyData} from '@/services/property';
+import {propertySvc, type NewPropertyData} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {Section} from '@/volto/Section';
-import Head from 'next/head';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
+import {useRouter} from 'next/navigation';
 import useSWRMutation from 'swr/mutation';
-import * as s from './new.css';
+import * as s from './page.css';
 
-export default function Page() {
+export default function NewPropertyPage() {
   const router = useRouter();
-  const propertySvc = usePropertyService();
 
   const address = useAddressFormState();
   const details = useDetailsFormState();
@@ -33,45 +31,36 @@ export default function Page() {
 
   return (
     <>
-      <Head>
-        <title>Add property - HausOps</title>
-        <meta name="description" content="HausOps" />
-        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
-      </Head>
+      <Section title="Address">
+        <AddressForm
+          layout="full-width"
+          namePrefix="Property"
+          state={address}
+        />
+      </Section>
+      <DetailsForm state={details} />
 
-      <PageLayout>
-        <PageHeader title="Add property" />
-        <Section title="Address">
-          <AddressForm
-            layout="full-width"
-            namePrefix="Property"
-            state={address}
-          />
-        </Section>
-        <DetailsForm state={details} />
-
-        <div className={s.Actions}>
-          <Button variant="text" as={Link} href="/properties">
-            {/* Discard */}
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            disabled={addPropertyMutation.isMutating}
-            onClick={async () => {
-              try {
-                const created = await addPropertyMutation.trigger();
-                console.log('property created', created);
-                router.push('/properties');
-              } catch (err) {
-                console.error('Cannot add property', err);
-              }
-            }}
-          >
-            Save
-          </Button>
-        </div>
-      </PageLayout>
+      <div className={s.Actions}>
+        <Button variant="text" as={Link} href="/properties">
+          {/* Discard */}
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          disabled={addPropertyMutation.isMutating}
+          onClick={async () => {
+            try {
+              const created = await addPropertyMutation.trigger();
+              console.log('property created', created);
+              router.push('/properties');
+            } catch (err) {
+              console.error('Cannot add property', err);
+            }
+          }}
+        >
+          Save
+        </Button>
+      </div>
     </>
   );
 }
