@@ -4,12 +4,13 @@ import {
   type AddressFormState,
 } from '@/components/AddressForm';
 import {Address} from '@/services/address';
-import {propertySvc, type MultiFamily} from '@/services/property';
+import type {MultiFamily} from '@/services/property';
 import {Button, MiniTextButton} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {useState} from 'react';
 import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {
@@ -17,14 +18,16 @@ type PropertyInfoProps = {
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
-  const {data, mutate: mutateProperty} = useSWR(
-    `/api/property/${props.property.id}`,
-    async () => {
-      const p = await propertySvc.getById(props.property.id);
-      return p?.type === 'multi-family' ? p : undefined;
+  const {data: property} = useSWR(
+    `/api/properties/${props.property.id}`,
+    async (endpoint): Promise<MultiFamily.Property> => {
+      const res = await fetch(endpoint);
+      return res.json();
+    },
+    {
+      fallbackData: props.property,
     },
   );
-  const property = data ?? props.property;
 
   const [editing, setEditing] = useState(false);
   const exitEditing = () => setEditing(false);
@@ -46,9 +49,6 @@ export function PropertyInfo(props: PropertyInfoProps) {
           property={property}
           onCancel={exitEditing}
           onUpdateSettled={exitEditing}
-          onUpdateSuccess={(updatedProperty) => {
-            mutateProperty(updatedProperty, {revalidate: false});
-          }}
         />
       ) : (
         <Viewing property={property} />
@@ -73,14 +73,33 @@ function Editing({
   property,
   onCancel,
   onUpdateSettled,
-  onUpdateSuccess,
 }: {
   property: MultiFamily.Property;
   onCancel: () => void;
   onUpdateSettled: () => void;
-  onUpdateSuccess: (updatedProperty: MultiFamily.Property) => void;
 }) {
   const address = useAddressFormState(property.address);
+  const updateProperty = useSWRMutation(
+    `/api/properties/${property.id}`,
+    async (endpoint): Promise<MultiFamily.Property> => {
+      const d = toPropertyModel(address.fields);
+      const res = await fetch(endpoint, {
+        body: JSON.stringify(d),
+        method: 'PATCH',
+      });
+      return res.json();
+    },
+    {
+      onError(err) {
+        console.error('Cannot update property', err);
+        onUpdateSettled();
+      },
+      onSuccess() {
+        onUpdateSettled();
+      },
+    },
+  );
+
   return (
     <>
       <AddressForm namePrefix="PropertyInfo" state={address} />
@@ -89,19 +108,10 @@ function Editing({
           Cancel
         </Button>
         <Button
-          variant="contained"
           // TODO: disable button and show loading state
-          onClick={async () => {
-            const d = toPropertyModel(address.fields);
-            try {
-              const updated = await propertySvc.update(property.id, d);
-              onUpdateSuccess(updated);
-            } catch (err) {
-              console.error('Cannot update property', err);
-            } finally {
-              onUpdateSettled();
-            }
-          }}
+          disabled={updateProperty.isMutating}
+          variant="contained"
+          onClick={() => updateProperty.trigger()}
         >
           Save
         </Button>

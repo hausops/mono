@@ -30,6 +30,8 @@ export default async function PropertyDetailsPage({params}: {params: Params}) {
     notFound();
   }
 
+  // TODO: refactor this page since updating a property's address
+  // doesn't update the document.title and the PageHeader title.
   const [streetAddr] = Address.from(property.address).format();
   return (
     <>
