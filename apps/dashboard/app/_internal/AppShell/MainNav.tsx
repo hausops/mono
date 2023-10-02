@@ -21,8 +21,9 @@ export function MainNav() {
           <NavLink key={i} {...props} />
         ))}
       </NavSection>
-      <footer className={s.Footer}></footer>
-      <NavLink href="/settings" icon={<SettingsIcon />} text="Settings" />
+      <footer className={s.Footer}>
+        <NavLink href="/settings" icon={<SettingsIcon />} text="Settings" />
+      </footer>
     </aside>
   );
 }
