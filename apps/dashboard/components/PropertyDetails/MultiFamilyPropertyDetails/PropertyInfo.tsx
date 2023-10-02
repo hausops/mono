@@ -18,7 +18,7 @@ type PropertyInfoProps = {
 };
 
 export function PropertyInfo(props: PropertyInfoProps) {
-  const {data: property} = useSWR(
+  const {data: property, mutate: mutateProperty} = useSWR(
     `/api/properties/${props.property.id}`,
     async (endpoint): Promise<MultiFamily.Property> => {
       const res = await fetch(endpoint);
@@ -49,6 +49,9 @@ export function PropertyInfo(props: PropertyInfoProps) {
           property={property}
           onCancel={exitEditing}
           onUpdateSettled={exitEditing}
+          onUpdateSuccess={(updatedProperty) => {
+            mutateProperty(updatedProperty, {revalidate: false});
+          }}
         />
       ) : (
         <Viewing property={property} />
@@ -73,10 +76,12 @@ function Editing({
   property,
   onCancel,
   onUpdateSettled,
+  onUpdateSuccess,
 }: {
   property: MultiFamily.Property;
   onCancel: () => void;
   onUpdateSettled: () => void;
+  onUpdateSuccess: (updatedProperty: MultiFamily.Property) => void;
 }) {
   const address = useAddressFormState(property.address);
   const updateProperty = useSWRMutation(
@@ -94,9 +99,11 @@ function Editing({
         console.error('Cannot update property', err);
         onUpdateSettled();
       },
-      onSuccess() {
+      onSuccess(updatedProperty) {
+        onUpdateSuccess(updatedProperty);
         onUpdateSettled();
       },
+      revalidate: false,
     },
   );
 
