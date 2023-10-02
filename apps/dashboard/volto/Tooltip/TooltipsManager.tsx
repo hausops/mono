@@ -43,7 +43,7 @@ export function TooltipsManagerProvider(props: PropsWithChildren) {
 export function useTooltipsManager(): TooltipsManager {
   const tooltipsManager = useContext(TooltipsManagerContext);
   if (!tooltipsManager) {
-    throw new Error('TooltipsManager is not provided via context.');
+    throw new Error('TooltipsManager is not provided in the context.');
   }
   return tooltipsManager;
 }

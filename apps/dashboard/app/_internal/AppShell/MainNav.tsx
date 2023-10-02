@@ -21,8 +21,9 @@ export function MainNav() {
           <NavLink key={i} {...props} />
         ))}
       </NavSection>
-      <footer className={s.Footer}></footer>
-      <NavLink href="/settings" icon={SettingsIcon} text="Settings" />
+      <footer className={s.Footer}>
+        <NavLink href="/settings" icon={<SettingsIcon />} text="Settings" />
+      </footer>
     </aside>
   );
 }
@@ -39,27 +40,27 @@ const navLinks: NavLinkProps[] = [
   {
     exact: true,
     href: '/',
-    icon: SpaceDashboardIcon,
+    icon: <SpaceDashboardIcon />,
     text: 'Dashboard',
   },
   {
     href: '/properties',
-    icon: HomeFilledIcon,
+    icon: <HomeFilledIcon />,
     text: 'Properties',
   },
   {
     href: '/units',
-    icon: ChairIcon,
+    icon: <ChairIcon />,
     text: 'Units',
   },
   {
     href: '/applications',
-    icon: DescriptionIcon,
+    icon: <DescriptionIcon />,
     text: 'Applications',
   },
   {
     href: '/payments',
-    icon: CreditCardIcon,
+    icon: <CreditCardIcon />,
     text: 'Payments',
   },
 ];

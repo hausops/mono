@@ -1,5 +1,5 @@
 import {useFieldsState, type FieldsState} from '@/components/useFieldsState';
-import {useAddressService, type AddressModel} from '@/services/address';
+import {addressSvc, type AddressModel} from '@/services/address';
 import {Select, toOption} from '@/volto/Select';
 import {TextField} from '@/volto/TextField';
 import {useMemo} from 'react';
@@ -22,9 +22,7 @@ export function AddressForm({
   namePrefix = '',
   state,
 }: AddressFormProps) {
-  const addressSvc = useAddressService();
   const {fields, updateField} = state;
-
   const cs =
     layout === 'full-width'
       ? {
@@ -69,7 +67,7 @@ export function AddressForm({
         name={`${namePrefix}AddressState`}
         options={useMemo(
           () => addressSvc.getAllStates().map((s) => toOption(s.code)),
-          [addressSvc],
+          [],
         )}
         value={fields.state}
         onChange={(e) => updateField('state', e.target.value)}

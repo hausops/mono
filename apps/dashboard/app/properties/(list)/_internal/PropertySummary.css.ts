@@ -3,8 +3,6 @@ import {unit} from '@/volto/spacing.css';
 import {font} from '@/volto/typography.css';
 import {style} from '@vanilla-extract/css';
 
-export const PropertyDetail = style({});
-
 export const Cover = style({
   backgroundColor: '#ececec', // TODO
 });

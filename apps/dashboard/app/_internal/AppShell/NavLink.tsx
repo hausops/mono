@@ -1,7 +1,10 @@
+'use client';
+
+import type {SvgIcon} from '@/volto/icons/SvgIcon';
 import clsx from 'clsx';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import type {ComponentType} from 'react';
+import {usePathname} from 'next/navigation';
+import type {ReactElement} from 'react';
 import * as s from './NavLink.css';
 
 export type NavLinkProps = {
@@ -9,23 +12,27 @@ export type NavLinkProps = {
   // otherwise (default: false) it matches pathname that starts with href.
   exact?: boolean;
   href: string;
-  icon: ComponentType;
+  icon: ReactElement<typeof SvgIcon>;
   text: string;
 };
 
-export function NavLink({exact = false, href, icon: Icon, text}: NavLinkProps) {
-  const {pathname} = useRouter();
-  const active = exact ? pathname === href : pathname.startsWith(href);
+export function NavLink({exact = false, href, icon, text}: NavLinkProps) {
+  const pathname = usePathname();
+  const active = pathname
+    ? exact
+      ? pathname === href
+      : pathname.startsWith(href)
+    : false;
+
   const linkClassName = clsx(s.link, {
     [s.state.active]: active,
   });
+
   return (
     <div className={s.root}>
       {active && <ActiveMarker />}
       <Link className={linkClassName} href={href}>
-        <span className={s.icon}>
-          <Icon />
-        </span>
+        <span className={s.icon}>{icon}</span>
         {text}
       </Link>
     </div>

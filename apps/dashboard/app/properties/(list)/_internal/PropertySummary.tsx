@@ -3,7 +3,6 @@ import type {PropertyModel} from '@/services/property';
 import {AspectRatio} from '@/volto/AspectRatio';
 import {IconButton} from '@/volto/Button';
 import {Card} from '@/volto/Card';
-import {TextSkeleton} from '@/volto/Skeleton';
 import {MoreHIcon} from '@/volto/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -64,16 +63,4 @@ const coverSizes = [
 
 function NoImage() {
   return <div className={s.NoImage}>No image</div>;
-}
-
-export function PropertySummarySkeleton() {
-  return (
-    <Card as="article">
-      <AspectRatio as="figure" ratio="2:1" className={s.Cover} />
-      <div className={s.SkeletonBody}>
-        <TextSkeleton width="50%" />
-        <TextSkeleton width="70%" />
-      </div>
-    </Card>
-  );
 }

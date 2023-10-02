@@ -15,7 +15,7 @@ export function LeaseServiceProvider({
 export function useLeaseService(): LeaseService {
   const svc = useContext(LeaseServiceContext);
   if (!svc) {
-    throw new Error('LeaseService is not provided from the context.');
+    throw new Error('LeaseService is not provided in the context.');
   }
   return svc;
 }

@@ -1,4 +1,4 @@
-import {useLeaseService} from '@/services/lease';
+import {leaseSvc} from '@/services/lease';
 import type {MultiFamily} from '@/services/property';
 import useSWR from 'swr';
 import {Unit, UnitSkeleton} from './Unit';
@@ -10,7 +10,6 @@ type UnitListProps = {
 export function UnitList(props: UnitListProps) {
   const {property} = props;
 
-  const leaseSvc = useLeaseService();
   const {isLoading, data: leaseByUnitId} = useSWR(
     `/api/leases?property_id=${property.id}`,
     async () => {

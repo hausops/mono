@@ -15,7 +15,7 @@ export function PropertyServiceProvider({
 export function usePropertyService(): PropertyService {
   const svc = useContext(PropertyServiceContext);
   if (!svc) {
-    throw new Error('PropertyService is not provided from the context.');
+    throw new Error('PropertyService is not provided in the context.');
   }
   return svc;
 }

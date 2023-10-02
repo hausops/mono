@@ -3,9 +3,10 @@ const withVanillaExtract = createVanillaExtractPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    typedRoutes: true,
+  },
   poweredByHeader: false,
-  reactStrictMode: true,
-  swcMinify: true,
 };
 
 module.exports = withVanillaExtract(nextConfig);
