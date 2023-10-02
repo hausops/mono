@@ -2,7 +2,6 @@ import {
   MultiFamilyPropertyDetails,
   SingleFamilyPropertyDetails,
 } from '@/components/PropertyDetails';
-import {PageHeader} from '@/layouts/PageHeader';
 import {Address} from '@/services/address';
 import {propertySvc} from '@/services/property';
 import type {Metadata} from 'next';
@@ -30,17 +29,9 @@ export default async function PropertyDetailsPage({params}: {params: Params}) {
     notFound();
   }
 
-  // TODO: refactor this page since updating a property's address
-  // doesn't update the document.title and the PageHeader title.
-  const [streetAddr] = Address.from(property.address).format();
-  return (
-    <>
-      <PageHeader title={streetAddr} />
-      {property.type === 'single-family' ? (
-        <SingleFamilyPropertyDetails property={property} />
-      ) : (
-        <MultiFamilyPropertyDetails property={property} />
-      )}
-    </>
+  return property.type === 'single-family' ? (
+    <SingleFamilyPropertyDetails property={property} />
+  ) : (
+    <MultiFamilyPropertyDetails property={property} />
   );
 }

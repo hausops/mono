@@ -9,26 +9,15 @@ import {Button, MiniTextButton} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import {CloseIcon, EditFilledIcon, LocationOnIcon} from '@/volto/icons';
 import {useState} from 'react';
-import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {
   property: MultiFamily.Property;
+  onUpdateSuccess: (updatedProperty: MultiFamily.Property) => void;
 };
 
-export function PropertyInfo(props: PropertyInfoProps) {
-  const {data: property, mutate: mutateProperty} = useSWR(
-    `/api/properties/${props.property.id}`,
-    async (endpoint): Promise<MultiFamily.Property> => {
-      const res = await fetch(endpoint);
-      return res.json();
-    },
-    {
-      fallbackData: props.property,
-    },
-  );
-
+export function PropertyInfo({property, onUpdateSuccess}: PropertyInfoProps) {
   const [editing, setEditing] = useState(false);
   const exitEditing = () => setEditing(false);
 
@@ -49,9 +38,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
           property={property}
           onCancel={exitEditing}
           onUpdateSettled={exitEditing}
-          onUpdateSuccess={(updatedProperty) => {
-            mutateProperty(updatedProperty, {revalidate: false});
-          }}
+          onUpdateSuccess={onUpdateSuccess}
         />
       ) : (
         <Viewing property={property} />

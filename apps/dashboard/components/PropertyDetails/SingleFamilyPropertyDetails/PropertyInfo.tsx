@@ -13,26 +13,15 @@ import {Section} from '@/volto/Section';
 import {TextField} from '@/volto/TextField';
 import {CloseIcon, EditFilledIcon} from '@/volto/icons';
 import {useState} from 'react';
-import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import * as s from './PropertyInfo.css';
 
 type PropertyInfoProps = {
   property: SingleFamily.Property;
+  onUpdateSuccess: (updatedProperty: SingleFamily.Property) => void;
 };
 
-export function PropertyInfo(props: PropertyInfoProps) {
-  const {data: property, mutate: mutateProperty} = useSWR(
-    `/api/properties/${props.property.id}`,
-    async (endpoint): Promise<SingleFamily.Property> => {
-      const res = await fetch(endpoint);
-      return res.json();
-    },
-    {
-      fallbackData: props.property,
-    },
-  );
-
+export function PropertyInfo({property, onUpdateSuccess}: PropertyInfoProps) {
   const [editing, setEditing] = useState(false);
   const exitEditing = () => setEditing(false);
 
@@ -53,9 +42,7 @@ export function PropertyInfo(props: PropertyInfoProps) {
           property={property}
           onCancel={exitEditing}
           onUpdateSettled={exitEditing}
-          onUpdateSuccess={(updatedProperty) => {
-            mutateProperty(updatedProperty, {revalidate: false});
-          }}
+          onUpdateSuccess={onUpdateSuccess}
         />
       ) : (
         <Viewing property={property} />
