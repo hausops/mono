@@ -5,7 +5,7 @@ import {
   useAddressFormState,
   type AddressFormState,
 } from '@/components/AddressForm';
-import {propertySvc, type NewPropertyData} from '@/services/property';
+import type {NewPropertyData} from '@/services/property';
 import {Button} from '@/volto/Button';
 import {Section} from '@/volto/Section';
 import Link from 'next/link';
@@ -24,9 +24,12 @@ export default function NewPropertyPage() {
   const address = useAddressFormState();
   const details = useDetailsFormState();
 
-  const addPropertyMutation = useSWRMutation('/api/properties', () => {
+  const addPropertyMutation = useSWRMutation('/api/properties', (endpoint) => {
     const d = toNewPropertyData(address.fields, details);
-    return propertySvc.add(d);
+    return fetch(endpoint, {
+      body: JSON.stringify(d),
+      method: 'POST',
+    });
   });
 
   return (
